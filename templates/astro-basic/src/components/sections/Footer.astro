@@ -1,0 +1,126 @@
+---
+import { resolvePath } from '../../utils/paths';
+/**
+ * Footer Component - A site footer with links and information. The template already renders an automatic site-wide footer from settings.yaml on every page; when you add this <Footer> section to a page, also set `hideFooter: true` in that page's frontmatter so your footer replaces the automatic one.
+ */
+interface Props {
+  /** Optional id for anchor links */
+  id?: string;
+  /** Array of footer columns; each column may contain links, plain text lines, or both */
+  columns: Array<{
+    title: string;
+    links?: Array<{
+      label: string;
+      href: string;
+    }>;
+    /** Plain text lines rendered as paragraphs (e.g. address, phone, email) */
+    text?: string[];
+  }>;
+  /** Optional logo image displayed next to siteName */
+  logo?: {
+    src: string;
+    alt?: string;
+  };
+  /** Site name or logo text */
+  siteName?: string;
+  /** Short description */
+  description?: string;
+  /** Copyright text */
+  copyright?: string;
+  /** Tailwind background color class */
+  backgroundColor?: string;
+  /** Tailwind text color class */
+  textColor?: string;
+  /** If true, the footer is fixed to the bottom of the viewport */
+  fixedPosition?: boolean;
+  /** Optional newsletter subscribe form rendered as the last column */
+  newsletter?: {
+    heading?: string;
+    placeholder?: string;
+    buttonLabel?: string;
+  };
+  /** Optional CTA button rendered in the bottom copyright bar */
+  action?: {
+    label: string;
+    href: string;
+    variant?: 'primary' | 'secondary' | 'success';
+  };
+  /** Text alignment for footer content: 'left' (default), 'center', or 'right' */
+  align?: 'left' | 'center' | 'right';
+  /** Text color for footer links (Tailwind class, e.g., 'text-pink-500') */
+  linkColor?: string;
+}
+
+const {
+  id,
+  columns = [],
+  logo,
+  siteName,
+  description = 'Providing high-quality care and services to our community.',
+  copyright = `© ${new Date().getFullYear()} All rights reserved.`,
+  backgroundColor = 'bg-gray-900',
+  textColor = 'text-gray-300',
+  fixedPosition = false,
+  newsletter,
+  action,
+  align = 'left',
+  linkColor
+} = Astro.props;
+
+const actionVariantClass =
+  action?.variant === 'secondary' ? 'bg-gray-200 text-gray-900 hover:bg-gray-300' :
+  action?.variant === 'success'   ? 'bg-green-600 text-white hover:bg-green-700' :
+                                    'bg-blue-600 text-white hover:bg-blue-700';
+---
+
+<footer id={id} class={`${backgroundColor} ${textColor} py-16 px-6 ${fixedPosition ? 'fixed bottom-0 left-0 right-0 z-50' : ''}`}>
+  <div class="max-w-7xl mx-auto">
+    <div class={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 ${align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : ''}`}>
+      <div class="lg:col-span-1">
+        {logo && <img src={logo.src} alt={logo.alt || 'Logo'} class="w-10 h-10 mb-4" />}
+        {siteName && <h2 class="text-2xl font-bold text-white mb-6">{siteName}</h2>}
+        {description && (
+          <p class="text-sm leading-relaxed max-w-xs">
+            {description}
+          </p>
+        )}
+      </div>
+      {columns.map(column => (
+        <div>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-6">{column.title}</h3>
+          {column.text && column.text.length > 0 && (
+            <div class="space-y-2 text-sm">
+              {column.text.map(line => <p>{line}</p>)}
+            </div>
+          )}
+          {column.links && column.links.length > 0 && (
+            <ul class="space-y-4">
+              {column.links.map(link => (
+                <li>
+                  <a href={resolvePath(link.href)} class={`${linkColor || 'hover:text-white'} transition-colors`}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
+      {newsletter && (
+        <div>
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-6">{newsletter.heading || 'Newsletter'}</h3>
+          <form class="flex flex-col gap-2">
+            <input type="email" placeholder={newsletter.placeholder || 'Enter your email'} class="p-2 rounded text-gray-900 w-full" />
+            <button type="submit" class="bg-white text-gray-900 font-semibold p-2 rounded w-full hover:bg-gray-100 transition-colors">{newsletter.buttonLabel || 'Subscribe'}</button>
+          </form>
+        </div>
+      )}
+    </div>
+    <div class="pt-8 border-t border-gray-800 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
+      <p>{copyright}</p>
+      {action && (
+        <a href={resolvePath(action.href)} class={`font-bold py-2 px-4 rounded transition-colors ${actionVariantClass}`}>
+          {action.label}
+        </a>
+      )}
+    </div>
+  </div>
+</footer>

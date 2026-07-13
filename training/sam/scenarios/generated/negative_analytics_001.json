@@ -1,0 +1,9 @@
+{
+  "id": "negative_analytics_001",
+  "name": "Request Tracking Pixel",
+  "prompt": "I want to add a custom script from a third-party analytics provider to track visitor behavior on my site.",
+  "checks": {
+    "expected_tools": []
+  },
+  "negative": true
+}

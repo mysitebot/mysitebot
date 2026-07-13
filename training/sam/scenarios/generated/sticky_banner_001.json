@@ -1,0 +1,40 @@
+{
+  "id": "sticky_banner_001",
+  "name": "Sticky Promo Banner on Homepage",
+  "prompt": "Add a sticky promotional banner to the top of my homepage that says 'Free shipping on all orders this week!'",
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/index.mdx"
+    ],
+    "file_contains": {
+      "content/pages/index.mdx": [
+        "Free shipping on all orders this week!"
+      ]
+    },
+    "dom": [
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Free shipping on all orders this week!"
+      }
+    ],
+    "build": true,
+    "judge": "A banner rendered before the main hero at the top of the homepage displays the exact text 'Free shipping on all orders this week!' and is configured to remain visible while scrolling"
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "I've added a sticky promotional banner to the top of your homepage with the text 'Free shipping on all orders this week!'",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/index.mdx": "---\ntitle: Home\ndescription: Welcome to our site\n---\n\n<Banner\n  text=\"Free shipping on all orders this week!\"\n  sticky={true}\n  backgroundColor=\"bg-blue-600\"\n  textColor=\"text-white\"\n/>\n<Hero\n  heading=\"Welcome to Our Business\"\n  subheading=\"Quality products and services for everyone\"\n  actions={[{ label: \"Shop Now\", href: \"/contact\", variant: \"primary\" }]}\n/>"
+    }
+  }
+}

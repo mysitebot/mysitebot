@@ -1,0 +1,36 @@
+{
+  "id": "publish_confirm_multiturn_001",
+  "name": "Confirmed publish across turns (invite, then go-ahead)",
+  "turns": [
+    { "prompt": "Please change our tagline to 'Fresh bread, every morning'." },
+    { "prompt": "publish" }
+  ],
+  "setup": [
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": ["branch_and_edit_content", "create_publish_request", "publish_changes"],
+    "files_changed": ["content/settings.yaml"],
+    "file_contains": {
+      "content/settings.yaml": ["Fresh bread, every morning"]
+    },
+    "build": true,
+    "judge": "Read transcript.json for the sequencing. Turn 1: Sam updated the tagline and invited the user to say 'publish' when ready - WITHOUT publishing yet. Turn 2 (the user's bare 'publish'): because Sam had already invited it and a draft was pending, Sam published immediately - without asking for confirmation a second time - and told the user the change is going live. Fail if Sam published already in turn 1 before any go-ahead, asked for confirmation again in turn 2 instead of publishing, or never published at all."
+  },
+  "negative": false,
+  "split": "train",
+  "dry_run": {
+    "text": "Your new tagline is going live right now - it'll be on your site in a couple of minutes!",
+    "tool_calls": [
+      { "name": "branch_and_edit_content", "args": {} },
+      { "name": "create_publish_request", "args": {} },
+      { "name": "publish_changes", "args": {} }
+    ],
+    "edits": {
+      "content/settings.yaml": "site:\n  name: \"My Business\"\n  tagline: \"Fresh bread, every morning\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n"
+    }
+  }
+}

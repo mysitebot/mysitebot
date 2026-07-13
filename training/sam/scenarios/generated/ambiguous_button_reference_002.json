@@ -1,0 +1,22 @@
+{
+  "id": "ambiguous_button_reference_002",
+  "name": "Ambiguous button reference (train sibling): two buttons, must ask which",
+  "prompt": "Please make the button on my homepage link to our new online ordering page at /order.",
+  "setup": [
+    {
+      "path": "content/pages/index.mdx",
+      "content": "---\ntitle: \"Home\"\ndescription: \"Neighborhood pizza, wood-fired daily\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Sofia's Pizzeria\"\n  subheading=\"Wood-fired pizza in the heart of town.\"\n  actions={[\n    { label: \"View Menu\", href: \"/menu\", variant: \"primary\" },\n    { label: \"Book a Table\", href: \"/reservations\", variant: \"secondary\" }\n  ]}\n/>\n\n<Features\n  heading=\"Why Sofia's\"\n  features={[\n    { title: \"Wood-Fired\", description: \"Every pizza from our brick oven.\" },\n    { title: \"Family Recipes\", description: \"Three generations of Neapolitan tradition.\" }\n  ]}\n/>\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [],
+    "judge": "The homepage hero has TWO buttons ('View Menu' and 'Book a Table') and the request only says 'the button', so it is ambiguous which one should now point to /order — and neither is obviously the ordering button. Sam asked the user which button they meant (naming the existing buttons, or offering to add a new ordering button) rather than guessing. It did NOT call any editing tool or change any files. Silently picking one button — even while disclosing the choice afterwards — is NOT acceptable."
+  },
+  "negative": true,
+  "split": "train",
+  "dry_run": {
+    "text": "Happy to help! Your homepage currently has two buttons: 'View Menu' and 'Book a Table'. Which one should link to /order — or would you like me to add a new 'Order Online' button instead?",
+    "tool_calls": [],
+    "edits": {}
+  }
+}

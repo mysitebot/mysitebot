@@ -1,0 +1,58 @@
+{
+  "id": "page_section_preserve_001",
+  "name": "Edit one page section, preserve the others",
+  "prompt": "On the About page, update the 'Our Mission' section to say 'We craft fast, accessible websites for local businesses.'. Leave the rest of the page unchanged.",
+  "setup": [
+    {
+      "path": "content/pages/about.mdx",
+      "content": "---\ntitle: \"About\"\ndescription: \"About our company\"\npageLayout: \"full\"\n---\n\n## Our Mission\n\nWe help small businesses thrive with beautiful websites.\n\n## Our Team\n\nOur team has fifteen designers and engineers based in Portland.\n\n## Our History\n\nFounded in 2010, we have served over three thousand clients.\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/about.mdx"
+    ],
+    "file_contains": {
+      "content/pages/about.mdx": [
+        "We craft fast, accessible websites for local businesses.",
+        "Our team has fifteen designers and engineers based in Portland.",
+        "Founded in 2010, we have served over three thousand clients."
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/about",
+        "selector": "body",
+        "contains": "accessible websites for local businesses"
+      },
+      {
+        "page": "/about",
+        "selector": "body",
+        "contains": "fifteen designers"
+      },
+      {
+        "page": "/about",
+        "selector": "body",
+        "contains": "three thousand clients"
+      }
+    ],
+    "judge": "On the About page, the 'Our Mission' section now reads 'We craft fast, accessible websites for local businesses.', and the 'Our Team' and 'Our History' sections (fifteen designers in Portland; founded 2010, three thousand clients) are both preserved completely unchanged."
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "Updated the 'Our Mission' section on the About page and left the 'Our Team' and 'Our History' sections unchanged.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/about.mdx": "---\ntitle: \"About\"\ndescription: \"About our company\"\npageLayout: \"full\"\n---\n\n## Our Mission\n\nWe craft fast, accessible websites for local businesses.\n\n## Our Team\n\nOur team has fifteen designers and engineers based in Portland.\n\n## Our History\n\nFounded in 2010, we have served over three thousand clients.\n"
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "id": "settings_name_rebrand_001",
+  "name": "Site-Wide Business Name Rebrand Across Settings and Pages",
+  "prompt": "We're rebranding from 'Sunrise Bakery' to 'Golden Hour Bakery'. Please update our site name and anywhere else the old name appears on the site.",
+  "setup": [
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"Sunrise Bakery\"\n  tagline: \"Fresh from our oven daily\"\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\ncontact:\n  email: \"hello@sunrisebakery.com\""
+    },
+    {
+      "path": "content/pages/index.mdx",
+      "content": "---\ntitle: \"Home\"\ndescription: \"Welcome to Sunrise Bakery\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Welcome to Sunrise Bakery\"\n  subheading=\"Fresh pastries baked daily, just for you.\"\n/>"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "file_contains": {
+      "content/settings.yaml": [
+        "Golden Hour Bakery"
+      ],
+      "content/pages/index.mdx": [
+        "Golden Hour Bakery"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Golden Hour Bakery"
+      }
+    ],
+    "judge": "The business name is updated to 'Golden Hour Bakery' in settings.yaml (site.name) and in all page content where 'Sunrise Bakery' appeared as text; the contact email, tagline, navigation, and all other content are left unchanged"
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "I've updated your business name from 'Sunrise Bakery' to 'Golden Hour Bakery' in the site settings and in the homepage hero heading where the old name appeared, leaving everything else unchanged.",
+    "tool_calls": [
+      {
+        "name": "list_content_files",
+        "args": {}
+      },
+      {
+        "name": "read_content_file",
+        "args": {}
+      },
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/settings.yaml": "site:\n  name: \"Golden Hour Bakery\"\n  tagline: \"Fresh from our oven daily\"\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\ncontact:\n  email: \"hello@sunrisebakery.com\"",
+      "content/pages/index.mdx": "---\ntitle: \"Home\"\ndescription: \"Welcome to Golden Hour Bakery\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Welcome to Golden Hour Bakery\"\n  subheading=\"Fresh pastries baked daily, just for you.\"\n/>"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+site:
+  name: Modern Publisher Blog
+  tagline: Insights at the Intersection of Design & Tech
+  primaryColor: '#0ea5e9'
+  bgEffect:
+  - grid
+  - aura
+  - hover
+  logo: ''
+contact:
+  email: newsletter@example.com
+  phone: ''
+social:
+  twitter: ''
+  linkedin: ''
+  instagram: ''
+navigation:
+- label: Blog Home
+  url: /
+# Analytics is provided platform-wide via a shared Cloudflare Web Analytics
+# beacon (injected at build time); per-site traffic is separated by hostname.
+# Only set enabled + website_id here to override with your OWN analytics token.
+analytics:
+  enabled: false
+  website_id: ""

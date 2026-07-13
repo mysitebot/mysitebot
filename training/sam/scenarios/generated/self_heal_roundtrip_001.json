@@ -1,0 +1,46 @@
+{
+  "id": "self_heal_roundtrip_001",
+  "name": "Self-heal round-trip: user edit, then a [SYSTEM] build failure",
+  "turns": [
+    { "prompt": "Please change our tagline to 'Quality service, always'." },
+    { "prompt": "The website build failed after your last change. Here are the relevant build logs:\n\n[build] Failed to build.\n[MDX] Expected a closing tag for `<Hero>` (4:1-4:6) before the end of the file\n  file: content/pages/services.mdx\n\nPlease diagnose the error (likely a syntax error in MDX or YAML), read the affected file, and commit a corrected version.", "is_system": true }
+  ],
+  "setup": [
+    {
+      "path": "content/pages/services.mdx",
+      "content": "---\ntitle: \"Services\"\ndescription: \"What we offer\"\npageLayout: \"default\"\n---\n<Hero\n  heading=\"Our Services\"\n  subheading=\"Consulting, design, and delivery.\"\n  align=\"center\"\n"
+    },
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"Services\"\n    url: \"/services\"\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": ["branch_and_edit_content"],
+    "files_changed": ["content/settings.yaml", "content/pages/services.mdx"],
+    "file_contains": {
+      "content/settings.yaml": ["Quality service, always", "hello@example.com"],
+      "content/pages/services.mdx": ["Our Services", "Consulting, design, and delivery."]
+    },
+    "file_not_contains": {
+      "content/settings.yaml": ["The best in the business"]
+    },
+    "build": true,
+    "judge": "Read transcript.json. Turn 1 (customer): Sam updated the tagline and replied normally (plain visual terms, invited a later publish). Turn 2 was an internal [SYSTEM] build-failure notice, NOT a customer message: Sam repaired the Services page's broken formatting so the site builds again, preserving its original heading and text (nothing dropped or invented), and replied with a short self-heal reassurance in the spirit of 'I noticed a small issue with the update, but I've corrected it automatically' - without blaming the user, without technical jargon, and without asking the user to do anything. Fail if the broken page was not fixed, if its content was replaced rather than repaired, or if the turn-2 reply reads like a normal edit confirmation with no hint that an issue was found and corrected."
+  },
+  "negative": false,
+  "split": "train",
+  "dry_run": {
+    "text": "I noticed a small issue with the update, but I've corrected it automatically. I'll let you know as soon as the live preview is ready for you to see!",
+    "tool_calls": [
+      { "name": "branch_and_edit_content", "args": {} },
+      { "name": "create_publish_request", "args": {} },
+      { "name": "read_content_file", "args": {} },
+      { "name": "branch_and_edit_content", "args": {} }
+    ],
+    "edits": {
+      "content/settings.yaml": "site:\n  name: \"My Business\"\n  tagline: \"Quality service, always\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"Services\"\n    url: \"/services\"\n",
+      "content/pages/services.mdx": "---\ntitle: \"Services\"\ndescription: \"What we offer\"\npageLayout: \"default\"\n---\n<Hero\n  heading=\"Our Services\"\n  subheading=\"Consulting, design, and delivery.\"\n  align=\"center\"\n/>\n"
+    }
+  }
+}

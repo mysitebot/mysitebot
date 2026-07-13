@@ -1,0 +1,49 @@
+{
+  "id": "images_hero_search_001",
+  "name": "Add a Hero Image via the Media Library",
+  "prompt": "Add a nice hero image of a modern bakery storefront to our homepage hero. Find one in our image library.",
+  "setup": [
+    {
+      "path": "content/pages/index.mdx",
+      "content": "---\ntitle: \"Home\"\ndescription: \"Welcome to our bakery\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Freshly Baked Every Morning\"\n  subheading=\"Artisan breads and pastries since 1995.\"\n/>\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "search_media_library",
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/index.mdx"
+    ],
+    "file_contains": {
+      "content/pages/index.mdx": [
+        "image={{",
+        "storage.googleapis.com",
+        "Freshly Baked Every Morning",
+        "Artisan breads and pastries since 1995."
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Freshly Baked Every Morning"
+      }
+    ],
+    "judge": "Sam called the media-library search tool (search_media_library) and then added an image to the existing homepage Hero, using a media-library URL it retrieved from that tool (a storage.googleapis.com .webp URL) as image.src with descriptive alt text. The original heading 'Freshly Baked Every Morning' and the subheading are preserved verbatim. Inventing an external image URL (e.g. unsplash/pexels), using a bare local path that was not returned by the search tool, or asking the user to supply an image instead of searching, is a FAILURE."
+  },
+  "negative": false,
+  "split": "train",
+  "dry_run": {
+    "text": "I found a bakery storefront image in your library and added it to your homepage hero.",
+    "tool_calls": [
+      { "name": "search_media_library", "args": { "query": "modern bakery storefront" } },
+      { "name": "branch_and_edit_content", "args": {} }
+    ],
+    "edits": {
+      "content/pages/index.mdx": "---\ntitle: \"Home\"\ndescription: \"Welcome to our bakery\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Freshly Baked Every Morning\"\n  subheading=\"Artisan breads and pastries since 1995.\"\n  image={{ src: \"https://storage.googleapis.com/mysitebot-media-stub/media/modern-bakery-storefront-1/full.webp\", alt: \"Modern bakery storefront\" }}\n/>\n"
+    }
+  }
+}

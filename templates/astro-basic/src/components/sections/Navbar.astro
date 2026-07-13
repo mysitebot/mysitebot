@@ -1,0 +1,152 @@
+---
+import { resolvePath } from '../../utils/paths';
+/**
+ * Navbar Component - A horizontal navigation bar with links.
+ */
+interface Props {
+  /** Brand/site name displayed on the left side of the navbar */
+  siteName?: string;
+  /** Optional logo image shown on the left side of the navbar */
+  logo?: {
+    src: string;
+    alt?: string;
+    /** Tailwind height class, e.g. 'h-10' or 'h-12' */
+    size?: string;
+  };
+  /** Array of navigation links */
+  links: Array<{
+    label: string;
+    href: string;
+    dropdown?: Array<{
+      label: string;
+      href: string;
+    }>;
+  }>;
+  /** Tailwind background color class */
+  backgroundColor?: string;
+  /** Tailwind text color class */
+  textColor?: string;
+  /** Tailwind text color class applied to the nav links (defaults to inheriting textColor) */
+  linkColor?: string;
+  /** Alignment of links: 'left', 'center', or 'right' */
+  align?: 'left' | 'center' | 'right';
+  /** If true, the navbar will stick to the top on scroll */
+  sticky?: boolean;
+  /** If true, the navbar will be fixed to the top of the viewport */
+  fixedTop?: boolean;
+  /** If true, the navbar will be fixed to the bottom of the viewport */
+  fixedBottom?: boolean;
+  /** Optional CTA button shown at the far right of the navbar */
+  cta?: {
+    label: string;
+    href: string;
+  };
+  /** If true, show a search input on the right side of the navbar */
+  showSearch?: boolean;
+  /** Placeholder text for the search input */
+  searchPlaceholder?: string;
+  /** Label for the search submit button (default: "Search") */
+  searchButtonLabel?: string;
+  /** Background image URL — renders as a full-cover background behind the navbar */
+  backgroundImage?: string;
+  /** If true, shows a hamburger menu button on the right side */
+  showHamburger?: boolean;
+}
+
+const {
+  siteName,
+  logo,
+  links = [],
+  backgroundColor = 'bg-pink-500',
+  textColor = 'text-white',
+  linkColor = '',
+  align = 'center',
+  sticky = false,
+  fixedTop = false,
+  fixedBottom = false,
+  cta,
+  showSearch = false,
+  searchPlaceholder = 'Search...',
+  searchButtonLabel = 'Search',
+  backgroundImage,
+  showHamburger = false
+} = Astro.props;
+
+const alignmentClasses = {
+  left: 'justify-start',
+  center: 'justify-center',
+  right: 'justify-end'
+};
+
+const hasLeftBrand = !!(siteName || logo);
+---
+
+<nav
+  class={`${backgroundImage ? 'bg-cover bg-center' : backgroundColor} ${textColor} py-4 px-6 ${sticky ? 'sticky top-0 z-50 shadow-md' : ''} ${fixedTop ? 'fixed top-0 left-0 right-0 z-50 shadow-lg' : ''} ${fixedBottom ? 'fixed bottom-0 left-0 right-0 z-50 shadow-lg-up' : ''}`}
+  style={backgroundImage ? `background-image: url('${backgroundImage}')` : undefined}
+>
+  <div class="max-w-7xl mx-auto flex items-center justify-between gap-6">
+    <div class="flex items-center gap-3 flex-shrink-0">
+      {logo && (
+        <img src={logo.src} alt={logo.alt ?? ''} class={`${logo.size ?? 'h-10'} w-auto object-contain`} />
+      )}
+      {siteName && (
+        <span class="font-semibold text-xl tracking-tight">{siteName}</span>
+      )}
+    </div>
+    {links.length > 0 && (
+      <ul class={`flex ${hasLeftBrand ? '' : `w-full ${alignmentClasses[align]}`} space-x-8`}>
+        {links.map(link => (
+          <li class="relative group">
+            <a href={resolvePath(link.href)} class={`hover:opacity-80 transition-opacity font-medium inline-flex items-center gap-1 ${linkColor}`}>
+              {link.label}
+              {link.dropdown && (
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              )}
+            </a>
+            {link.dropdown && (
+              <ul class="absolute left-0 mt-2 w-48 bg-white text-gray-900 rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                {link.dropdown.map(item => (
+                  <li>
+                    <a href={resolvePath(item.href)} class="block px-4 py-3 hover:bg-gray-50 first:rounded-t-xl last:rounded-b-xl transition-colors">
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    )}
+    <div class="flex items-center gap-4 flex-shrink-0">
+      {showSearch && (
+        <form class="flex items-center">
+          <input
+            type="text"
+            placeholder={searchPlaceholder}
+            class="border border-gray-300 rounded-l px-3 py-1.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <button type="submit" class="bg-purple-500 text-white px-4 py-1.5 text-sm rounded-r hover:bg-purple-600 transition-colors">
+            {searchButtonLabel}
+          </button>
+        </form>
+      )}
+      {showHamburger && (
+        <button class="flex items-center px-3 py-2 border rounded hover:opacity-80 transition-opacity lg:hidden">
+          <svg class="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <title>Menu</title>
+            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+          </svg>
+        </button>
+      )}
+      {cta && (
+        <a href={resolvePath(cta.href)} class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 rounded hover:bg-gray-200 font-medium transition-colors">
+          {cta.label}
+        </a>
+      )}
+    </div>
+  </div>
+</nav>

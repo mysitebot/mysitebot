@@ -1,0 +1,65 @@
+{
+  "id": "nav_rename_preserve_001",
+  "name": "Rename one nav item, preserve the rest",
+  "prompt": "Rename the 'Services' item in the top navigation menu to 'Solutions'. Leave all the other menu items exactly as they are.",
+  "setup": [
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nsocial:\n  twitter: \"\"\n  linkedin: \"\"\n  instagram: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\n  - label: \"Services\"\n    url: \"/services\"\n  - label: \"Contact\"\n    url: \"/contact\"\n\nanalytics:\n  enabled: true\n  website_id: \"da39a3ee-5e6b-4b0d-9c8a-c47c5d6e2e3a\"\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/settings.yaml"
+    ],
+    "file_contains": {
+      "content/settings.yaml": [
+        "label: \"Solutions\"",
+        "label: \"Home\"",
+        "label: \"About\"",
+        "label: \"Contact\""
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Solutions"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Home"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "About"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Contact"
+      }
+    ],
+    "judge": "The 'Services' navigation item in settings.yaml was renamed to 'Solutions'. The three other pre-existing navigation entries \u2014 Home, About, and Contact \u2014 are all still present and unchanged. No navigation entry other than 'Services' was modified or removed."
+  },
+  "negative": false,
+  "split": "holdout",
+  "dry_run": {
+    "text": "Renamed the 'Services' menu item to 'Solutions' in content/settings.yaml and left Home, About, and Contact unchanged.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/settings.yaml": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nsocial:\n  twitter: \"\"\n  linkedin: \"\"\n  instagram: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\n  - label: \"Solutions\"\n    url: \"/services\"\n  - label: \"Contact\"\n    url: \"/contact\"\n\nanalytics:\n  enabled: true\n  website_id: \"da39a3ee-5e6b-4b0d-9c8a-c47c5d6e2e3a\"\n"
+    }
+  }
+}

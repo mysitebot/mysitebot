@@ -1,0 +1,45 @@
+{
+  "id": "wizard_impatient_multiturn_001",
+  "name": "Wizard User Front-Loads Details And Demands Direct Build",
+  "prompt": "[Turn 1 \u2014 user]: Hi, I need a website for my business.\n\n[Turn 2 \u2014 user]: It's a pet grooming service called Furry Friends Grooming. I want a clean look with teal and white colors. Please just build it now, I don't need to answer more questions.",
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/index.mdx",
+      "content/settings.yaml"
+    ],
+    "file_contains": {
+      "content/pages/index.mdx": [
+        "Furry Friends Grooming"
+      ],
+      "content/settings.yaml": [
+        "Furry Friends Grooming"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Furry Friends Grooming"
+      }
+    ],
+    "judge": "Since the user already supplied the business name, type, and color preference and explicitly asked Sam to proceed without further questions, Sam builds the homepage directly in this turn rather than asking another clarifying or confirmation question; the result reflects a pet-grooming business named 'Furry Friends Grooming' with a teal and white look."
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "Sam builds a homepage for Furry Friends Grooming, a pet grooming service, using a teal and white color scheme, and updates site settings \u2014 without asking any further questions, honoring the user's explicit request to just build it.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/index.mdx": "---\ntitle: \"Home\"\ndescription: \"Furry Friends Grooming - professional pet grooming services\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Furry Friends Grooming\"\n  subheading=\"Gentle, professional grooming for your best friend.\"\n  backgroundColor=\"bg-teal-600\"\n  textColor=\"text-white\"\n  actions={[\n    { label: \"Book an Appointment\", href: \"/#contact\", variant: \"primary\" }\n  ]}\n/>\n\n<Features\n  heading=\"Our Services\"\n  features={[\n    { title: \"Full Grooming\", description: \"Bath, cut, and style tailored to your pet.\" },\n    { title: \"Nail Trimming\", description: \"Quick and stress-free nail care.\" }\n  ]}\n/>\n",
+      "content/settings.yaml": "site:\n  name: \"Furry Friends Grooming\"\n  tagline: \"Gentle, professional grooming for your best friend.\"\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\ncontact:\n  email: \"hello@furryfriendsgrooming.com\"\n"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+site:
+  name: "My Business"
+  tagline: "The best in the business"
+  primaryColor: "#4f46e5"
+  bgEffect: ["grid", "aura", "hover"]
+  logo: ""
+
+contact:
+  email: "hello@example.com"
+  phone: ""
+
+social:
+  twitter: ""
+  linkedin: ""
+  instagram: ""
+
+navigation:
+  - label: "Home"
+    url: "/"
+
+# Analytics is provided platform-wide via a shared Cloudflare Web Analytics
+# beacon (injected at build time); per-site traffic is separated by hostname.
+# Only set enabled + website_id here to override with your OWN analytics token.
+analytics:
+  enabled: false
+  website_id: ""

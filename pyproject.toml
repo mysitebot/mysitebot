@@ -1,0 +1,59 @@
+[project]
+name = "sam"
+version = "0.1.0"
+description = "Standalone Astro site-editing agent: editing engine, CLI, sealed template, SAM eval loop. Runs on an OpenAI-compatible LLM API key alone."
+requires-python = ">=3.12"
+dependencies = [
+    "PyYAML==6.0.3",
+    "python-dotenv==1.2.2",
+    "pydantic==2.13.4",
+    "openai==2.41.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agent"]
+
+# Ship the sealed template tree as package data (agent/templates/...) so an
+# installed wheel can resolve templates without a source checkout — see
+# agent/templates.py's resolver. Selective per-subtree mapping: a blanket
+# "templates" include would drag in local build artifacts (node_modules/,
+# dist/, .astro/ — ~200MB) because force-include bypasses VCS-ignore filters.
+[tool.hatch.build.targets.wheel.force-include]
+"templates/SECTIONS.md" = "agent/templates/SECTIONS.md"
+"templates/sections-schema.json" = "agent/templates/sections-schema.json"
+"templates/generate_sections_doc.py" = "agent/templates/generate_sections_doc.py"
+"templates/layouts" = "agent/templates/layouts"
+"templates/astro-basic/content" = "agent/templates/astro-basic/content"
+"templates/astro-basic/public" = "agent/templates/astro-basic/public"
+"templates/astro-basic/src" = "agent/templates/astro-basic/src"
+"templates/astro-basic/astro.config.mjs" = "agent/templates/astro-basic/astro.config.mjs"
+"templates/astro-basic/package.json" = "agent/templates/astro-basic/package.json"
+"templates/astro-basic/package-lock.json" = "agent/templates/astro-basic/package-lock.json"
+"templates/astro-basic/tailwind.config.mjs" = "agent/templates/astro-basic/tailwind.config.mjs"
+"templates/astro-basic/README.md" = "agent/templates/astro-basic/README.md"
+
+[dependency-groups]
+dev = [
+    "pytest==9.0.3",
+    "pytest-asyncio==1.4.0",
+    "ruff>=0.8",
+    # SAM eval loop: browser verification + HTTP (satisfied transitively in the
+    # old workspace; declared explicitly now that sam stands alone).
+    "playwright>=1.40",
+    "httpx>=0.27",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests", "training/sam/tests"]
+# Match root: strict mode, async tests carry explicit @pytest.mark.asyncio markers.
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E9", "F63", "F7", "F82"]

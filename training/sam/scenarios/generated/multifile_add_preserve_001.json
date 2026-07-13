@@ -1,0 +1,82 @@
+{
+  "id": "multifile_add_preserve_001",
+  "name": "Add a page + nav link, preserve the existing page and nav",
+  "prompt": "Add a new 'Pricing' page that says 'Simple, transparent pricing for every team.', and add a 'Pricing' link to the top navigation menu. Don't change any of the existing pages or menu items.",
+  "setup": [
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nsocial:\n  twitter: \"\"\n  linkedin: \"\"\n  instagram: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\n  - label: \"Services\"\n    url: \"/services\"\n  - label: \"Contact\"\n    url: \"/contact\"\n\nanalytics:\n  enabled: true\n  website_id: \"da39a3ee-5e6b-4b0d-9c8a-c47c5d6e2e3a\"\n"
+    },
+    {
+      "path": "content/pages/about.mdx",
+      "content": "---\ntitle: \"About\"\ndescription: \"Learn about our company\"\npageLayout: \"full\"\n---\n\n## Our Story\n\nFounded in 2010, Acme has shipped over nine thousand widgets to delighted customers.\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/pricing.mdx",
+      "content/settings.yaml"
+    ],
+    "file_contains": {
+      "content/pages/pricing.mdx": [
+        "Simple, transparent pricing for every team."
+      ],
+      "content/settings.yaml": [
+        "label: \"Pricing\"",
+        "label: \"Home\"",
+        "label: \"About\"",
+        "label: \"Services\"",
+        "label: \"Contact\""
+      ],
+      "content/pages/about.mdx": [
+        "Founded in 2010, Acme has shipped over nine thousand widgets to delighted customers."
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Pricing"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "About"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Contact"
+      },
+      {
+        "page": "/about",
+        "selector": "body",
+        "contains": "nine thousand widgets"
+      },
+      {
+        "page": "/pricing",
+        "selector": "body",
+        "contains": "Simple, transparent pricing for every team."
+      }
+    ],
+    "judge": "A new Pricing page was created containing 'Simple, transparent pricing for every team.', and a 'Pricing' link was added to the navigation. All four pre-existing navigation entries (Home, About, Services, Contact) are still present, and the existing About page \u2014 including its 'Our Story' content about widgets shipped since 2010 \u2014 is completely unchanged."
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "Created content/pages/pricing.mdx with the pricing line and added a 'Pricing' entry to the navigation in content/settings.yaml; left the existing About page and all other menu items unchanged.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/pricing.mdx": "---\ntitle: \"Pricing\"\ndescription: \"Our pricing plans\"\npageLayout: \"full\"\n---\n\n## Pricing\n\nSimple, transparent pricing for every team.\n",
+      "content/settings.yaml": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nsocial:\n  twitter: \"\"\n  linkedin: \"\"\n  instagram: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\n  - label: \"Services\"\n    url: \"/services\"\n  - label: \"Contact\"\n    url: \"/contact\"\n  - label: \"Pricing\"\n    url: \"/pricing\"\n\nanalytics:\n  enabled: true\n  website_id: \"da39a3ee-5e6b-4b0d-9c8a-c47c5d6e2e3a\"\n"
+    }
+  }
+}

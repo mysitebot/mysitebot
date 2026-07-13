@@ -1,0 +1,556 @@
+---
+/**
+ * Hero Component - Property-Driven Architecture
+ * Inspired by Fulldev UI for maximum AI-compatibility.
+ * 
+ * Instead of complex slots, we use a structured props object.
+ */
+/**
+ * Hero Component - The primary visual hook at the top of a page.
+ * Use this for high-impact messaging and primary calls to action.
+ */
+interface Props {
+  /** Optional ID for anchor linking */
+  id?: string;
+  /** The main large title (e.g., "Transform Your Business"). Omit for image-only hero sections. */
+  heading?: string;
+  /** Supporting text below the heading */
+  subheading?: string;
+  /** If true, uses monospace font for the subheading */
+  mono?: boolean;
+  /** Primary font family for heading */
+  fontFamily?: 'sans' | 'serif' | 'mono';
+  /** Font weight for heading */
+  fontWeight?: 'bold' | 'extrabold' | 'black';
+  /** A small label shown above the heading */
+  badge?: string;
+  /** Optional logo shown above everything */
+  logo?: {
+    src: string;
+    alt?: string;
+    size?: string;
+    circular?: boolean;
+  };
+  /** Array of CTA buttons */
+  actions?: Array<{
+    label: string;
+    href: string;
+    variant?: 'primary' | 'secondary' | 'success';
+  }>;
+  /** Optional single CTA button (alternative to actions) */
+  cta?: {
+    label: string;
+    href: string;
+    variant?: 'primary' | 'secondary' | 'success';
+  };
+  /** Optional CTA button rendered below the text (alternative to cta) */
+  action?: {
+    label: string;
+    href: string;
+    variant?: 'primary' | 'secondary' | 'success';
+  };
+  /** Text alignment: 'center' (default), 'left' or 'right' */
+  align?: 'center' | 'left' | 'right';
+  /** Layout style: 'split' (side-by-side) or 'stacked' (vertical) */
+  layout?: 'split' | 'stacked';
+  /** If true, the section will take up at least the full height of the screen */
+  fullHeight?: boolean;
+  /** Tailwind min-height class to set a custom minimum height (e.g., 'min-h-[600px]', 'min-h-96'). Ignored when fullHeight is true. */
+  minHeight?: string;
+  /** If true, show a large search bar */
+  showSearch?: boolean;
+  /** Search bar placeholder text */
+  searchPlaceholder?: string;
+  /** Custom search fields for multi-input search forms */
+  searchFields?: Array<{ placeholder: string; type?: string }>;
+  /** Search form button label */
+  searchButtonLabel?: string;
+  /** Main visual image */
+  image?: {
+    src: string;
+    alt: string;
+  };
+  /** Array of images for gallery/carousel layout (alternative to single image) */
+  images?: Array<{
+    src: string;
+    alt: string;
+  }>;
+  /** Background image URL (creates a full-cover background with overlay) */
+  backgroundImage?: string;
+  /** Background video URL (creates a full-cover background video with overlay) */
+  backgroundVideo?: string;
+  /** Background color (Tailwind class, e.g., 'bg-indigo-600') */
+  backgroundColor?: string;
+  /** Optional heading color (Tailwind class) */
+  headingColor?: string;
+  /** Optional subheading color (Tailwind class) */
+  subheadingColor?: string;
+  /** Base text color applied to the whole section (Tailwind class, e.g., 'text-white'). Use when backgroundColor is dark and you want all text to inherit a light color. */
+  textColor?: string;
+  /** Background gradient for the hero (e.g., 'from-green-400 via-green-500 to-purple-500' for use with bg-gradient-to-r) */
+  backgroundGradient?: string;
+  /** YouTube or other iframe embed URL; rendered as a responsive 16:9 iframe in place of the image */
+  videoEmbed?: string;
+  /** Direct video file URL (mp4/webm); rendered as a native <video> element with controls in place of the image */
+  videoSrc?: string;
+  /** If true, the videoSrc plays automatically (muted, looping, no controls) — use for ambient/background-style split-panel videos */
+  videoAutoplay?: boolean;
+  /** Direct audio file URL (mp3/wav/ogg); rendered as a native <audio> element with controls */
+  audioSrc?: string;
+  /** Where to render the image relative to the text in stacked layout: 'top' (above heading) or 'bottom' (default, below content). 'left'/'right' act as aliases for layout='split'. */
+  imagePosition?: 'top' | 'bottom' | 'left' | 'right';
+  /** If true, renders a narrow sidebar panel on the left side of the hero */
+  showSidebar?: boolean;
+  /** Background color class for the sidebar panel (e.g., 'bg-white bg-opacity-75') */
+  sidebarBackgroundColor?: string;
+  /** Right-side content panel for split layout: supports headings, lists, and text blocks */
+  sidebarContent?: Array<{ heading?: string; items?: string[]; text?: string; }>;
+  /** Optional newsletter signup card rendered on the right side of a split-layout hero (e.g. heading, email input, subscribe button) */
+  newsletter?: { heading?: string; placeholder?: string; buttonLabel?: string; };
+  /** Left-side sidebar for split layout: supports headings, paragraph content, and links */
+  sidebar?: { title?: string; content?: string; linksTitle?: string; links?: Array<{ label: string; href: string; }>; image?: { src: string; alt: string; }; };
+  /** Which side to render the sidebar: 'left' (default) or 'right' */
+  sidebarPosition?: 'left' | 'right';
+  /** Background color for the right-side content panel (Tailwind class) */
+  sidebarContentBackgroundColor?: string;
+  /** Additional body paragraphs rendered below the subheading */
+  paragraphs?: string[];
+  /** Bulleted list items rendered below paragraphs (or subheading if no paragraphs) */
+  bulletPoints?: string[];
+  /** Tailwind max-width class to constrain the inner content container (e.g., 'max-w-3xl', 'max-w-4xl'). Defaults to 'max-w-6xl'. */
+  maxWidth?: string;
+  /** If true, renders the hero image as a circle (rounded-full). Useful for profile/avatar-style hero images. */
+  imageCircular?: boolean;
+  /** Horizontal alignment for circular images: 'left' (default), 'center', or 'right' */
+  imageAlign?: 'left' | 'center' | 'right';
+  /** If true, wraps the text content in a semi-transparent card panel (e.g., for a hero with a background image) */
+  card?: boolean;
+  /** Tailwind background/style classes for the card panel (default: 'bg-white bg-opacity-75') */
+  cardBackgroundColor?: string;
+  /** Inline navigation links rendered as an overlay nav bar across the top of the hero */
+  links?: Array<{ label: string; href: string }>;
+  /** Brand/site name shown on the left side of the overlay nav bar (used alongside links) */
+  siteName?: string;
+  /** Text color for navigation links in the overlay nav bar (Tailwind class, e.g., 'text-pink-300') */
+  linkColor?: string;
+  /** If true, header is fixed to the top of the viewport */
+  fixedTop?: boolean;
+  /** If true, shows a hamburger menu button on the right side */
+  showHamburger?: boolean;
+  /** Optional login form displayed on the right side */
+  loginForm?: {
+    usernameLabel?: string;
+    usernamePlaceholder?: string;
+    passwordLabel?: string;
+    passwordPlaceholder?: string;
+    buttonLabel?: string;
+    buttonColor?: string;
+  };
+  /** Optional select dropdown options displayed in hero */
+  selectOptions?: string[];
+  /** Label for the select dropdown */
+  selectLabel?: string;
+}
+
+import Input from '../ui/Input.astro';
+import Button from '../ui/Button.astro';
+import { resolvePath } from '../../utils/paths';
+
+const {
+  id,
+  heading,
+  subheading,
+  mono = false,
+  badge,
+  logo,
+  actions = [],
+  cta,
+  action,
+  align = 'center',
+  layout = 'split',
+  fullHeight = false,
+  minHeight,
+  showSearch = false,
+  searchPlaceholder = "Search for properties...",
+  searchFields,
+  searchButtonLabel = "Search",
+  image,
+  images,
+  backgroundImage,
+  backgroundVideo,
+  backgroundColor = '',
+  backgroundGradient,
+  headingColor,
+  subheadingColor,
+  textColor,
+  videoEmbed,
+  videoSrc,
+  videoAutoplay = false,
+  audioSrc,
+  imagePosition = 'bottom',
+  showSidebar = false,
+  sidebarBackgroundColor = 'bg-white bg-opacity-75',
+  sidebarContent,
+  sidebarContentBackgroundColor = 'bg-gray-100',
+  sidebar,
+  sidebarPosition = 'left',
+  paragraphs,
+  bulletPoints,
+  maxWidth = 'max-w-6xl',
+  imageCircular = false,
+  imageAlign = 'left',
+  card = false,
+  cardBackgroundColor = 'bg-white bg-opacity-75',
+  links,
+  siteName,
+  linkColor,
+  newsletter,
+  loginForm,
+  fixedTop = false,
+  showHamburger = false,
+  selectOptions,
+  selectLabel,
+} = Astro.props;
+
+const ctaActions = action ? [action, ...actions] : (cta ? [cta, ...actions] : actions);
+
+const isDarkBg = backgroundImage || backgroundVideo || (backgroundColor && !backgroundColor.includes('white') && !backgroundColor.includes('gray-50') && !backgroundColor.includes('gray-100'));
+const alignmentClasses = {
+  center: 'text-center',
+  left: 'text-left',
+  right: 'text-right'
+};
+
+const stackedAlignment = {
+  center: 'flex-col items-center',
+  left: 'flex-col items-start',
+  right: 'flex-col items-end'
+};
+---
+
+<section id={id} class={`${fixedTop ? 'fixed top-0 w-full z-50' : ''} ${sidebar || showSidebar ? `flex${sidebarPosition === 'right' ? ' flex-row-reverse' : ''}` : `py-20 px-6 ${alignmentClasses[align]}`} ${fullHeight ? 'min-h-screen' : (minHeight || '')} ${!showSidebar && (fullHeight || minHeight) ? 'flex items-center justify-center' : ''} ${backgroundGradient ? `bg-gradient-to-r ${backgroundGradient}` : backgroundColor} ${textColor || ''} overflow-hidden relative`}>
+  {(backgroundImage || backgroundVideo) && (
+    <div class="absolute inset-0 z-0">
+      <div class="absolute inset-0 bg-gray-900/60 z-10"></div>
+      {backgroundVideo ? (
+        <video src={resolvePath(backgroundVideo)} autoplay loop muted playsinline class="w-full h-full object-cover" />
+      ) : (
+        <img src={resolvePath(backgroundImage!)} alt="Background" class="w-full h-full object-cover" />
+      )}
+    </div>
+  )}
+  {(links && links.length > 0 || siteName || showHamburger) && (
+    <nav class="absolute top-0 left-0 w-full z-20 flex items-center justify-between px-6 py-4">
+      {siteName && (
+        <a href="#" class={`text-2xl font-semibold ${textColor || 'text-white'} hover:no-underline`}>{siteName}</a>
+      )}
+      {links && links.length > 0 && (
+        <div class="flex gap-4">
+          {links.map(link => (
+            <a href={link.href} class={`px-3 py-2 ${linkColor || textColor || 'text-white'} hover:underline`}>{link.label}</a>
+          ))}
+        </div>
+      )}
+      {showHamburger && (
+        <button class={`${linkColor || textColor || 'text-white'} hover:opacity-75 focus:outline-none`}>
+          <svg class="h-6 w-6 fill-current" viewBox="0 0 24 24">
+            <path d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z"></path>
+          </svg>
+        </button>
+      )}
+    </nav>
+  )}
+  {sidebar && (
+    <div class={`w-1/4 relative z-10 ${sidebarBackgroundColor} p-4 md:p-8`}>
+      {sidebar.image && (
+        <img src={resolvePath(sidebar.image.src)} alt={sidebar.image.alt} class="w-full mb-4 rounded" />
+      )}
+      {sidebar.title && (
+        <h2 class="text-2xl font-bold mb-2 text-gray-900">{sidebar.title}</h2>
+      )}
+      {sidebar.content && (
+        <p class="text-sm text-gray-700 leading-relaxed mb-4">{sidebar.content}</p>
+      )}
+      {sidebar.linksTitle && (
+        <h3 class="text-xl font-bold mb-2 text-gray-900">{sidebar.linksTitle}</h3>
+      )}
+      {sidebar.links && (
+        <ul class="space-y-2">
+          {sidebar.links.map((link) => (
+            <li><a href={link.href} class="text-gray-500 hover:text-gray-700">{link.label}</a></li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )}
+  {showSidebar && !sidebar && (
+    <div class={`w-1/5 relative z-10 ${sidebarBackgroundColor}`}></div>
+  )}
+  <div class={`${sidebar || showSidebar ? 'flex-1 py-20 px-6 flex flex-col items-center justify-center' : `${maxWidth} mx-auto flex ${layout === 'stacked' && !sidebarContent ? stackedAlignment[align] : ((imagePosition === 'right' || align === 'right') ? 'flex-col md:flex-row-reverse' : 'flex-col md:flex-row')} items-center gap-12 w-full`} relative z-10`}>
+    {imagePosition === 'top' && image && (
+      <div class={`w-full flex ${imageCircular && imageAlign === 'left' ? 'justify-start' : imageCircular && imageAlign === 'right' ? 'justify-end' : 'justify-center'}`}>
+        <img src={resolvePath(image.src)} alt={image.alt} class={`object-cover shadow-xl ${imageCircular ? 'rounded-full w-64 h-64' : 'w-full rounded-2xl'}`} />
+      </div>
+    )}
+    <div class={`flex-1 ${layout === 'stacked' && !sidebarContent ? (align === 'center' ? 'w-full' : 'md:w-1/2') : (sidebarContent ? 'md:w-1/2' : 'md:w-1/2')} ${card ? `${cardBackgroundColor} p-6 rounded-lg` : ''}`}>
+      {logo && (
+        <img
+          src={resolvePath(logo.src)}
+          alt={logo.alt || "Logo"}
+          class={`${logo.size || 'h-16'} mb-8 ${logo.circular ? 'rounded-full' : ''} ${align === 'center' ? 'mx-auto' : (align === 'right' ? 'ml-auto' : '')}`}
+        />
+      )}
+      {badge && (
+        <span class="inline-block px-4 py-1.5 mb-6 text-sm font-semibold tracking-wide uppercase bg-indigo-50 text-indigo-600 rounded-full">
+          {badge}
+        </span>
+      )}
+      {heading && (
+        <h1 class={`text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight ${headingColor || (isDarkBg ? 'text-white' : 'text-gray-900')}`}>
+          {heading}
+        </h1>
+      )}
+      {subheading && (
+        <p class={`text-xl mb-10 max-w-2xl ${align === 'center' ? 'mx-auto' : (align === 'right' ? 'ml-auto' : 'mx-auto md:mx-0')} ${subheadingColor || (isDarkBg ? 'text-gray-200' : 'text-gray-500')} ${mono ? 'font-mono' : ''}`}>
+          {subheading}
+        </p>
+      )}
+      {paragraphs && paragraphs.map((para, i) => (
+        <p key={i} class={`text-lg mb-6 max-w-2xl ${align === 'center' ? 'mx-auto' : (align === 'right' ? 'ml-auto' : 'mx-auto md:mx-0')} ${isDarkBg ? 'text-gray-200' : 'text-gray-600'}`}>
+          {para}
+        </p>
+      ))}
+      {bulletPoints && bulletPoints.length > 0 && (
+        <ul class={`list-disc pl-6 mb-8 space-y-2 max-w-2xl ${align === 'center' ? 'mx-auto' : (align === 'right' ? 'ml-auto' : 'mx-auto md:mx-0')} ${isDarkBg ? 'text-gray-200' : 'text-gray-700'}`}>
+          {bulletPoints.map((item, i) => (
+            <li key={i} class="text-lg">{item}</li>
+          ))}
+        </ul>
+      )}
+
+      {(showSearch || searchFields) && (
+        <div class={`max-w-xl mb-10 ${align === 'center' ? 'mx-auto' : (align === 'right' ? 'ml-auto' : '')}`}>
+          {searchFields ? (
+            <form class="flex flex-col gap-3">
+              {searchFields.map((field, idx) => (
+                <input
+                  key={idx}
+                  type={field.type || 'text'}
+                  placeholder={field.placeholder}
+                  class="w-full px-4 py-3 bg-white border border-gray-300 rounded shadow focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                />
+              ))}
+              <button
+                type="submit"
+                class="w-full bg-yellow-500 text-white font-semibold py-3 rounded hover:bg-yellow-600 transition-colors"
+              >
+                {searchButtonLabel}
+              </button>
+            </form>
+          ) : (
+            <div class="relative group">
+              <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                placeholder={searchPlaceholder}
+                class="w-full pl-14 pr-6 py-5 bg-white border border-gray-100 rounded-2xl shadow-xl shadow-indigo-100/20 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent text-lg transition-all"
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {selectOptions && selectOptions.length > 0 && (
+        <div class={`max-w-xl mb-10 ${align === 'center' ? 'mx-auto' : (align === 'right' ? 'ml-auto' : '')}`}>
+          <div class="relative inline-block w-full">
+            <select class="appearance-none w-full bg-white border border-gray-300 px-4 py-3 rounded shadow focus:outline-none focus:ring-2 focus:ring-indigo-600 cursor-pointer">
+              <option>{selectLabel || 'Select an option'}</option>
+              {selectOptions.map((option) => (
+                <option key={option}>{option}</option>
+              ))}
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M0 7 L 10 16 L 20 7" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {layout === 'split' && ctaActions.length > 0 && (
+        <div class={`flex flex-wrap gap-4 ${align === 'center' ? 'justify-center' : (align === 'right' ? 'justify-end' : 'justify-start')}`}>
+          {/* Button resolves the base path itself — resolving here too would
+              double-prefix under a non-root ASTRO_BASE. */}
+          {ctaActions.map(action => (
+            <Button
+              href={action.href}
+              variant={action.variant}
+            >
+              {action.label}
+            </Button>
+          ))}
+        </div>
+      )}
+    </div>
+    
+    {image && imagePosition !== 'top' && !sidebarContent && (
+      <div class={`flex-1 w-full ${layout === 'stacked' ? 'max-w-4xl' : 'md:w-1/2'} ${imageCircular && imageAlign === 'left' ? 'flex justify-start' : imageCircular && imageAlign === 'right' ? 'flex justify-end' : 'flex justify-center'}`}>
+        <img
+          src={resolvePath(image.src)}
+          alt={image.alt}
+          class={`shadow-2xl object-cover ${imageCircular ? 'rounded-full aspect-square' : 'rounded-3xl aspect-video md:aspect-square'} ${imageCircular ? 'w-64 h-64' : 'w-full'}`}
+        />
+      </div>
+    )}
+
+    {images && images.length > 0 && imagePosition !== 'top' && !sidebarContent && (
+      <div class={`flex-1 w-full ${layout === 'stacked' ? 'max-w-4xl' : 'md:w-1/2'} flex flex-col gap-4`}>
+        {images.map((img) => (
+          <img
+            key={img.src}
+            src={resolvePath(img.src)}
+            alt={img.alt}
+            class="shadow-2xl object-cover rounded-3xl w-full"
+          />
+        ))}
+      </div>
+    )}
+
+    {videoEmbed && !sidebarContent && (
+      <div class={`flex-1 w-full ${layout === 'stacked' ? 'max-w-4xl' : 'md:w-1/2'}`}>
+        <div class="relative w-full" style="padding-bottom: 56.25%;">
+          <iframe
+            src={videoEmbed}
+            frameborder="0"
+            allowfullscreen
+            class="absolute inset-0 w-full h-full rounded-2xl shadow-2xl"
+          />
+        </div>
+      </div>
+    )}
+
+    {videoSrc && !sidebarContent && (
+      <div class={`flex-1 w-full ${layout === 'stacked' ? 'max-w-4xl' : 'md:w-1/2'}`}>
+        {videoAutoplay ? (
+          <video src={videoSrc} autoplay muted loop playsinline class="w-full rounded-2xl shadow-2xl" />
+        ) : (
+          <video src={videoSrc} controls class="w-full rounded-2xl shadow-2xl" />
+        )}
+      </div>
+    )}
+
+    {audioSrc && !sidebarContent && (
+      <div class={`flex-1 w-full ${layout === 'stacked' ? 'max-w-4xl' : 'md:w-1/2'}`}>
+        <audio controls class="w-full rounded-lg shadow-2xl p-2 bg-gray-100">
+          <source src={audioSrc} type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+    )}
+
+    {layout === 'stacked' && ctaActions.length > 0 && (
+      <div class={`flex flex-wrap gap-4 justify-center mt-4`}>
+        {/* Button resolves the base path itself. */}
+        {ctaActions.map(action => (
+          <Button
+            href={action.href}
+            variant={action.variant}
+          >
+            {action.label}
+          </Button>
+        ))}
+      </div>
+    )}
+
+    {layout === 'split' && sidebarContent && (
+      <div class={`flex-1 ${sidebarContentBackgroundColor} p-8 md:p-12 lg:p-16 rounded-lg`}>
+        {sidebarContent.map((block, idx) => (
+          <div key={idx} class={idx > 0 ? 'mt-8' : ''}>
+            {block.heading && (
+              <h3 class="text-2xl font-bold mb-4 text-gray-800">{block.heading}</h3>
+            )}
+            {block.items && (
+              <ul class="list-disc pl-4 space-y-2">
+                {block.items.map((item, i) => (
+                  <li key={i} class="text-gray-700">{item}</li>
+                ))}
+              </ul>
+            )}
+            {block.text && (
+              <p class="text-gray-700 italic">{block.text}</p>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+
+    {layout === 'split' && newsletter && (
+      <div class="flex-1 flex items-center justify-center">
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 w-full max-w-sm">
+          {newsletter.heading && (
+            <h2 class="text-xl font-bold mb-4 text-gray-800">{newsletter.heading}</h2>
+          )}
+          <form>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="hero-newsletter-email">Email</label>
+              <input
+                id="hero-newsletter-email"
+                type="email"
+                placeholder={newsletter.placeholder || 'Email'}
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <button
+              type="button"
+              class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              {newsletter.buttonLabel || 'Subscribe'}
+            </button>
+          </form>
+        </div>
+      </div>
+    )}
+
+    {layout === 'split' && loginForm && (
+      <div class="flex-1 flex items-center justify-center">
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 w-full max-w-sm">
+          <form>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="hero-username">
+                {loginForm.usernameLabel || 'Username'}
+              </label>
+              <input
+                id="hero-username"
+                type="text"
+                placeholder={loginForm.usernamePlaceholder || 'Username'}
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <div class="mb-6">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="hero-password">
+                {loginForm.passwordLabel || 'Password'}
+              </label>
+              <input
+                id="hero-password"
+                type="password"
+                placeholder={loginForm.passwordPlaceholder || 'Password'}
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <button
+              type="button"
+              class={`w-full text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${loginForm.buttonColor || 'bg-pink-500 hover:bg-pink-700'}`}
+            >
+              {loginForm.buttonLabel || 'Sign In'}
+            </button>
+          </form>
+        </div>
+      </div>
+    )}
+  </div>
+</section>

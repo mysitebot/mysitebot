@@ -1,0 +1,28 @@
+{
+  "id": "newsletter_about_001",
+  "name": "Newsletter Signup on About Page",
+  "prompt": "Can you add a newsletter sign-up section to the bottom of my About page? Just ask for their email address.",
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/about.mdx"
+    ],
+    "build": true,
+    "judge": "A form or section for collecting email addresses for a newsletter or mailing list appears at or near the bottom of the About page"
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "I've added a newsletter sign-up section to the bottom of your About page with an email address field.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/about.mdx": "---\ntitle: About Us\ndescription: Learn more about our company\n---\n\n<Hero\n  heading=\"About Us\"\n  subheading=\"We're passionate about what we do\"\n/>\n<Article\n  paragraphs={[\"We are a dedicated team committed to delivering the best products and services to our customers. Our story began over a decade ago with a simple mission: make quality accessible to everyone.\"]}\n/>\n<ContactForm\n  heading=\"Newsletter Sign-Up\"\n  subheading=\"Subscribe to receive the latest news and updates\"\n  fields={[\n    { label: \"Email Address\", type: \"email\", required: true, placeholder: \"your@email.com\" }\n  ]}\n  buttonVariant=\"primary\"\n/>"
+    }
+  }
+}

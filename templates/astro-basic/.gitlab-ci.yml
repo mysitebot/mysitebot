@@ -1,0 +1,4 @@
+# Hosting is handled by the mysite.bot API (in-process Astro build + Cloudflare
+# Pages Direct Upload). GitLab is the content store only — no CI build/deploy.
+# Intentionally left without jobs.
+stages: []

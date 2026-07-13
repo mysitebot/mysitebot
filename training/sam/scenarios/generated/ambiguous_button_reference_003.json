@@ -1,0 +1,21 @@
+{
+  "id": "ambiguous_button_reference_003",
+  "name": "Ambiguous Button Reference Across Pages",
+  "prompt": "Change the button to link to /booking instead of where it goes now.",
+  "setup": [
+    {
+      "path": "content/pages/index.mdx",
+      "content": "---\ntitle: \"Home\"\ndescription: \"Welcome to our site\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Fresh Bread, Baked Daily\"\n  subheading=\"Stop by for a taste of home.\"\n  actions={[\n    { label: \"Get Started\", href: \"/contact\", variant: \"primary\" }\n  ]}\n/>\n\n<Features\n  heading=\"Why Choose Us\"\n  features={[\n    { title: \"Fresh Ingredients\", description: \"Locally sourced every morning.\" },\n    { title: \"Friendly Service\", description: \"We know our regulars by name.\" }\n  ]}\n/>\n"
+    },
+    {
+      "path": "content/pages/about.mdx",
+      "content": "---\ntitle: \"About\"\ndescription: \"Learn about our bakery\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Our Story\"\n  subheading=\"Family-owned since 1998.\"\n  actions={[\n    { label: \"Get Started\", href: \"/contact\", variant: \"primary\" }\n  ]}\n/>\n\n<Article\n  heading=\"Meet the Team\"\n  paragraphs={[\"We are a small team passionate about great bread.\"]}\n/>\n"
+    }
+  ],
+  "negative": true,
+  "dry_run": {
+    "text": "Sam points out that both the homepage and the About page have a 'Get Started' button linking to /contact, and asks which page's button (or both) should be updated to /booking before making any change.",
+    "tool_calls": [],
+    "edits": {}
+  }
+}

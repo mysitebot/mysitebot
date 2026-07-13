@@ -1,0 +1,29 @@
+{
+  "id": "newsletter_home_001",
+  "name": "Add Newsletter to Home",
+  "prompt": "Could you add a newsletter sign-up section at the bottom of our homepage? Make it say 'Join our mailing list for exclusive updates'.",
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/index.mdx"
+    ],
+    "file_contains": {
+      "content/pages/index.mdx": [
+        "<Newsletter",
+        "Join our mailing list for exclusive updates"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Join our mailing list for exclusive updates"
+      }
+    ],
+    "judge": "The homepage now includes a Newsletter component with the requested heading text."
+  },
+  "negative": false
+}

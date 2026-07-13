@@ -1,0 +1,77 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/sections/Hero.astro';
+import ContactForm from '../components/sections/ContactForm.astro';
+import Pricing from '../components/sections/Pricing.astro';
+import Gallery from '../components/sections/Gallery.astro';
+import Testimonials from '../components/sections/Testimonials.astro';
+import Features from '../components/sections/Features.astro';
+import Newsletter from '../components/sections/Newsletter.astro';
+import Team from '../components/sections/Team.astro';
+import ListingGrid from '../components/sections/ListingGrid.astro';
+import Banner from '../components/sections/Banner.astro';
+import Calendar from '../components/sections/Calendar.astro';
+import Navbar from '../components/sections/Navbar.astro';
+import HeroCarousel from '../components/sections/HeroCarousel.astro';
+import Footer from '../components/sections/Footer.astro';
+import Article from '../components/sections/Article.astro';
+import Header from '../components/sections/Header.astro';
+import Sidebar from '../components/sections/Sidebar.astro';
+import TwoColumn from '../components/sections/TwoColumn.astro';
+import NewsGrid from '../components/sections/NewsGrid.astro';
+import Parallax from '../components/sections/Parallax.astro';
+import Table from '../components/sections/Table.astro';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('pages');
+  return pages.map(page => ({
+    params: { slug: page.slug === 'index' ? undefined : page.slug },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+const { Content } = await page.render();
+
+// Map components for MDX
+const components = {
+  Hero,
+  ContactForm,
+  Pricing,
+  Gallery,
+  Testimonials,
+  Features,
+  Newsletter,
+  Team,
+  ListingGrid,
+  Banner,
+  Calendar,
+  Navbar,
+  HeroCarousel,
+  Footer,
+  Article,
+  Header,
+  Sidebar,
+  TwoColumn,
+  NewsGrid,
+  Parallax,
+  Table,
+};
+---
+
+<Layout 
+  title={page.data.title} 
+  description={page.data.description}
+  hideHeader={page.data.hideHeader}
+  hideFooter={page.data.hideFooter}
+  pageLayout={page.data.pageLayout}
+>
+  {page.data.pageLayout === 'full' || page.data.pageLayout === 'sidebar' ? (
+    <Content components={components} />
+  ) : (
+    <div class="max-w-4xl mx-auto px-6 py-16 prose prose-indigo">
+      <Content components={components} />
+    </div>
+  )}
+</Layout>

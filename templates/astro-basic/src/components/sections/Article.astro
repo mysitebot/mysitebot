@@ -1,0 +1,333 @@
+---
+import { resolvePath } from '../../utils/paths';
+/**
+ * Article Component - A content card with a heading and one or more body paragraphs.
+ * Use this for article intros, about-us prose, or any long-form text section.
+ */
+interface Props {
+  /** Optional anchor id for in-page links (e.g. href="#about") */
+  id?: string;
+  /** Optional small badge label shown above the heading (e.g. "Featured", "News") */
+  badge?: string;
+  /** Section heading */
+  heading?: string;
+  /** Optional subtitle displayed directly below the heading */
+  subheading?: string;
+  /** One or more paragraphs of body text */
+  paragraphs: string[];
+  /** Primary font family for paragraphs: 'sans' (default), 'serif', or 'mono' */
+  fontFamily?: 'sans' | 'serif' | 'mono';
+  /** Optional full-width image */
+  image?: { src: string; alt: string; };
+  /** Optional array of images for split layout (alternative to single image) */
+  images?: Array<{ src: string; alt: string; }>;
+  /** Where to render the image relative to the text: 'top' (above heading), 'bottom' (default, below paragraphs), 'left' or 'right' (side-by-side split layout) */
+  imagePosition?: 'top' | 'bottom' | 'left' | 'right';
+  /** If true, renders image as circular and overlapping the top of the card */
+  imageCircular?: boolean;
+  /** Horizontal alignment for circular images: 'left' (default), 'center', or 'right' */
+  imageAlign?: 'left' | 'center' | 'right';
+  /** Background color for the outer section (Tailwind class, e.g., 'bg-gray-100') */
+  backgroundColor?: string;
+  /** Text color for heading and paragraphs (Tailwind class, e.g., 'text-white'). Overrides the default dark-on-light palette — use when backgroundColor is dark. */
+  textColor?: string;
+  /** Override color for the heading only (Tailwind class, e.g., 'text-pink-500'). Takes precedence over textColor for the heading element. */
+  headingColor?: string;
+  /** Override color for the badge label (Tailwind class, e.g., 'text-red-700'). Defaults to 'text-indigo-500'. */
+  badgeColor?: string;
+  /** If true, renders paragraphs inside a raised card */
+  card?: boolean;
+  /** Background color for the raised card (Tailwind class, e.g., 'bg-gray-100'). Defaults to 'bg-white' when card=true. */
+  cardBackgroundColor?: string;
+  /** Max width constraint (Tailwind class, e.g., 'max-w-3xl') */
+  maxWidth?: string;
+  /** Section layout variant: 'default' (card + maxWidth), 'centered' (centered text, no card), 'wide' (full-width, no maxWidth constraint), 'split' (two-column: text on left, map/image on right) */
+  layout?: 'default' | 'centered' | 'wide' | 'split';
+  /** Optional CTA button rendered below the text */
+  action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
+  /** Multiple CTA buttons rendered below the text */
+  actions?: Array<{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }>;
+  /** Alignment for action buttons: 'left' (default), 'center', or 'right' */
+  actionAlign?: 'left' | 'center' | 'right';
+  /** Optional sidebar with a title and list of links; renders a two-column layout (position controlled by sidebarPosition) */
+  sidebar?: { title?: string; links?: Array<{ label: string; href: string; }>; sections?: Array<{ title: string; content?: string; links?: Array<{ label: string; href: string; }> }>; image?: { src: string; alt: string; }; content?: string; backgroundColor?: string; textColor?: string; };
+  /** Which side to render the sidebar: 'left' (default) or 'right' */
+  sidebarPosition?: 'left' | 'right';
+  /** Background color for the sidebar (Tailwind class, e.g., 'bg-yellow-800'). Overrides sidebar.backgroundColor when present. */
+  sidebarBackgroundColor?: string;
+  /** Background image URL — creates a full-cover background with a subtle overlay */
+  backgroundImage?: string;
+  /** Optional embedded iframe (e.g., Google Maps embed or YouTube video); rendered below paragraphs, or in the right column when layout='split' */
+  map?: { src: string; width?: string; height?: string; heading?: string; };
+  /** YouTube or other iframe embed URL; rendered as a responsive 16:9 iframe below the paragraphs */
+  videoEmbed?: string;
+  /** Optional bulleted list of items rendered after paragraphs */
+  bulletPoints?: string[];
+  /** Text alignment: 'left' (default), 'center', or 'right' — mirrors Hero.align */
+  align?: 'left' | 'center' | 'right';
+}
+
+const {
+  id,
+  badge,
+  heading,
+  subheading,
+  paragraphs,
+  image,
+  images,
+  imagePosition = 'bottom',
+  imageCircular = false,
+  imageAlign = 'center',
+  backgroundColor = '',
+  textColor,
+  headingColor,
+  badgeColor,
+  card = true,
+  cardBackgroundColor,
+  maxWidth = 'max-w-3xl',
+  layout = 'default',
+  action,
+  actions,
+  actionAlign = 'left',
+  sidebar,
+  sidebarPosition = 'left',
+  sidebarBackgroundColor,
+  backgroundImage,
+  map,
+  videoEmbed,
+  bulletPoints,
+  fontFamily = 'sans',
+  align,
+} = Astro.props;
+
+const alignClass = align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : '';
+
+const fontFamilyClasses = {
+  sans: 'font-sans',
+  serif: 'font-serif',
+  mono: 'font-mono',
+};
+---
+
+<section
+  id={id}
+  class={`py-16 px-4 ${backgroundColor} ${backgroundImage ? 'bg-cover bg-center relative' : ''}`}
+  style={backgroundImage ? `background-image: url('${backgroundImage}')` : undefined}
+>
+  {backgroundImage && <div class="absolute inset-0 bg-black bg-opacity-30 pointer-events-none" />}
+  <div class={`w-full ${layout === 'wide' ? 'max-w-full' : sidebar ? 'max-w-6xl' : layout === 'split' ? 'max-w-6xl' : maxWidth} mx-auto relative z-10`}>
+    {layout === 'split' ? (
+      <div class="flex flex-col md:flex-row gap-8">
+        <div class="flex-1">
+          {badge && (
+            <div class={`uppercase tracking-wide text-sm font-semibold mb-2 ${badgeColor || 'text-indigo-500'}`}>{badge}</div>
+          )}
+          {heading && (
+            <h2 class={`text-2xl font-bold mb-4 ${headingColor || textColor || 'text-gray-800'}`}>{heading}</h2>
+          )}
+          {subheading && (
+            <p class={`text-lg font-medium mt-1 mb-4 ${textColor || 'text-gray-500'}`}>{subheading}</p>
+          )}
+          {paragraphs.map((para) => (
+            <p class={`mt-4 text-lg leading-relaxed ${fontFamilyClasses[fontFamily]} ${textColor || 'text-gray-700'}`}>{para}</p>
+          ))}
+          {bulletPoints && (
+            <ul class={`mt-4 pl-6 list-disc ${textColor || 'text-gray-700'}`}>
+              {bulletPoints.map((point) => (
+                <li class="mt-2">{point}</li>
+              ))}
+            </ul>
+          )}
+          {actions && (
+            <div class={`flex gap-2 mt-6 ${actionAlign === 'center' ? 'justify-center' : actionAlign === 'right' ? 'justify-end' : 'justify-start'}`}>
+              {actions.map((act) => (
+                <a
+                  href={resolvePath(act.href)}
+                  class={`inline-block px-4 py-2 rounded font-bold text-white ${act.variant === 'secondary' ? 'bg-gray-500 hover:bg-gray-700' : act.variant === 'success' ? 'bg-green-500 hover:bg-green-700' : 'bg-indigo-500 hover:bg-indigo-700'}`}
+                >{act.label}</a>
+              ))}
+            </div>
+          )}
+          {!actions && action && (
+            <a
+              href={resolvePath(action.href)}
+              class={`inline-block mt-6 px-4 py-2 rounded font-bold text-white ${actionAlign === 'center' ? 'block mx-auto' : actionAlign === 'right' ? 'float-right' : ''} ${action.variant === 'secondary' ? 'bg-gray-500 hover:bg-gray-700' : action.variant === 'success' ? 'bg-green-500 hover:bg-green-700' : 'bg-indigo-500 hover:bg-indigo-700'}`}
+            >{action.label}</a>
+          )}
+        </div>
+        {map && (
+          <div class="flex-1">
+            {map.heading && (
+              <h2 class={`text-2xl font-bold mb-4 ${textColor || 'text-gray-800'}`}>{map.heading}</h2>
+            )}
+            <iframe src={resolvePath(map.src)} width={map.width || '100%'} height={map.height || '315'} frameBorder="0" allowFullScreen class="w-full rounded"></iframe>
+          </div>
+        )}
+        {image && (
+          <div class="flex-1">
+            <img src={resolvePath(image.src)} alt={image.alt} class="w-full h-full object-cover rounded" />
+          </div>
+        )}
+        {images && (
+          <div class="flex-1 flex flex-col gap-4">
+            {images.map((img) => (
+              <img src={resolvePath(img.src)} alt={img.alt} class="w-full h-auto object-cover rounded" />
+            ))}
+          </div>
+        )}
+      </div>
+    ) : (
+    <div class={sidebar ? `flex gap-8 ${sidebarPosition === 'right' ? 'flex-row' : 'flex-row-reverse'}` : ''}>
+      <div class={sidebar ? 'flex-1' : 'w-full'}>
+        {(imagePosition === 'left' || imagePosition === 'right') ? (
+          <div class={`flex flex-col md:flex-row gap-8 ${imagePosition === 'right' ? 'md:flex-row-reverse' : ''} ${card ? `${cardBackgroundColor || 'bg-white'} border rounded shadow p-8` : ''}`}>
+            {image && (
+              <div class="w-full md:w-1/2 flex-shrink-0">
+                <img src={resolvePath(image.src)} alt={image.alt} class="w-full h-full object-cover rounded" />
+              </div>
+            )}
+            <div class="w-full md:w-1/2">
+              {badge && (
+                <div class={`uppercase tracking-wide text-sm font-semibold mb-2 ${badgeColor || 'text-indigo-500'}`}>{badge}</div>
+              )}
+              {heading && (
+                <h1 class={`text-3xl font-bold leading-tight mb-4 ${headingColor || textColor || 'text-gray-800'}`}>{heading}</h1>
+              )}
+              {subheading && (
+                <p class={`text-lg font-medium mt-1 mb-4 ${textColor || 'text-gray-500'}`}>{subheading}</p>
+              )}
+              {paragraphs.map((para) => (
+                <p class={`mt-4 text-lg leading-relaxed ${fontFamilyClasses[fontFamily]} ${textColor || 'text-gray-600'}`}>{para}</p>
+              ))}
+              {bulletPoints && (
+                <ul class={`mt-4 pl-6 list-disc ${textColor || 'text-gray-700'}`}>
+                  {bulletPoints.map((point) => (
+                    <li class="mt-2">{point}</li>
+                  ))}
+                </ul>
+              )}
+              {map && (
+                <div class="mt-6 w-full">
+                  <iframe src={resolvePath(map.src)} width={map.width || '600'} height={map.height || '450'} frameBorder="0" style="border:0;" allowFullScreen="" aria-hidden="false" tabIndex="0" class="w-full"></iframe>
+                </div>
+              )}
+              {actions && (
+                <div class={`flex gap-2 mt-6 ${actionAlign === 'center' ? 'justify-center' : actionAlign === 'right' ? 'justify-end' : 'justify-start'}`}>
+                  {actions.map((act) => (
+                    <a
+                      href={resolvePath(act.href)}
+                      class={`inline-block px-4 py-2 rounded font-bold text-white ${act.variant === 'secondary' ? 'bg-gray-500 hover:bg-gray-700' : act.variant === 'success' ? 'bg-green-500 hover:bg-green-700' : 'bg-indigo-500 hover:bg-indigo-700'}`}
+                    >{act.label}</a>
+                  ))}
+                </div>
+              )}
+              {!actions && action && (
+                <a
+                  href={resolvePath(action.href)}
+                  class={`inline-block mt-6 px-4 py-2 rounded font-bold text-white ${actionAlign === 'center' ? 'block mx-auto' : actionAlign === 'right' ? 'float-right' : ''} ${action.variant === 'secondary' ? 'bg-gray-500 hover:bg-gray-700' : action.variant === 'success' ? 'bg-green-500 hover:bg-green-700' : 'bg-indigo-500 hover:bg-indigo-700'}`}
+                >{action.label}</a>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div class={`${card ? `${cardBackgroundColor || 'bg-white'} border rounded shadow p-8` : ''} ${alignClass || (layout === 'centered' ? 'text-center' : '')} ${imageCircular ? 'relative' : ''}`} style={imageCircular ? 'padding-top: 60px;' : undefined}>
+            {image && imagePosition === 'top' && imageCircular && (
+              <div class={`absolute -top-16 flex ${imageAlign === 'left' ? 'left-0 justify-start' : imageAlign === 'right' ? 'right-0 justify-end' : 'left-1/2 transform -translate-x-1/2'}`}>
+                <img src={resolvePath(image.src)} alt={image.alt} class="w-32 h-32 object-cover rounded-full border-4 border-indigo-500" />
+              </div>
+            )}
+            {image && imagePosition === 'top' && !imageCircular && (
+              <img src={resolvePath(image.src)} alt={image.alt} class="w-full h-64 object-cover mb-6 rounded" />
+            )}
+            {badge && (
+              <div class={`uppercase tracking-wide text-sm text-indigo-500 font-semibold mb-2 ${layout === 'centered' ? 'flex justify-center' : ''}`}>{badge}</div>
+            )}
+            {heading && (
+              <h1 class={`text-3xl font-bold leading-tight mb-4 ${headingColor || textColor || 'text-gray-800'}`}>{heading}</h1>
+            )}
+            {subheading && (
+              <p class={`text-lg font-medium mt-1 mb-4 ${textColor || 'text-gray-500'}`}>{subheading}</p>
+            )}
+            {paragraphs.map((para) => (
+              <p class={`mt-4 text-lg leading-relaxed ${fontFamilyClasses[fontFamily]} ${textColor || 'text-gray-600'}`}>{para}</p>
+            ))}
+            {bulletPoints && (
+              <ul class={`mt-4 pl-6 list-disc ${textColor || 'text-gray-700'}`}>
+                {bulletPoints.map((point) => (
+                  <li class="mt-2">{point}</li>
+                ))}
+              </ul>
+            )}
+            {image && imagePosition !== 'top' && (
+              <img src={resolvePath(image.src)} alt={image.alt} class="w-full h-64 object-cover mt-6 rounded" />
+            )}
+            {videoEmbed && (
+              <div class="relative w-full mt-6" style="padding-bottom: 56.25%;">
+                <iframe
+                  src={resolvePath(videoEmbed)}
+                  frameborder="0"
+                  allowfullscreen
+                  class="absolute inset-0 w-full h-full rounded-2xl shadow-2xl"
+                />
+              </div>
+            )}
+            {actions && (
+              <div class={`flex gap-2 mt-6 ${actionAlign === 'center' ? 'justify-center' : actionAlign === 'right' ? 'justify-end' : 'justify-start'}`}>
+                {actions.map((act) => (
+                  <a
+                    href={resolvePath(act.href)}
+                    class={`inline-block px-4 py-2 rounded font-bold text-white ${act.variant === 'secondary' ? 'bg-gray-500 hover:bg-gray-700' : act.variant === 'success' ? 'bg-green-500 hover:bg-green-700' : 'bg-indigo-500 hover:bg-indigo-700'}`}
+                  >{act.label}</a>
+                ))}
+              </div>
+            )}
+            {!actions && action && (
+              <a
+                href={resolvePath(action.href)}
+                class={`inline-block mt-6 px-4 py-2 rounded font-bold text-white ${actionAlign === 'center' ? 'block mx-auto' : actionAlign === 'right' ? 'float-right' : ''} ${action.variant === 'secondary' ? 'bg-gray-500 hover:bg-gray-700' : action.variant === 'success' ? 'bg-green-500 hover:bg-green-700' : 'bg-indigo-500 hover:bg-indigo-700'}`}
+              >{action.label}</a>
+            )}
+          </div>
+        )}
+      </div>
+      {sidebar && (
+        <aside class={`w-1/3 flex-shrink-0 p-4 ${sidebarBackgroundColor || sidebar.backgroundColor || ''}`}>
+          {sidebar.image && (
+            <img src={resolvePath(sidebar.image.src)} alt={sidebar.image.alt} class="w-full mb-4 rounded" />
+          )}
+          {sidebar.title && <h2 class={`text-2xl font-bold mb-4 ${sidebar.textColor || 'text-gray-800'}`}>{sidebar.title}</h2>}
+          {sidebar.content && (
+            <p class={`text-base leading-relaxed mb-4 ${sidebar.textColor || 'text-gray-600'}`}>{sidebar.content}</p>
+          )}
+          {sidebar.links && (
+            <ul class="mb-6">
+              {sidebar.links.map((link) => (
+                <li class="mb-2">
+                  <a href={resolvePath(link.href)} class={`${sidebar.textColor ? 'hover:opacity-80' : 'text-purple-600 hover:text-purple-800'}`}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          )}
+          {sidebar.sections && sidebar.sections.map((section) => (
+            <div class="mb-6">
+              <h2 class={`text-2xl font-bold mb-4 ${sidebar.textColor || 'text-gray-800'}`}>{section.title}</h2>
+              {section.content && (
+                <p class={`text-base leading-relaxed mb-3 ${sidebar.textColor || 'text-gray-600'}`}>{section.content}</p>
+              )}
+              {section.links && (
+                <ul>
+                  {section.links.map((link) => (
+                    <li class="mb-2">
+                      <a href={resolvePath(link.href)} class={`${sidebar.textColor ? 'hover:opacity-80' : 'text-purple-600 hover:text-purple-800'}`}>{link.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </aside>
+      )}
+    </div>
+    )}
+  </div>
+</section>

@@ -1,0 +1,52 @@
+{
+  "id": "conditional_testimonial_swap_001",
+  "name": "Conditional Section Removal and Replacement",
+  "prompt": "If we still have a customer testimonials section on the homepage, please remove it and replace it with a banner that says: We're hiring \u2014 join our team!",
+  "setup": [
+    {
+      "path": "content/pages/index.mdx",
+      "content": "---\ntitle: \"Home\"\ndescription: \"Welcome to our site\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Fresh Bread, Baked Daily\"\n  subheading=\"Stop by for a taste of home.\"\n  actions={[\n    { label: \"Get Started\", href: \"/contact\", variant: \"primary\" }\n  ]}\n/>\n\n<Features\n  heading=\"Why Choose Us\"\n  features={[\n    { title: \"Fresh Ingredients\", description: \"Locally sourced every morning.\" },\n    { title: \"Friendly Service\", description: \"We know our regulars by name.\" }\n  ]}\n/>\n\n<Article\n  badge=\"Testimonial\"\n  heading=\"What Our Customers Say\"\n  paragraphs={[\"'Best bread in town!' \u2014 Jane Doe\"]}\n/>\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/index.mdx"
+    ],
+    "file_contains": {
+      "content/pages/index.mdx": [
+        "We're hiring \u2014 join our team!"
+      ]
+    },
+    "file_not_contains": {
+      "content/pages/index.mdx": [
+        "What Our Customers Say",
+        "Best bread in town!"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "We're hiring"
+      }
+    ],
+    "judge": "Sam confirmed the homepage did have a testimonials section, removed it entirely, and added a banner with the exact hiring text in its place \u2014 leaving the Hero and Features sections untouched. Fail if the testimonials section still exists, if the banner text differs from the requested wording, or if the Hero or Features sections were altered."
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "Sam confirms it removed the testimonials section from the homepage and added a banner announcing 'We're hiring \u2014 join our team!' in its place.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/index.mdx": "---\ntitle: \"Home\"\ndescription: \"Welcome to our site\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Fresh Bread, Baked Daily\"\n  subheading=\"Stop by for a taste of home.\"\n  actions={[\n    { label: \"Get Started\", href: \"/contact\", variant: \"primary\" }\n  ]}\n/>\n\n<Features\n  heading=\"Why Choose Us\"\n  features={[\n    { title: \"Fresh Ingredients\", description: \"Locally sourced every morning.\" },\n    { title: \"Friendly Service\", description: \"We know our regulars by name.\" }\n  ]}\n/>\n\n<Banner\n  text=\"We're hiring \u2014 join our team!\"\n/>\n"
+    }
+  }
+}

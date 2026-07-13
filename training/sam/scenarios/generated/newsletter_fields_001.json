@@ -1,0 +1,45 @@
+{
+  "id": "newsletter_fields_001",
+  "name": "Newsletter Signup with Named Fields on About Page",
+  "prompt": "Add a newsletter signup section to the bottom of my About page. It should have the heading 'Stay in the Loop' and ask for both first name and email address.",
+  "setup": [
+    {
+      "path": "content/pages/about.mdx",
+      "content": "---\ntitle: \"About\"\ndescription: \"Learn about our story\"\npageLayout: \"full\"\n---\n<Article\n  heading=\"Our Story\"\n  paragraphs={[\n    \"We started as a small family kitchen in 2001.\",\n    \"Today we serve hundreds of happy customers every week.\"\n  ]}\n/>"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "file_contains": {
+      "content/pages/about.mdx": [
+        "Stay in the Loop",
+        "First Name",
+        "Email"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/about",
+        "selector": "body",
+        "contains": "Stay in the Loop"
+      }
+    ],
+    "judge": "A newsletter signup section with heading 'Stay in the Loop' and fields for first name and email is added at the bottom of the About page; the existing 'Our Story' article content is fully preserved"
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "I've added a newsletter signup section with heading 'Stay in the Loop' and fields for first name and email address to the bottom of your About page, preserving the existing story content.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/about.mdx": "---\ntitle: \"About\"\ndescription: \"Learn about our story\"\npageLayout: \"full\"\n---\n<Article\n  heading=\"Our Story\"\n  paragraphs={[\n    \"We started as a small family kitchen in 2001.\",\n    \"Today we serve hundreds of happy customers every week.\"\n  ]}\n/>\n\n<ContactForm\n  heading=\"Stay in the Loop\"\n  fields={[\n    { label: \"First Name\", type: \"text\", required: true },\n    { label: \"Email\", type: \"email\", required: true }\n  ]}\n/>"
+    }
+  }
+}

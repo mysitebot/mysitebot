@@ -1,0 +1,84 @@
+{
+  "id": "compound_rebrand_001",
+  "name": "Rebrand 'Services' to 'Solutions' across nav (label + url) and homepage",
+  "prompt": "We've rebranded our 'Services' offering as 'Solutions'. Please update it consistently across the whole site in one go: in the top navigation menu, rename the 'Services' item to 'Solutions' AND change its link from /services to /solutions; and on the homepage, update the hero line that mentions 'our Services' so it reads 'our Solutions' instead. Keep every other menu item, link, and piece of wording exactly as it is.",
+  "setup": [
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nsocial:\n  twitter: \"\"\n  linkedin: \"\"\n  instagram: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\n  - label: \"Services\"\n    url: \"/services\"\n  - label: \"Contact\"\n    url: \"/contact\"\n\nanalytics:\n  enabled: true\n  website_id: \"da39a3ee-5e6b-4b0d-9c8a-c47c5d6e2e3a\"\n"
+    },
+    {
+      "path": "content/pages/index.mdx",
+      "content": "---\ntitle: \"Home\"\ndescription: \"Welcome to our landing page\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Grow Your Business Faster\"\n  subheading=\"Explore our Services to see how we help local businesses grow.\"\n  badge=\"Introducing MYSITEBOT\"\n  align=\"center\"\n  actions={[\n    { label: \"Get Started\", href: \"/#contact\", variant: \"primary\" },\n    { label: \"Learn More\", href: \"/#features\", variant: \"secondary\" }\n  ]}\n/>\n\n<Features\n  heading=\"Why Choose Us\"\n  subheading=\"We deliver top-tier static sites with modern design and blazing fast performance.\"\n  features={[\n    { title: \"Blazing Fast\", description: \"Fully static pages load in milliseconds.\", icon: \"zap\" },\n    { title: \"SEO Optimized\", description: \"Built with search engines in mind from day one.\", icon: \"search\" },\n    { title: \"Modern Design\", description: \"Stunning layouts that wow your visitors.\", icon: \"layout\" }\n  ]}\n/>\n\n<ContactForm\n  heading=\"Get In Touch\"\n  subheading=\"Ready to start? Send us a message and we will get back to you shortly.\"\n  email=\"hello@example.com\"\n  fields={[\n    { label: \"Your Name\", type: \"text\", required: true },\n    { label: \"Your Email\", type: \"email\", required: true },\n    { label: \"Message\", type: \"textarea\", required: true }\n  ]}\n/>\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/settings.yaml",
+      "content/pages/index.mdx"
+    ],
+    "file_contains": {
+      "content/settings.yaml": [
+        "label: \"Solutions\"",
+        "url: \"/solutions\"",
+        "label: \"Home\"",
+        "label: \"About\"",
+        "label: \"Contact\"",
+        "url: \"/about\"",
+        "url: \"/contact\""
+      ],
+      "content/pages/index.mdx": [
+        "Explore our Solutions to see how we help local businesses grow.",
+        "Grow Your Business Faster",
+        "Why Choose Us"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Solutions"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Home"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "About"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Contact"
+      },
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Explore our Solutions"
+      }
+    ],
+    "judge": "Sam rebranded 'Services' to 'Solutions' consistently in a single change: in content/settings.yaml the navigation item's label is now 'Solutions' AND its url is now '/solutions' (not '/services'); and on the homepage the hero line now reads 'Explore our Solutions to see how we help local businesses grow.'. All three pre-existing nav items (Home, About, Contact) and their links are unchanged, and the rest of the homepage (the Why Choose Us features and the contact form) is preserved. Leaving the nav url as /services, or failing to update the homepage hero mention, is a failure."
+  },
+  "negative": false,
+  "split": "train",
+  "dry_run": {
+    "text": "Done! I renamed 'Services' to 'Solutions' in your menu and pointed it at the new /solutions address, and I updated the line on your home page so it now says 'Explore our Solutions...'. Everything else is exactly as it was. I'm double-checking it all now and will confirm the moment it's ready \u2014 just say 'publish' whenever you'd like it to go live.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/settings.yaml": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nsocial:\n  twitter: \"\"\n  linkedin: \"\"\n  instagram: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\n  - label: \"Solutions\"\n    url: \"/solutions\"\n  - label: \"Contact\"\n    url: \"/contact\"\n\nanalytics:\n  enabled: true\n  website_id: \"da39a3ee-5e6b-4b0d-9c8a-c47c5d6e2e3a\"\n",
+      "content/pages/index.mdx": "---\ntitle: \"Home\"\ndescription: \"Welcome to our landing page\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Grow Your Business Faster\"\n  subheading=\"Explore our Solutions to see how we help local businesses grow.\"\n  badge=\"Introducing MYSITEBOT\"\n  align=\"center\"\n  actions={[\n    { label: \"Get Started\", href: \"/#contact\", variant: \"primary\" },\n    { label: \"Learn More\", href: \"/#features\", variant: \"secondary\" }\n  ]}\n/>\n\n<Features\n  heading=\"Why Choose Us\"\n  subheading=\"We deliver top-tier static sites with modern design and blazing fast performance.\"\n  features={[\n    { title: \"Blazing Fast\", description: \"Fully static pages load in milliseconds.\", icon: \"zap\" },\n    { title: \"SEO Optimized\", description: \"Built with search engines in mind from day one.\", icon: \"search\" },\n    { title: \"Modern Design\", description: \"Stunning layouts that wow your visitors.\", icon: \"layout\" }\n  ]}\n/>\n\n<ContactForm\n  heading=\"Get In Touch\"\n  subheading=\"Ready to start? Send us a message and we will get back to you shortly.\"\n  email=\"hello@example.com\"\n  fields={[\n    { label: \"Your Name\", type: \"text\", required: true },\n    { label: \"Your Email\", type: \"email\", required: true },\n    { label: \"Message\", type: \"textarea\", required: true }\n  ]}\n/>\n"
+    }
+  }
+}

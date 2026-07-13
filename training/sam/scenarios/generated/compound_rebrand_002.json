@@ -1,0 +1,99 @@
+{
+  "id": "compound_rebrand_002",
+  "name": "Rebrand 'Services' to 'Solutions' site-wide, incl. an unnamed page's prose",
+  "prompt": "We've officially rebranded our 'Services' offering as 'Solutions'. Please make the whole site consistent with the new name: in the top navigation menu, rename the 'Services' item to 'Solutions' and change its link from /services to /solutions; and update the wording on EVERY page where the old name 'Services' still appears in the text so it reads 'Solutions' instead. Don't change anything else \u2014 keep all other menu items, links, headings, and wording exactly as they are.",
+  "setup": [
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nsocial:\n  twitter: \"\"\n  linkedin: \"\"\n  instagram: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\n  - label: \"Services\"\n    url: \"/services\"\n  - label: \"Contact\"\n    url: \"/contact\"\n\nanalytics:\n  enabled: true\n  website_id: \"da39a3ee-5e6b-4b0d-9c8a-c47c5d6e2e3a\"\n"
+    },
+    {
+      "path": "content/pages/index.mdx",
+      "content": "---\ntitle: \"Home\"\ndescription: \"Welcome to our landing page\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Grow Your Business Faster\"\n  subheading=\"Explore our Services to see how we help local businesses grow.\"\n  badge=\"Introducing MYSITEBOT\"\n  align=\"center\"\n  actions={[\n    { label: \"Get Started\", href: \"/#contact\", variant: \"primary\" },\n    { label: \"Learn More\", href: \"/#features\", variant: \"secondary\" }\n  ]}\n/>\n\n<Features\n  heading=\"Why Choose Us\"\n  subheading=\"We deliver top-tier static sites with modern design and blazing fast performance.\"\n  features={[\n    { title: \"Blazing Fast\", description: \"Fully static pages load in milliseconds.\", icon: \"zap\" },\n    { title: \"SEO Optimized\", description: \"Built with search engines in mind from day one.\", icon: \"search\" },\n    { title: \"Modern Design\", description: \"Stunning layouts that wow your visitors.\", icon: \"layout\" }\n  ]}\n/>\n"
+    },
+    {
+      "path": "content/pages/about.mdx",
+      "content": "---\ntitle: \"About\"\ndescription: \"Learn about our company\"\npageLayout: \"full\"\n---\n\n## Our Story\n\nFounded in 2010, we have grown steadily year after year. Today our Services team supports hundreds of local businesses across the region.\n\n## What Drives Us\n\nWe believe small businesses deserve great websites without the usual headaches.\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/settings.yaml",
+      "content/pages/index.mdx",
+      "content/pages/about.mdx"
+    ],
+    "file_contains": {
+      "content/settings.yaml": [
+        "label: \"Solutions\"",
+        "url: \"/solutions\"",
+        "label: \"Home\"",
+        "label: \"About\"",
+        "label: \"Contact\"",
+        "url: \"/about\"",
+        "url: \"/contact\""
+      ],
+      "content/pages/index.mdx": [
+        "Explore our Solutions to see how we help local businesses grow.",
+        "Why Choose Us"
+      ],
+      "content/pages/about.mdx": [
+        "Today our Solutions team supports hundreds of local businesses across the region.",
+        "Founded in 2010",
+        "What Drives Us"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Solutions"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Home"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "About"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Contact"
+      },
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Explore our Solutions"
+      },
+      {
+        "page": "/about",
+        "selector": "body",
+        "contains": "our Solutions team supports"
+      }
+    ],
+    "judge": "Sam rebranded 'Services' to 'Solutions' consistently across the ENTIRE site in one change: (1) in content/settings.yaml the nav item's label is 'Solutions' AND its url is '/solutions'; (2) on the homepage the hero line now reads 'Explore our Solutions to see how we help local businesses grow.'; and (3) on the About page the prose now reads 'Today our Solutions team supports hundreds of local businesses across the region.'. The other nav items (Home, About, Contact) and their links, the homepage's Why Choose Us features, and the rest of the About page (Founded in 2010; What Drives Us) are all preserved unchanged. Leaving the nav url as /services, or missing the 'Services' mention on the About page, is a failure."
+  },
+  "negative": false,
+  "split": "train",
+  "dry_run": {
+    "text": "All done! I renamed 'Services' to 'Solutions' in your menu and pointed it at the new /solutions address, and I updated the wording on your home page and your About page so they use the new name too. Everything else is untouched. I'm double-checking it all now \u2014 just say 'publish' whenever you'd like it to go live.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/settings.yaml": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nsocial:\n  twitter: \"\"\n  linkedin: \"\"\n  instagram: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\n  - label: \"Solutions\"\n    url: \"/solutions\"\n  - label: \"Contact\"\n    url: \"/contact\"\n\nanalytics:\n  enabled: true\n  website_id: \"da39a3ee-5e6b-4b0d-9c8a-c47c5d6e2e3a\"\n",
+      "content/pages/index.mdx": "---\ntitle: \"Home\"\ndescription: \"Welcome to our landing page\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Grow Your Business Faster\"\n  subheading=\"Explore our Solutions to see how we help local businesses grow.\"\n  badge=\"Introducing MYSITEBOT\"\n  align=\"center\"\n  actions={[\n    { label: \"Get Started\", href: \"/#contact\", variant: \"primary\" },\n    { label: \"Learn More\", href: \"/#features\", variant: \"secondary\" }\n  ]}\n/>\n\n<Features\n  heading=\"Why Choose Us\"\n  subheading=\"We deliver top-tier static sites with modern design and blazing fast performance.\"\n  features={[\n    { title: \"Blazing Fast\", description: \"Fully static pages load in milliseconds.\", icon: \"zap\" },\n    { title: \"SEO Optimized\", description: \"Built with search engines in mind from day one.\", icon: \"search\" },\n    { title: \"Modern Design\", description: \"Stunning layouts that wow your visitors.\", icon: \"layout\" }\n  ]}\n/>\n",
+      "content/pages/about.mdx": "---\ntitle: \"About\"\ndescription: \"Learn about our company\"\npageLayout: \"full\"\n---\n\n## Our Story\n\nFounded in 2010, we have grown steadily year after year. Today our Solutions team supports hundreds of local businesses across the region.\n\n## What Drives Us\n\nWe believe small businesses deserve great websites without the usual headaches.\n"
+    }
+  }
+}

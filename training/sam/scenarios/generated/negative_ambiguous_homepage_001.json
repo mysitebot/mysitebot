@@ -1,0 +1,15 @@
+{
+  "id": "negative_ambiguous_homepage_001",
+  "name": "Clarify a vague edit instead of guessing",
+  "prompt": "Update my homepage.",
+  "checks": {
+    "expected_tools": [],
+    "judge": "The request is vague \u2014 it doesn't say WHAT to change. Sam asked a clarifying question about what to update on the homepage (e.g. the headline, images, a specific section) rather than guessing and editing it. It did NOT call any editing tool or change any files. Silently doing nothing, or rewriting the homepage on a guess, is NOT acceptable."
+  },
+  "negative": true,
+  "dry_run": {
+    "text": "Happy to update your homepage! What would you like to change \u2014 the headline, the hero image, a specific section, or something else?",
+    "tool_calls": [],
+    "edits": {}
+  }
+}

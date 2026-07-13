@@ -1,0 +1,29 @@
+site:
+  name: Daily Grind Cafe
+  tagline: Specialty Pour-Overs & Artisanal Bakes
+  primaryColor: '#b45309'
+  bgEffect:
+  - grid
+  - aura
+  - hover
+  logo: ''
+contact:
+  email: bookings@example.com
+  phone: ''
+social:
+  twitter: ''
+  linkedin: ''
+  instagram: ''
+navigation:
+- label: Home
+  url: /
+- label: Menu
+  url: /menu
+- label: Bookings
+  url: /contact
+# Analytics is provided platform-wide via a shared Cloudflare Web Analytics
+# beacon (injected at build time); per-site traffic is separated by hostname.
+# Only set enabled + website_id here to override with your OWN analytics token.
+analytics:
+  enabled: false
+  website_id: ""

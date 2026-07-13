@@ -1,0 +1,43 @@
+{
+  "id": "hero_cta_buttons_001",
+  "name": "Two CTA Buttons Added to Hero",
+  "prompt": "Add two buttons to the hero section on my home page: one that says 'Book a Demo' and links to /contact, and another that says 'See How It Works' and links to /about.",
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/index.mdx"
+    ],
+    "file_contains": {
+      "content/pages/index.mdx": [
+        "Book a Demo",
+        "/contact",
+        "See How It Works",
+        "/about"
+      ]
+    },
+    "dom": [
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Book a Demo"
+      }
+    ],
+    "build": true,
+    "judge": "The homepage hero section displays both 'Book a Demo' and 'See How It Works' as clickable buttons with the correct href values"
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "I've added both buttons to your homepage hero: 'Book a Demo' linking to /contact and 'See How It Works' linking to /about.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/index.mdx": "---\ntitle: Home\ndescription: Welcome to our site\n---\n\n<Hero\n  heading=\"Welcome to Our Business\"\n  subheading=\"Discover how we can help you succeed\"\n  actions={[\n    { label: \"Book a Demo\", href: \"/contact\", variant: \"primary\" },\n    { label: \"See How It Works\", href: \"/about\", variant: \"secondary\" }\n  ]}\n/>"
+    }
+  }
+}

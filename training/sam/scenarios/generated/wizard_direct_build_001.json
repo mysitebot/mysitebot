@@ -1,0 +1,20 @@
+{
+  "id": "wizard_direct_build_001",
+  "name": "Onboarding wizard: direct request builds immediately",
+  "prompt": "Hi! I run a small bakery called Crumb & Crust and I'd love a website that shows off our breads and our opening hours.",
+  "is_init": true,
+  "checks": {
+    "expected_tools": ["create_project"],
+    "judge": "This was the user's very first message (onboarding). Sam treated the direct request as authorization to build immediately: it created the website with a reasonable bakery-appropriate name without first asking permission or a round of questions, and its reply is warm and non-technical, telling the owner their site is being created/prepared (ideally with its link). It must NOT repeat the standard intro greeting ('Hello! I'm Sam...'). Publishing/preview mechanics are simplified in this test environment - do not penalize how the publish step is described or whether the extra personalization edits succeeded. Fail only if Sam did not create the site, only asked questions instead of building, re-sent the intro greeting, or claimed the site could not be created."
+  },
+  "negative": false,
+  "split": "train",
+  "dry_run": {
+    "text": "Perfect! Your new website has been provisioned. It will be live here in a couple of minutes: http://localhost:8000/preview/local_crumb-and-crust/. What would you like to add first? Maybe a hero banner or a contact section?",
+    "tool_calls": [
+      { "name": "check_project_availability", "args": {} },
+      { "name": "create_project", "args": {} }
+    ],
+    "edits": {}
+  }
+}

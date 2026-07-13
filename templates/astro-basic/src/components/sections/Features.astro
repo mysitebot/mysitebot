@@ -1,0 +1,146 @@
+---
+import { resolvePath } from '../../utils/paths';
+import Button from '../ui/Button.astro';
+
+/**
+ * Features Component - Property-Driven Architecture
+ */
+interface Props {
+  /** Optional anchor id for in-page links (e.g. href="#features") */
+  id?: string;
+  heading?: string;
+  subheading?: string;
+  columns?: 2 | 3 | 4;
+  /** Layout variant: 'grid' for multi-column card grid (default), 'list' for full-width stacked rows */
+  layout?: 'grid' | 'list';
+  backgroundColor?: string;
+  /** Background image URL — creates a full-cover background behind the features grid */
+  backgroundImage?: string;
+  /** Base text color applied to heading, subheading, and feature titles/descriptions (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark. */
+  textColor?: string;
+  /** Override color for the section heading only (Tailwind class, e.g. 'text-yellow-600'). Takes precedence over textColor for the h2 element. */
+  headingColor?: string;
+  /** Text alignment for the section header and feature card content: 'center' (default), 'left', or 'right' */
+  align?: 'left' | 'center' | 'right';
+  /** Optional section-level CTA button rendered below the features grid */
+  action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
+  features: Array<{
+    title: string;
+    description: string;
+    icon?: string;
+    image?: string;
+    backgroundColor?: string;
+    /** Override color for this feature's title only (Tailwind class, e.g. 'text-red-500'). Takes precedence over textColor for the h3 element. */
+    headingColor?: string;
+    /** Optional CTA button shown below the description */
+    action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
+  }>;
+}
+
+const {
+  id,
+  heading,
+  subheading,
+  columns = 3,
+  layout = 'grid',
+  backgroundColor = 'bg-white',
+  backgroundImage,
+  textColor,
+  headingColor,
+  align = 'center',
+  action,
+  features = []
+} = Astro.props;
+
+const alignmentClasses = {
+  center: 'text-center',
+  left: 'text-left',
+  right: 'text-right'
+};
+
+const gridCols = layout === 'list'
+  ? 'grid-cols-1'
+  : ({
+      2: 'md:grid-cols-2',
+      3: 'md:grid-cols-2 lg:grid-cols-3',
+      4: 'md:grid-cols-2 lg:grid-cols-4'
+    }[columns] ?? 'md:grid-cols-2 lg:grid-cols-3');
+---
+
+<section
+  id={id}
+  class={`py-24 px-6 ${backgroundImage ? 'bg-cover bg-center' : backgroundColor} ${textColor || ''}`}
+  style={backgroundImage ? `background-image: url('${backgroundImage}')` : undefined}
+>
+  <div class="max-w-7xl mx-auto">
+    {(heading || subheading) && (
+      <div class={`${alignmentClasses[align]} mb-20`}>
+        {heading && <h2 class={`text-4xl font-bold mb-4 ${headingColor || textColor || 'text-gray-900'}`}>{heading}</h2>}
+        {subheading && <p class={`text-lg max-w-2xl ${align === 'center' ? 'mx-auto' : (align === 'right' ? 'ml-auto' : '')} ${textColor || 'text-gray-500'}`}>{subheading}</p>}
+      </div>
+    )}
+
+    <div class={`grid grid-cols-1 ${gridCols} gap-12`}>
+      {features.map(feature => (
+        <div class={`group ${layout === 'list' ? 'flex gap-6 items-start' : 'p-8 rounded-2xl'} ${alignmentClasses[align]} ${feature.backgroundColor || ''}`}>
+          {layout === 'list' ? (
+            <>
+              {feature.image ? (
+                <img src={resolvePath(feature.image)} alt={feature.title} class="w-24 h-24 object-cover rounded-xl shrink-0" />
+              ) : (
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                  <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+              )}
+              <div>
+                <h3 class={`text-xl font-bold mb-3 ${feature.headingColor || textColor || 'text-gray-900'}`}>{feature.title}</h3>
+                <p class={`leading-relaxed ${textColor || 'text-gray-500'}`}>{feature.description}</p>
+                {feature.action && (
+                  <div class="mt-4">
+                    {/* Button resolves the base path itself. */}
+                    <Button href={feature.action.href} variant={feature.action.variant || 'primary'}>
+                      {feature.action.label}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              {feature.image ? (
+                <img src={resolvePath(feature.image)} alt={feature.title} class="w-full h-48 object-cover rounded-xl mb-6" />
+              ) : (
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                  <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+              )}
+              <h3 class={`text-xl font-bold mb-3 ${feature.headingColor || textColor || 'text-gray-900'}`}>{feature.title}</h3>
+              <p class={`leading-relaxed ${textColor || 'text-gray-500'}`}>{feature.description}</p>
+              {feature.action && (
+                <div class="mt-6">
+                  {/* Button resolves the base path itself. */}
+                  <Button href={feature.action.href} variant={feature.action.variant || 'primary'}>
+                    {feature.action.label}
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      ))}
+    </div>
+
+    {action && (
+      <div class={`mt-12 ${alignmentClasses[align]}`}>
+        {/* Button resolves the base path itself. */}
+        <Button href={action.href} variant={action.variant || 'primary'}>
+          {action.label}
+        </Button>
+      </div>
+    )}
+  </div>
+</section>

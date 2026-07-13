@@ -1,0 +1,71 @@
+---
+import { resolvePath } from '../../utils/paths';
+
+/**
+ * Team Component - Showcases key staff members or contributors.
+ * Use this to build trust and humanize the brand.
+ */
+interface Props {
+  /** Optional ID for anchor linking */
+  id?: string;
+  /** Background color for the outer section (Tailwind class, e.g., 'bg-white') */
+  backgroundColor?: string;
+  /** Base text color for heading and body text (Tailwind class, e.g., 'text-white') */
+  textColor?: string;
+  /** Horizontal alignment of the section header: 'center' (default), 'left', or 'right' */
+  align?: 'left' | 'center' | 'right';
+  /** Number of columns in the grid layout (2, 3, or 4; default: 4) */
+  columns?: 2 | 3 | 4;
+  /** Section heading */
+  heading?: string;
+  /** Supporting description */
+  subheading?: string;
+  /** Array of team members */
+  members: Array<{
+    /** Full name of the member */
+    name: string;
+    /** Job title or role */
+    role: string;
+    /** Short biography */
+    bio?: string;
+    /** URL to the member's profile picture */
+    avatar?: string;
+  }>;
+}
+
+const { id, backgroundColor = 'bg-gray-50', textColor = 'text-gray-900', align = 'center', columns = 4, heading, subheading, members = [] } = Astro.props;
+const alignClass = align === 'left' ? 'text-left' : align === 'right' ? 'text-right' : 'text-center';
+const gridColsClass = columns === 2 ? 'lg:grid-cols-2' : columns === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4';
+---
+
+<section id={id} class={`py-24 px-6 ${backgroundColor}`}>
+  <div class="max-w-7xl mx-auto">
+    {(heading || subheading) && (
+      <div class={`${alignClass} mb-20`}>
+        {heading && <h2 class={`text-4xl font-bold mb-4 ${textColor}`}>{heading}</h2>}
+        {subheading && <p class={`text-lg max-w-2xl mx-auto opacity-70 ${textColor}`}>{subheading}</p>}
+      </div>
+    )}
+
+    <div class={`grid grid-cols-1 md:grid-cols-2 ${gridColsClass} gap-8`}>
+      {members.map(member => (
+        <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div class="mb-6">
+            {member.avatar ? (
+              <img src={resolvePath(member.avatar)} alt={member.name} class="w-24 h-24 rounded-2xl object-cover mx-auto shadow-sm" />
+            ) : (
+              <div class="w-24 h-24 rounded-2xl bg-indigo-100 flex items-center justify-center mx-auto">
+                <span class="text-indigo-600 font-bold text-2xl">{member.name.charAt(0)}</span>
+              </div>
+            )}
+          </div>
+          <div class="text-center">
+            <h3 class="text-xl font-bold text-gray-900 mb-1">{member.name}</h3>
+            <p class="text-indigo-600 font-semibold text-sm mb-4">{member.role}</p>
+            {member.bio && <p class="text-gray-500 text-sm leading-relaxed">{member.bio}</p>}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

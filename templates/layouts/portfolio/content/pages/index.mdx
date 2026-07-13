@@ -1,0 +1,44 @@
+---
+title: "Home"
+description: "Creative Design Portfolio"
+pageLayout: "full"
+---
+<Hero 
+  heading="Capturing Ideas Through Design" 
+  subheading="I design high-end digital products, brand identities, and memorable interfaces." 
+  badge="Hi, I'm Alex"
+  align="left"
+  actions={[
+    { label: "View Work", href: "/#work", variant: "primary" },
+    { label: "Let's Chat", href: "/#contact", variant: "secondary" }
+  ]}
+  image={{ src: "/static/sam.webp", alt: "Designer sketching at a desk" }}
+/>
+
+<Gallery 
+  heading="Selected Work"
+  columns={3}
+  images={[
+    { src: "/static/sam.webp", alt: "Brand Mockup UI Project", caption: "Brand Identity Systems" },
+    { src: "/static/sam.webp", alt: "Mobile Dashboard Interface", caption: "FinTech Mobile Interface" },
+    { src: "/static/sam.webp", alt: "SaaS Website Design", caption: "Premium SaaS Design Layout" }
+  ]}
+/>
+
+<Testimonials 
+  heading="Kind Words From Directors"
+  testimonials={[
+    { quote: "Alex brought a level of visual craftsmanship that instantly elevated our web application UI.", author: "Theresa K.", role: "Product Director, SyncLoop", avatar: "/static/sam.webp" }
+  ]}
+/>
+
+<ContactForm 
+  heading="Work With Me" 
+  subheading="Looking to kick off a design project? Drop me a line and let's build something beautiful."
+  email="hello@example.com"
+  fields={[
+    { label: "Your Name", type: "text", required: true },
+    { label: "Email Address", type: "email", required: true },
+    { label: "Project Description", type: "textarea", required: true }
+  ]}
+/>

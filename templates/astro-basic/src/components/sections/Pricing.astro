@@ -1,0 +1,91 @@
+---
+/**
+ * Pricing Component - Property-Driven Architecture
+ */
+interface Props {
+  /** Optional anchor id for in-page links (e.g. href="#pricing") */
+  id?: string;
+  heading?: string;
+  subheading?: string;
+  /** Background color for the outer section (Tailwind class, e.g., 'bg-gray-100') */
+  backgroundColor?: string;
+  /** Text color for heading and subheading (Tailwind class, e.g., 'text-white'). Use when backgroundColor is dark. */
+  textColor?: string;
+  /** Text alignment for heading and subheading: 'center' (default), 'left', or 'right' */
+  align?: 'left' | 'center' | 'right';
+  plans: Array<{
+    name: string;
+    price: string;
+    period?: string;
+    description?: string;
+    features: string[];
+    ctaLabel: string;
+    ctaHref: string;
+    highlighted?: boolean;
+  }>;
+}
+
+import Button from '../ui/Button.astro';
+
+const {
+  id,
+  heading = "Simple, transparent pricing",
+  subheading = "Choose the plan that's right for your business.",
+  backgroundColor = "bg-white",
+  textColor,
+  align = 'center',
+  plans = []
+} = Astro.props;
+
+const alignClass = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right'
+}[align];
+---
+
+<section id={id} class={`py-24 px-6 ${backgroundColor} ${textColor || 'text-gray-900'}`}>
+  <div class="max-w-7xl mx-auto">
+    <div class={`${alignClass} mb-16`}>
+      <h2 class={`text-4xl font-bold ${textColor ? textColor : 'text-gray-900'} mb-4`}>{heading}</h2>
+      <p class={`text-lg ${textColor ? textColor : 'text-gray-500'} ${align === 'center' ? 'max-w-2xl mx-auto' : ''}`}>{subheading}</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {plans.map(plan => (
+        <div class={`flex flex-col p-8 rounded-3xl border ${plan.highlighted ? 'border-indigo-600 ring-4 ring-indigo-50 shadow-2xl relative' : 'border-gray-100 shadow-sm'}`}>
+          {plan.highlighted && (
+            <span class="absolute top-0 right-8 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+              Most Popular
+            </span>
+          )}
+          <h3 class="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+          {plan.description && <p class="text-sm text-gray-500 mb-6">{plan.description}</p>}
+          <div class="flex items-baseline mb-8">
+            <span class="text-4xl font-extrabold text-gray-900">{plan.price}</span>
+            {plan.period && <span class="text-gray-500 ml-1">/{plan.period}</span>}
+          </div>
+          <ul class="space-y-4 mb-10 flex-grow">
+            {plan.features.map(feature => (
+              <li class="flex items-start text-sm text-gray-600">
+                <svg class="h-5 w-5 text-indigo-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                {feature}
+              </li>
+            ))}
+          </ul>
+          {/* Button resolves the base path itself — resolving here too would
+              double-prefix under a non-root ASTRO_BASE. */}
+          <Button
+            href={plan.ctaHref}
+            variant={plan.highlighted ? 'primary' : 'secondary'}
+            class="w-full"
+          >
+            {plan.ctaLabel}
+          </Button>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

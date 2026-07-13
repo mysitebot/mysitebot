@@ -1,0 +1,111 @@
+---
+import { resolvePath } from '../../utils/paths';
+/**
+ * NewsGrid Component - Displays multiple columns of news or content articles.
+ * Each column has a heading and contains a list of article cards.
+ * Optionally renders a sidebar (e.g. category list) to the left of the grid.
+ */
+interface Props {
+  /** Optional anchor id for in-page links (e.g. href="#news") */
+  id?: string;
+  /** Background color for the outer section (Tailwind class, e.g. 'bg-gray-100') */
+  backgroundColor?: string;
+  /** Text color for headings and labels (Tailwind class, e.g. 'text-white') */
+  textColor?: string;
+  /** Overall section heading displayed above the columns */
+  heading?: string;
+  /** Supporting description shown below the section heading */
+  subheading?: string;
+  /** Number of columns in the news grid area */
+  columns?: 2 | 3 | 4;
+  /** Text alignment for heading and subheading: 'center' (default), 'left', or 'right' */
+  align?: 'left' | 'center' | 'right';
+  /** Optional sidebar rendered to the left of the news grid */
+  sidebar?: {
+    /** Sidebar heading (e.g. "Categories") */
+    heading?: string;
+    /** List of sidebar item labels */
+    items: string[];
+  };
+  /** Array of column sections, each with a heading and articles */
+  sections: Array<{
+    heading: string;
+    articles: Array<{
+      title: string;
+      description?: string;
+      image?: { src: string; alt: string };
+      action?: { label: string; href: string };
+    }>;
+  }>;
+}
+
+const {
+  id,
+  backgroundColor = 'bg-gray-100',
+  textColor = 'text-gray-900',
+  heading,
+  subheading,
+  columns = 3,
+  align = 'center',
+  sidebar,
+  sections = []
+} = Astro.props;
+
+const gridCols = {
+  2: 'md:grid-cols-2',
+  3: 'md:grid-cols-2 lg:grid-cols-3',
+  4: 'md:grid-cols-2 lg:grid-cols-4'
+}[columns];
+---
+
+<section id={id} class={`py-24 px-6 ${backgroundColor}`}>
+  <div class="max-w-7xl mx-auto">
+    {(heading || subheading) && (
+      <div class={`mb-12 ${align === 'left' ? 'text-left' : align === 'right' ? 'text-right' : 'text-center'}`}>
+        {heading && <h2 class={`text-3xl font-bold mb-4 ${textColor}`}>{heading}</h2>}
+        {subheading && <p class={`text-lg ${textColor} opacity-75`}>{subheading}</p>}
+      </div>
+    )}
+    <div class={sidebar ? 'flex flex-wrap gap-8' : ''}>
+      {sidebar && (
+        <aside class="w-full md:w-1/3 bg-white p-5 rounded-lg shadow-sm">
+          {sidebar.heading && <h2 class={`text-2xl font-bold mb-4 ${textColor}`}>{sidebar.heading}</h2>}
+          <ul class="space-y-2">
+            {sidebar.items.map(item => (
+              <li class="text-gray-600">{item}</li>
+            ))}
+          </ul>
+        </aside>
+      )}
+      <div class={`${sidebar ? 'flex-1' : ''}`}>
+        <div class={`grid grid-cols-1 ${gridCols} gap-8`}>
+          {sections.map(section => (
+            <div>
+              <h2 class={`text-2xl font-bold mb-6 ${textColor}`}>{section.heading}</h2>
+              <div class="space-y-4">
+                {section.articles.map(article => (
+                  <article class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                    {article.image && (
+                      <img src={resolvePath(article.image.src)} alt={article.image.alt} class="w-full h-auto" />
+                    )}
+                    <div class="p-4">
+                      <h3 class="text-xl font-semibold text-gray-900 mb-2">{article.title}</h3>
+                      {article.description && (
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4">{article.description}</p>
+                      )}
+                      {article.action && (
+                        <a href={resolvePath(article.action.href)} class="inline-block bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition-colors">
+                          {article.action.label}
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,44 @@
+{
+  "id": "features_append_001",
+  "name": "Append New Feature to Homepage Features Section",
+  "prompt": "Add 'Same-Day Delivery' as a new feature to our homepage features section. The description should be 'Order by noon, get it by 6pm.'",
+  "setup": [
+    {
+      "path": "content/pages/index.mdx",
+      "content": "---\ntitle: \"Home\"\ndescription: \"Welcome to our store\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Quality Goods, Fast\"\n  subheading=\"Everything you need, delivered with care.\"\n/>\n\n<Features\n  heading=\"Why Shop With Us\"\n  features={[\n    { title: \"Fresh Products\", description: \"Sourced locally every day.\" },\n    { title: \"Easy Returns\", description: \"No questions asked, 30-day returns.\" }\n  ]}\n/>"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "file_contains": {
+      "content/pages/index.mdx": [
+        "Same-Day Delivery",
+        "Order by noon, get it by 6pm."
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Same-Day Delivery"
+      }
+    ],
+    "judge": "The 'Same-Day Delivery' feature with description 'Order by noon, get it by 6pm.' is appended to the Features section on the homepage; both pre-existing features 'Fresh Products' and 'Easy Returns' are fully preserved"
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "I've appended 'Same-Day Delivery' with its description to the features section on your homepage, keeping 'Fresh Products' and 'Easy Returns' exactly as they were.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/index.mdx": "---\ntitle: \"Home\"\ndescription: \"Welcome to our store\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Quality Goods, Fast\"\n  subheading=\"Everything you need, delivered with care.\"\n/>\n\n<Features\n  heading=\"Why Shop With Us\"\n  features={[\n    { title: \"Fresh Products\", description: \"Sourced locally every day.\" },\n    { title: \"Easy Returns\", description: \"No questions asked, 30-day returns.\" },\n    { title: \"Same-Day Delivery\", description: \"Order by noon, get it by 6pm.\" }\n  ]}\n/>"
+    }
+  }
+}

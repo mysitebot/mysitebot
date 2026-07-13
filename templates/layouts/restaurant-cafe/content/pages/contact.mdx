@@ -1,0 +1,24 @@
+---
+title: "Bookings & Contact"
+description: "Book a table or get in touch"
+pageLayout: "full"
+---
+<Hero 
+  heading="Join Us for Coffee" 
+  subheading="Located at 104 Main Street, downtown. Open Mon-Fri 7 AM - 4 PM, Sat-Sun 8 AM - 4 PM." 
+  badge="Find Us"
+  align="left"
+  actions={[]}
+/>
+
+<ContactForm 
+  heading="Book a Table" 
+  subheading="Reservations are recommended for weekend brunch. Fill in the form and we will confirm your table."
+  email="bookings@example.com"
+  fields={[
+    { label: "Your Name", type: "text", required: true },
+    { label: "Phone Number", type: "text", required: true },
+    { label: "Number of Guests", type: "text", required: true },
+    { label: "Date & Time", type: "text", required: true }
+  ]}
+/>

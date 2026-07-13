@@ -1,0 +1,210 @@
+---
+/**
+ * Header Component - A horizontal header with logo on the left and contact info on the right.
+ */
+interface Props {
+  /** Optional logo image shown on the left side */
+  logo?: {
+    src: string;
+    alt?: string;
+    size?: string;
+  };
+  /** Brand name rendered as bold text on the left when no logo is provided */
+  siteName?: string;
+  /** Main heading text displayed prominently (e.g., "Welcome to Tech Startup") */
+  heading?: string;
+  /** Optional image displayed alongside the site name (e.g. school emblem, badge) */
+  image?: {
+    src: string;
+    alt?: string;
+  };
+  /** Body paragraphs displayed below the heading */
+  paragraphs?: string[];
+  /** Contact information displayed on the right side */
+  contactInfo?: Array<{
+    label: string;
+    value: string;
+  }>;
+  /** Optional call-to-action button shown on the right side */
+  cta?: {
+    label: string;
+    href: string;
+  };
+  /** Navigation links rendered as a horizontal nav bar */
+  links?: Array<{
+    label: string;
+    href: string;
+  }>;
+  /** Text color for navigation links (Tailwind class, e.g., 'text-yellow-500') */
+  linkColor?: string;
+  /** Background color for the header (Tailwind class) */
+  backgroundColor?: string;
+  /** Background gradient for the header (e.g., 'from-purple-500 to-pink-500' for use with bg-gradient-to-r) */
+  backgroundGradient?: string;
+  /** Text color for the header (Tailwind class) */
+  textColor?: string;
+  /** Whether to show a search input in the header */
+  showSearch?: boolean;
+  /** Placeholder text for the search input */
+  searchPlaceholder?: string;
+  /** Label for the search submit button (shown when showSearch is true) */
+  searchButtonLabel?: string;
+  /** Background image URL — creates a full-cover background with optional overlay */
+  backgroundImage?: string;
+  /** Min height for the header when using backgroundImage (e.g., 'h-64') */
+  minHeight?: string;
+  /** Optional subtitle displayed below the site name or heading */
+  subheading?: string;
+  /** Text/content alignment within the header: 'left' (default), 'center', or 'right' */
+  align?: 'left' | 'center' | 'right';
+  /** If true, header is fixed to the top of the viewport */
+  fixedTop?: boolean;
+  /** Optional login form displayed on the right side */
+  loginForm?: {
+    usernameLabel?: string;
+    usernamePlaceholder?: string;
+    passwordLabel?: string;
+    passwordPlaceholder?: string;
+    buttonLabel?: string;
+    buttonColor?: string;
+  };
+  /** If true, shows a hamburger menu button on the right side */
+  showHamburger?: boolean;
+  /** If true, renders the image as circular (rounded-full) */
+  imageCircular?: boolean;
+  /** Logo horizontal alignment: 'left' (default), 'center', or 'right' */
+  logoAlign?: 'left' | 'center' | 'right';
+  /** Horizontal alignment for images: 'left' (default), 'center', or 'right' */
+  imageAlign?: 'left' | 'center' | 'right';
+  /** Optional select dropdown options displayed in header */
+  selectOptions?: string[];
+  /** Label for the select dropdown */
+  selectLabel?: string;
+}
+
+const {
+  logo,
+  siteName,
+  heading,
+  subheading,
+  image,
+  paragraphs = [],
+  contactInfo = [],
+  cta,
+  links,
+  linkColor,
+  backgroundColor = 'bg-white',
+  backgroundGradient,
+  textColor = 'text-gray-900',
+  showSearch = false,
+  searchPlaceholder = 'Search...',
+  searchButtonLabel,
+  backgroundImage,
+  minHeight = 'h-64',
+  align = 'left',
+  fixedTop = false,
+  loginForm,
+  showHamburger = false,
+  imageCircular = false,
+  logoAlign = 'left',
+  imageAlign = 'left',
+  selectOptions,
+  selectLabel
+} = Astro.props;
+
+const alignClass = align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : 'text-left';
+const justifyClass = align === 'center' ? 'justify-center' : align === 'right' ? 'justify-end' : 'justify-start';
+---
+
+<header
+  class={`${fixedTop ? 'fixed w-full top-0 z-50' : ''} ${backgroundImage ? 'bg-cover bg-center' : backgroundGradient ? `bg-gradient-to-r ${backgroundGradient}` : backgroundColor} ${textColor} ${alignClass} py-4 px-6 ${backgroundImage ? minHeight : ''} flex items-center justify-center`}
+  style={backgroundImage ? `background-image: url('${backgroundImage}')` : undefined}
+>
+  <div class={`${backgroundImage ? 'absolute inset-0 bg-black bg-opacity-20 pointer-events-none' : ''}`} />
+  <div class={`max-w-7xl mx-auto w-full relative z-10 flex flex-col gap-4 ${align === 'center' ? 'items-center' : align === 'right' ? 'items-end' : 'items-start'}`}>
+    {heading && <h1 class={`text-3xl font-bold ${alignClass}`}>{heading}</h1>}
+    <div class={`flex items-center gap-6 w-full ${logoAlign === 'right' ? 'justify-end' : logoAlign === 'center' ? 'justify-center' : 'justify-between'}`}>
+      {logoAlign !== 'right' && (
+        <div class="flex-shrink-0">
+          {logo ? (
+            <img src={logo.src} alt={logo.alt ?? ''} class={`${logo.size ?? 'h-10'} w-auto object-contain`} />
+          ) : siteName && (
+            <span class="text-2xl font-bold">{siteName}</span>
+          )}
+          {subheading && <p class="mt-1 text-sm opacity-90">{subheading}</p>}
+          {paragraphs && paragraphs.length > 0 && (
+            <div class="mt-3 space-y-2">
+              {paragraphs.map(para => (
+                <p class="text-sm">{para}</p>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    {logoAlign === 'right' && logo && (
+      <img src={logo.src} alt={logo.alt ?? ''} class={`flex-shrink-0 ${logo.size ?? 'h-10'} w-auto object-contain`} />
+    )}
+    {image && (
+      <img src={image.src} alt={image.alt ?? ''} class={`flex-shrink-0 object-cover ${imageCircular ? 'rounded-full h-32 w-32' : 'h-16 w-auto'} ${imageAlign === 'center' ? 'mx-auto' : imageAlign === 'right' ? 'ml-auto' : ''}`} />
+    )}
+    {logoAlign !== 'right' && (
+      <div class="flex items-center gap-4 ml-auto">
+      {links && links.length > 0 && (
+        <nav>
+          <ul class="flex gap-6">
+            {links.map(link => (
+              <li><a href={link.href} class={`${linkColor ?? ''} hover:opacity-75 transition-opacity`}>{link.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+      )}
+      {contactInfo.length > 0 && (
+        <div class="text-right space-y-1">
+          {contactInfo.map(info => (
+            <p class="text-sm">
+              <span class="font-semibold">{info.label}:</span> {info.value}
+            </p>
+          ))}
+        </div>
+      )}
+      {selectOptions && selectOptions.length > 0 && (
+        <select class="px-3 py-1.5 rounded border border-gray-300 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-current">
+          {selectOptions.map(option => (
+            <option>{option}</option>
+          ))}
+        </select>
+      )}
+      {showSearch && (
+        <form class="flex">
+          <input type="text" placeholder={searchPlaceholder} class="px-3 py-1.5 rounded-l border border-gray-300 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-current" />
+          {searchButtonLabel && (
+            <button type="submit" class="bg-current text-white px-3 py-1.5 rounded-r text-sm font-medium hover:opacity-90 transition-opacity">{searchButtonLabel}</button>
+          )}
+        </form>
+      )}
+      {loginForm && (
+        <form class="flex gap-2">
+          <input type="text" placeholder={loginForm.usernamePlaceholder ?? 'Username'} class="px-3 py-1.5 rounded border border-gray-300 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-current" />
+          <input type="password" placeholder={loginForm.passwordPlaceholder ?? 'Password'} class="px-3 py-1.5 rounded border border-gray-300 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-current" />
+          <button type="submit" class={`${loginForm.buttonColor ?? 'bg-pink-500'} hover:opacity-90 text-white font-bold py-2 px-4 rounded transition-opacity`}>
+            {loginForm.buttonLabel ?? 'Log in'}
+          </button>
+        </form>
+      )}
+      {cta && (
+        <a href={cta.href} class="inline-block bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors">
+          {cta.label}
+        </a>
+      )}
+      {showHamburger && (
+        <button class="hamburger hamburger--spin" type="button" aria-label="Toggle menu">
+          <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+          </span>
+        </button>
+      )}
+    </div>
+    )}
+    </div>
+  </div>
+</header>

@@ -1,0 +1,10 @@
+sam — standalone Astro site-editing agent
+Copyright (c) 2026 mysite.bot — released under the MIT License (see LICENSE).
+
+Template provenance
+-------------------
+The sealed Astro template and its section library (templates/) were developed
+with reference to design patterns in the HuggingFace WebSight dataset. No
+WebSight dataset content is redistributed in this repository; the components
+here are original, re-authored Astro/MDX. The WebSight-derived training data
+and mapper tooling are NOT part of this repository.

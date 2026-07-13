@@ -1,0 +1,55 @@
+---
+/**
+ * Calendar Component - Displays a grid of events or a schedule.
+ */
+interface Props {
+  /** Optional anchor id for in-page links (e.g. href="#events") */
+  id?: string;
+  /** Background color for the section (Tailwind class, e.g. 'bg-black') */
+  backgroundColor?: string;
+  /** Base text color applied to the whole section (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark. */
+  textColor?: string;
+  /** Section heading */
+  heading?: string;
+  /** Supporting description */
+  subheading?: string;
+  /** Text alignment for heading and subheading: 'center' (default), 'left', or 'right' */
+  align?: 'left' | 'center' | 'right';
+  /** Array of events */
+  events: Array<{
+    date: string;
+    title: string;
+    description?: string;
+    time?: string;
+  }>;
+}
+
+const { id, backgroundColor = 'bg-white', textColor = '', heading, subheading, align = 'center', events = [] } = Astro.props;
+
+const alignClass = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+}[align];
+---
+
+<section id={id} class={`py-24 px-6 ${backgroundColor} ${textColor}`}>
+  <div class="max-w-7xl mx-auto">
+    {(heading || subheading) && (
+      <div class={`${alignClass} mb-16`}>
+        {heading && <h2 class={`text-4xl font-bold mb-4 ${textColor || 'text-gray-900'}`}>{heading}</h2>}
+        {subheading && <p class={`text-lg max-w-2xl mx-auto ${textColor || 'text-gray-500'}`}>{subheading}</p>}
+      </div>
+    )}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {events.map(event => (
+        <div class="border border-gray-100 rounded-3xl p-8 hover:shadow-lg transition-all">
+          <div class="text-indigo-600 font-bold mb-2 uppercase tracking-widest text-sm">{event.date} {event.time && `· ${event.time}`}</div>
+          <h3 class={`text-xl font-bold mb-4 ${textColor || 'text-gray-900'}`}>{event.title}</h3>
+          {event.description && <p class={`text-sm leading-relaxed ${textColor || 'text-gray-500'}`}>{event.description}</p>}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

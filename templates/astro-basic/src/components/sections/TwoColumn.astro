@@ -1,0 +1,241 @@
+---
+/**
+ * TwoColumn Component - A two-column layout with independent left and right content areas.
+ * Use this for side-by-side comparisons, dual messaging, or balanced layouts.
+ */
+interface Props {
+  /** Optional anchor id for in-page links */
+  id?: string;
+  /** Optional logo image displayed centered above the two-column layout */
+  logo?: { src: string; alt?: string; size?: string; };
+  /** Left column heading */
+  leftHeading?: string;
+  /** Left column paragraphs */
+  leftParagraphs?: string[];
+  /** Left column image */
+  leftImage?: { src: string; alt: string; };
+  /** Left column navigation links */
+  leftLinks?: Array<{ label: string; href: string; }>;
+  /** Left column content sections (e.g., forms, cards with structured items) */
+  leftContent?: Array<{
+    title?: string;
+    description?: string;
+    items?: Array<{ title: string; description?: string }>;
+    form?: { fields: Array<{ label?: string; type: 'email' | 'text' | 'textarea'; placeholder: string }>, buttonLabel: string, buttonColor?: string };
+    action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
+  }>;
+  /** Right column heading */
+  rightHeading?: string;
+  /** Right column paragraphs */
+  rightParagraphs?: string[];
+  /** Right column image */
+  rightImage?: { src: string; alt: string; };
+  /** Right column images for gallery grid */
+  rightImages?: Array<{ src: string; alt: string; }>;
+  /** Right column content sections (e.g., cards with structured items) */
+  rightContent?: Array<{
+    title?: string;
+    description?: string;
+    items?: Array<{ title: string; description?: string }>;
+    action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
+  }>;
+  /** Background color for the outer section (Tailwind class) */
+  backgroundColor?: string;
+  /** Background color for the left column (Tailwind class); overrides backgroundColor for that column */
+  leftBackgroundColor?: string;
+  /** Background color for the right column (Tailwind class); overrides backgroundColor for that column */
+  rightBackgroundColor?: string;
+  /** Background image URL for the left column */
+  leftBackgroundImage?: string;
+  /** Background image URL for the right column */
+  rightBackgroundImage?: string;
+  /** Text color for left column (Tailwind class) */
+  leftTextColor?: string;
+  /** Text color for right column (Tailwind class) */
+  rightTextColor?: string;
+  /** Text color for content (Tailwind class) */
+  textColor?: string;
+  /** Link color for left column navigation (Tailwind class) */
+  leftLinkColor?: string;
+  /** Padding and spacing preset: 'normal' (default) or 'compact' */
+  spacing?: 'normal' | 'compact';
+}
+
+const {
+  id,
+  logo,
+  leftHeading,
+  leftParagraphs = [],
+  leftImage,
+  leftLinks = [],
+  leftContent = [],
+  rightHeading,
+  rightParagraphs = [],
+  rightImage,
+  rightImages = [],
+  rightContent = [],
+  backgroundColor = 'bg-gray-100',
+  leftBackgroundColor,
+  rightBackgroundColor,
+  leftBackgroundImage,
+  rightBackgroundImage,
+  leftTextColor,
+  rightTextColor,
+  textColor = 'text-gray-800',
+  leftLinkColor,
+  spacing = 'normal',
+} = Astro.props;
+
+const paddingClass = spacing === 'compact' ? 'py-8 px-4' : 'py-16 px-4';
+const leftBg = leftBackgroundColor || backgroundColor;
+const rightBg = rightBackgroundColor || backgroundColor;
+const leftText = leftTextColor || textColor;
+const rightText = rightTextColor || textColor;
+---
+
+<section id={id} class="w-full">
+  {logo && (
+    <div class="flex justify-center py-8">
+      <img
+        src={logo.src}
+        alt={logo.alt || 'Logo'}
+        class={`${logo.size || 'h-16'}`}
+      />
+    </div>
+  )}
+  <div class="grid grid-cols-1 md:grid-cols-2">
+    {/* Left Column */}
+    <div
+      class={`flex flex-col justify-center ${leftBg} ${paddingClass} bg-cover bg-center`}
+      style={leftBackgroundImage ? { backgroundImage: `url(${leftBackgroundImage})` } : {}}
+    >
+      {leftImage && (
+        <img src={leftImage.src} alt={leftImage.alt} class="w-full h-auto mb-6 rounded" />
+      )}
+      {leftHeading && (
+        <h2 class={`text-2xl font-bold mb-4 ${leftText}`}>{leftHeading}</h2>
+      )}
+      {leftLinks.length > 0 && (
+        <nav class="mb-6">
+          <ul class="space-y-2">
+            {leftLinks.map((link) => (
+              <li key={link.href}>
+                <a href={link.href} class={`${leftLinkColor || 'text-blue-500'} hover:opacity-80`}>{link.label}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+      {leftParagraphs.map((para) => (
+        <p class={`text-lg leading-relaxed mb-4 ${leftText}`}>{para}</p>
+      ))}
+        {leftContent.map((section, idx) => (
+          <div key={idx} class="bg-white rounded shadow p-4 mb-6">
+            {section.title && (
+              <h3 class={`text-xl font-bold mb-4 ${leftText}`}>{section.title}</h3>
+            )}
+            {section.description && (
+              <p class={`text-base leading-relaxed mb-4 ${leftText}`}>{section.description}</p>
+            )}
+            {section.form && (
+              <form class="space-y-3">
+                {section.form.fields.map((field, fieldIdx) => (
+                  <div key={fieldIdx}>
+                    {field.label && <label class={`block text-sm font-medium mb-1 ${leftText}`}>{field.label}</label>}
+                    <input
+                      type={field.type}
+                      placeholder={field.placeholder}
+                      class="w-full p-2 border rounded"
+                    />
+                  </div>
+                ))}
+                <button
+                  type="submit"
+                  class={`w-full p-2 ${section.form.buttonColor || 'bg-red-500'} text-white rounded`}
+                >
+                  {section.form.buttonLabel}
+                </button>
+              </form>
+            )}
+            {section.items && section.items.length > 0 && (
+              <div class="space-y-3">
+                {section.items.map((item, itemIdx) => (
+                  <div key={itemIdx}>
+                    {item.title && <h4 class={`font-bold ${leftText}`}>{item.title}</h4>}
+                    {item.description && <p class={`text-sm text-gray-600`}>{item.description}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+            {section.action && (
+              <a
+                href={section.action.href}
+                class={`inline-block py-2 px-4 rounded font-bold text-white ${
+                  section.action.variant === 'secondary' ? 'bg-gray-500' :
+                  section.action.variant === 'success' ? 'bg-green-500' :
+                  'bg-yellow-500'
+                } hover:opacity-80`}
+              >
+                {section.action.label}
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+
+    {/* Right Column */}
+    <div
+      class={`flex flex-col justify-center ${rightBg} ${paddingClass} bg-cover bg-center`}
+      style={rightBackgroundImage ? { backgroundImage: `url(${rightBackgroundImage})` } : {}}
+    >
+      {rightImage && (
+        <img src={rightImage.src} alt={rightImage.alt} class="w-full h-auto mb-6 rounded" />
+      )}
+      {rightHeading && (
+        <h2 class={`text-2xl font-bold mb-4 ${rightText}`}>{rightHeading}</h2>
+      )}
+      {rightParagraphs.map((para) => (
+        <p class={`text-lg leading-relaxed mb-4 ${rightText}`}>{para}</p>
+      ))}
+      {rightImages.length > 0 && (
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          {rightImages.map((img) => (
+            <img key={img.src} src={img.src} alt={img.alt} class="w-full h-auto rounded" />
+          ))}
+        </div>
+      )}
+      {rightContent.map((section, idx) => (
+        <div key={idx} class="bg-white rounded shadow p-4 mb-6">
+          {section.title && (
+            <h3 class={`text-xl font-bold mb-4 ${rightText}`}>{section.title}</h3>
+          )}
+          {section.description && (
+            <p class={`text-base leading-relaxed mb-4 ${rightText}`}>{section.description}</p>
+          )}
+          {section.items && section.items.length > 0 && (
+            <div class="space-y-4">
+              {section.items.map((item, itemIdx) => (
+                <div key={itemIdx} class="mb-4">
+                  {item.title && <h4 class={`text-lg font-bold ${rightText}`}>{item.title}</h4>}
+                  {item.description && <p class={`text-sm text-gray-700`}>{item.description}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+          {section.action && (
+            <a
+              href={section.action.href}
+              class={`inline-block py-2 px-4 rounded font-bold text-white ${
+                section.action.variant === 'secondary' ? 'bg-gray-500' :
+                section.action.variant === 'success' ? 'bg-green-500' :
+                'bg-yellow-500'
+              } hover:opacity-80`}
+            >
+              {section.action.label}
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

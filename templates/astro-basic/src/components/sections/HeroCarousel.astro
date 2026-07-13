@@ -1,0 +1,55 @@
+---
+import { resolvePath } from '../../utils/paths';
+
+/**
+ * HeroCarousel Component - Full-screen background slideshow with content.
+ */
+interface Props {
+  slides: Array<{
+    heading: string;
+    subheading?: string;
+    image: string;
+    action?: { label: string; href: string };
+  }>;
+}
+
+const { slides = [] } = Astro.props;
+
+// Calculate dynamic keyframes to avoid PostCSS processing errors
+const duration = slides.length * 5;
+const keyframes = slides.map((_, i) => `
+  ${(i / slides.length) * 100}% { transform: translateX(-${i * 100}%); }
+  ${((i + 0.8) / slides.length) * 100}% { transform: translateX(-${i * 100}%); }
+`).join('\n') + '100% { transform: translateX(0); }';
+---
+
+<section class="relative h-screen w-full overflow-hidden bg-black">
+  <div class="absolute inset-0 z-0 flex animate-slideshow">
+    {slides.map(slide => (
+      <div class="relative min-w-full h-full">
+        <img src={resolvePath(slide.image)} alt={slide.heading} class="absolute inset-0 w-full h-full object-cover opacity-60" />
+        <div class="absolute inset-0 flex items-center justify-center p-6 text-center">
+          <div class="max-w-4xl">
+            <h2 class="text-5xl md:text-8xl font-black text-white mb-6 drop-shadow-lg">{slide.heading}</h2>
+            {slide.subheading && <p class="text-xl md:text-2xl text-gray-200 mb-10 drop-shadow-md">{slide.subheading}</p>}
+            {slide.action && (
+              <a href={resolvePath(slide.action.href)} class="inline-block bg-white text-black px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-200 transition-colors">
+                {slide.action.label}
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+  
+  <style is:inline set:html={`
+    .animate-slideshow {
+      animation: slide ${duration}s infinite;
+    }
+    @keyframes slide {
+      ${keyframes}
+    }
+  `}>
+  </style>
+</section>

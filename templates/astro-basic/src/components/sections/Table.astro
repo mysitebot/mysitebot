@@ -1,0 +1,109 @@
+---
+/**
+ * Table Component - Displays structured tabular data with optional search and filtering.
+ * Ideal for food menus, product catalogs, pricing tables, or any structured dataset.
+ */
+interface Props {
+  /** Optional ID for anchor linking */
+  id?: string;
+  /** Section heading */
+  heading?: string;
+  /** Section subheading */
+  subheading?: string;
+  /** Column headers */
+  columns: Array<{ label: string; key: string; }>;
+  /** Table rows */
+  rows: Array<Record<string, string>>;
+  /** Whether to show a search bar above the table */
+  showSearch?: boolean;
+  /** Placeholder text for the search bar */
+  searchPlaceholder?: string;
+  /** Background color for the outer section (Tailwind class, e.g., 'bg-white') */
+  backgroundColor?: string;
+  /** Background image URL for the outer section */
+  backgroundImage?: string;
+  /** Text color for headings and content (Tailwind class, e.g., 'text-white') */
+  textColor?: string;
+  /** Text alignment for heading and subheading: 'left' (default), 'center', or 'right' */
+  align?: 'left' | 'center' | 'right';
+  /** Header background color (Tailwind class, e.g., 'bg-gray-100') */
+  headerBackgroundColor?: string;
+  /** Hover row background color (Tailwind class) */
+  rowHoverColor?: string;
+  /** Max width constraint (Tailwind class, e.g., 'max-w-4xl') */
+  maxWidth?: string;
+  /** Card styling for the table */
+  card?: boolean;
+  /** Card background color (Tailwind class) */
+  cardBackgroundColor?: string;
+}
+
+const {
+  id,
+  heading,
+  subheading,
+  columns = [],
+  rows = [],
+  showSearch = false,
+  searchPlaceholder = 'Search...',
+  backgroundColor = 'bg-white',
+  backgroundImage,
+  textColor = 'text-gray-900',
+  align = 'left',
+  headerBackgroundColor = 'bg-gray-100',
+  rowHoverColor = 'hover:bg-gray-50',
+  maxWidth = 'max-w-4xl',
+  card = false,
+  cardBackgroundColor = 'bg-white',
+} = Astro.props;
+
+const alignClass = align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right';
+---
+
+<section id={id} class={`py-24 px-6 overflow-hidden ${backgroundColor}`} style={backgroundImage ? `background-image: url('${backgroundImage}'); background-size: cover; background-position: center;` : undefined}>
+  <div class={`mx-auto ${maxWidth}`}>
+    {(heading || subheading) && (
+      <div class={`${alignClass} mb-12`}>
+        {heading && <h2 class={`text-4xl font-bold mb-4 ${textColor}`}>{heading}</h2>}
+        {subheading && <p class={`text-lg ${textColor} opacity-70`}>{subheading}</p>}
+      </div>
+    )}
+
+    {showSearch && (
+      <div class="mb-8">
+        <input
+          type="text"
+          placeholder={searchPlaceholder}
+          class={`w-full px-4 py-3 border border-gray-300 rounded-lg ${textColor} bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+        />
+      </div>
+    )}
+
+    <div class={card ? `${cardBackgroundColor} rounded-lg shadow-lg overflow-hidden` : 'overflow-hidden rounded-lg border border-gray-200'}>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class={`${headerBackgroundColor} border-b border-gray-200`}>
+              {columns.map(col => (
+                <th class={`px-6 py-4 text-left text-sm font-semibold ${textColor} uppercase tracking-wide`}>
+                  {col.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody class={textColor}>
+            {rows.map(row => (
+              <tr class={`border-b border-gray-200 ${rowHoverColor} transition-colors`}>
+                {columns.map(col => (
+                  <td class="px-6 py-4 text-sm">
+                    {row[col.key]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

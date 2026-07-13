@@ -1,0 +1,75 @@
+{
+  "id": "saas_multisection_build_001",
+  "name": "Dense multi-section homepage build — every explicitly named section must appear (pricing tiers + newsletter)",
+  "prompt": "I'm launching PulseMetrics, a real-time analytics dashboard for e-commerce teams. Please turn my homepage into a proper SaaS landing page in one go. I want ALL of the following, not just some: (1) rewrite the hero so it's about real-time e-commerce analytics with a clear call-to-action, instead of the generic placeholder about local-business websites; (2) a features section covering live dashboards, smart alerts and integrations; (3) a pricing section with three tiers named Starter, Growth and Scale; and (4) a newsletter sign-up section to capture leads. Please make sure the pricing and the newsletter are both actually there — don't skip them.",
+  "setup": [
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nsocial:\n  twitter: \"\"\n  linkedin: \"\"\n  instagram: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"Features\"\n    url: \"/#features\"\n  - label: \"Contact\"\n    url: \"/#contact\"\n\nanalytics:\n  enabled: true\n  website_id: \"da39a3ee-5e6b-4b0d-9c8a-c47c5d6e2e3a\"\n"
+    },
+    {
+      "path": "content/pages/index.mdx",
+      "content": "---\ntitle: \"Home\"\ndescription: \"Welcome to our landing page\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Grow Your Business Faster\"\n  subheading=\"We build highly optimized, secure, and beautiful websites tailored for local businesses.\"\n  badge=\"Introducing MYSITEBOT\"\n  align=\"center\"\n  actions={[\n    { label: \"Get Started\", href: \"/#contact\", variant: \"primary\" },\n    { label: \"Learn More\", href: \"/#features\", variant: \"secondary\" }\n  ]}\n/>\n\n<Features\n  heading=\"Why Choose Us\"\n  subheading=\"We deliver top-tier static sites with modern design and blazing fast performance.\"\n  features={[\n    { title: \"Blazing Fast\", description: \"Fully static pages load in milliseconds.\", icon: \"zap\" },\n    { title: \"SEO Optimized\", description: \"Built with search engines in mind from day one.\", icon: \"search\" },\n    { title: \"Modern Design\", description: \"Stunning layouts that wow your visitors.\", icon: \"layout\" }\n  ]}\n/>\n\n<ContactForm\n  heading=\"Get In Touch\"\n  subheading=\"Ready to start? Send us a message and we will get back to you shortly.\"\n  email=\"hello@example.com\"\n  fields={[\n    { label: \"Your Name\", type: \"text\", required: true },\n    { label: \"Your Email\", type: \"email\", required: true },\n    { label: \"Message\", type: \"textarea\", required: true }\n  ]}\n/>\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/index.mdx"
+    ],
+    "file_contains": {
+      "content/pages/index.mdx": [
+        "<Pricing",
+        "<Newsletter",
+        "Starter",
+        "Growth",
+        "Scale"
+      ]
+    },
+    "file_not_contains": {
+      "content/pages/index.mdx": [
+        "Grow Your Business Faster"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Starter"
+      },
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Growth"
+      },
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Scale"
+      },
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Subscribe"
+      }
+    ],
+    "judge": "Sam delivered a homepage that contains EVERY section the user explicitly named, in one edit: (a) a pricing section (a <Pricing> component) with three tiers named Starter, Growth and Scale; (b) a newsletter sign-up section (a <Newsletter> component) with an email capture; (c) a features section covering the product's capabilities; and (d) a hero rewritten to be about the customer's real-time e-commerce analytics product with a call-to-action — NOT the generic 'Grow Your Business Faster' placeholder about local-business websites. Omitting the pricing section OR the newsletter section, or leaving the stock placeholder hero, is a FAILURE even if the rest of the page is good — the whole point is that a dense request naming several sections must not silently drop the ones that were spelled out."
+  },
+  "negative": false,
+  "split": "train",
+  "dry_run": {
+    "text": "Done! I've rebuilt your homepage as a full SaaS landing page: a new hero focused on real-time e-commerce analytics, a features section (live dashboards, smart alerts, integrations), a pricing section with Starter, Growth and Scale tiers, and a newsletter sign-up to capture leads. I'm double-checking the build now and will confirm the moment it's ready — say 'publish' whenever you'd like it live.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/index.mdx": "---\ntitle: \"Home\"\ndescription: \"PulseMetrics - Real-time analytics dashboard for e-commerce teams\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Real-Time E-commerce Analytics\"\n  subheading=\"Gain instant insights into your sales, customer behavior, and marketing performance. Make data-driven decisions to boost your online store.\"\n  badge=\"PulseMetrics\"\n  align=\"center\"\n  actions={[\n    { label: \"Get Started Free\", href: \"#pricing\", variant: \"primary\" },\n    { label: \"See Features\", href: \"#features\", variant: \"secondary\" }\n  ]}\n/>\n\n<Features\n  id=\"features\"\n  heading=\"Key Features\"\n  subheading=\"Understand your e-commerce business like never before.\"\n  features={[\n    { title: \"Live Dashboards\", description: \"Monitor your key metrics in real-time with customizable dashboards.\", icon: \"trending-up\" },\n    { title: \"Smart Alerts\", description: \"Get notified instantly about significant changes or opportunities.\", icon: \"bell\" },\n    { title: \"Seamless Integrations\", description: \"Connect with your favorite e-commerce platforms and tools.\", icon: \"plug\" }\n  ]}\n/>\n\n<Pricing\n  id=\"pricing\"\n  heading=\"Flexible Pricing Plans\"\n  subheading=\"Choose the plan that best fits your business needs.\"\n  plans={[\n    { name: \"Starter\", price: \"$49\", period: \"/month\", description: \"Perfect for small businesses just starting out.\", features: [ \"1 User\", \"Basic Analytics\", \"Email Support\" ], ctaLabel: \"Get Started\", ctaHref: \"#signup\" },\n    { name: \"Growth\", price: \"$99\", period: \"/month\", description: \"Ideal for growing businesses looking for more insights.\", features: [ \"5 Users\", \"Advanced Analytics\", \"Priority Support\", \"Key Integrations\" ], ctaLabel: \"Start Growing\", ctaHref: \"#signup\", highlighted: true },\n    { name: \"Scale\", price: \"$199\", period: \"/month\", description: \"For established businesses needing comprehensive analytics.\", features: [ \"Unlimited Users\", \"All Features\", \"Dedicated Account Manager\" ], ctaLabel: \"Scale Now\", ctaHref: \"#signup\" }\n  ]}\n/>\n\n<Newsletter\n  id=\"signup\"\n  heading=\"Stay Ahead of the Curve\"\n  subheading=\"Sign up for our newsletter to receive the latest e-commerce analytics tips and product updates.\"\n  placeholder=\"Enter your email address\"\n  buttonLabel=\"Subscribe\"\n/>\n"
+    }
+  }
+}

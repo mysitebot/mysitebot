@@ -1,0 +1,46 @@
+{
+  "id": "footer_create_001",
+  "name": "Add Footer with Navigation and Contact Columns",
+  "prompt": "Add a footer to my homepage with two columns: one called 'Navigate' with links to Home (/) and About (/about), and one called 'Get in Touch' that shows our email support@freshbread.com.",
+  "setup": [
+    {
+      "path": "content/pages/index.mdx",
+      "content": "---\ntitle: \"Home\"\ndescription: \"Welcome\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Fresh Bread Daily\"\n  subheading=\"Baked with love every morning.\"\n/>"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "file_contains": {
+      "content/pages/index.mdx": [
+        "hideFooter: true",
+        "Navigate",
+        "Get in Touch",
+        "support@freshbread.com"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "support@freshbread.com"
+      }
+    ],
+    "judge": "A Footer component with a 'Navigate' column containing Home and About links and a 'Get in Touch' column displaying the email address is added to the homepage, and the page's frontmatter sets hideFooter: true so the site's automatic settings-driven footer is suppressed and exactly one footer appears; the Hero section is fully preserved."
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "I've added a footer to your homepage with a 'Navigate' column linking to Home and About, and a 'Get in Touch' column showing your email address, while keeping the existing hero intact.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/index.mdx": "---\ntitle: \"Home\"\ndescription: \"Welcome\"\npageLayout: \"full\"\nhideFooter: true\n---\n<Hero\n  heading=\"Fresh Bread Daily\"\n  subheading=\"Baked with love every morning.\"\n/>\n\n<Footer\n  columns={[\n    { title: \"Navigate\", links: [{ label: \"Home\", href: \"/\" }, { label: \"About\", href: \"/about\" }] },\n    { title: \"Get in Touch\", links: [{ label: \"support@freshbread.com\", href: \"mailto:support@freshbread.com\" }] }\n  ]}\n/>"
+    }
+  }
+}

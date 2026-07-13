@@ -1,0 +1,52 @@
+{
+  "id": "footer_preserve_content_001",
+  "name": "Three-Column Footer With Content Preservation",
+  "prompt": "Add a footer to my About page with three columns: 'Navigate' linking to Home (/) and About (/about), 'Follow Us' with links to our Instagram (https://instagram.com/freshbread) and Facebook (https://facebook.com/freshbread), and 'Contact' showing our email hello@freshbread.com. Don't change anything else on the page.",
+  "setup": [
+    {
+      "path": "content/pages/about.mdx",
+      "content": "---\ntitle: \"About\"\ndescription: \"About our bakery\"\npageLayout: \"full\"\n---\n<Article\n  heading=\"Our Story\"\n  paragraphs={[\"Fresh Bread Co. has been baking since 1998, using time-honored recipes passed down through three generations.\"]}\n/>\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/about.mdx"
+    ],
+    "file_contains": {
+      "content/pages/about.mdx": [
+        "hideFooter: true",
+        "Navigate",
+        "Follow Us",
+        "https://instagram.com/freshbread",
+        "https://facebook.com/freshbread",
+        "hello@freshbread.com",
+        "Our Story"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/about",
+        "selector": "body",
+        "contains": "hello@freshbread.com"
+      }
+    ],
+    "judge": "Sam adds a three-column footer with exactly the requested links, social URLs, and email to the About page, and sets hideFooter: true in the page frontmatter so the site's automatic footer is suppressed and only one footer appears, while leaving the existing 'Our Story' article content completely unchanged."
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "Sam appends a three-column footer (Navigate, Follow Us, Contact) to the bottom of the About page and leaves the existing 'Our Story' section untouched.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/about.mdx": "---\ntitle: \"About\"\ndescription: \"About our bakery\"\npageLayout: \"full\"\nhideFooter: true\n---\n<Article\n  heading=\"Our Story\"\n  paragraphs={[\"Fresh Bread Co. has been baking since 1998, using time-honored recipes passed down through three generations.\"]}\n/>\n\n<Footer\n  columns={[\n    { title: \"Navigate\", links: [{ label: \"Home\", href: \"/\" }, { label: \"About\", href: \"/about\" }] },\n    { title: \"Follow Us\", links: [{ label: \"Instagram\", href: \"https://instagram.com/freshbread\" }, { label: \"Facebook\", href: \"https://facebook.com/freshbread\" }] },\n    { title: \"Contact\", links: [{ label: \"hello@freshbread.com\", href: \"mailto:hello@freshbread.com\" }] }\n  ]}\n/>\n"
+    }
+  }
+}

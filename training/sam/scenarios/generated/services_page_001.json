@@ -1,0 +1,37 @@
+{
+  "id": "services_page_001",
+  "name": "Add Services Page",
+  "prompt": "Create a Services page that lists our main offerings, including 'Web Development', 'Design', and 'Consulting' using a Features section, and add it to the site navigation.",
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/services.mdx",
+      "content/settings.yaml"
+    ],
+    "file_contains": {
+      "content/pages/services.mdx": [
+        "<Features",
+        "Web Development",
+        "Design",
+        "Consulting"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/services",
+        "selector": "body",
+        "contains": "Web Development"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Services"
+      }
+    ],
+    "judge": "A new services page lists the three offerings via a Features section and appears in the site navigation."
+  },
+  "negative": false
+}

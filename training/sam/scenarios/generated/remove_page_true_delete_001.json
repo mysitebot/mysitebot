@@ -1,0 +1,50 @@
+{
+  "id": "remove_page_true_delete_001",
+  "name": "Delete a page for real (file gone, nav cleaned, others preserved)",
+  "prompt": "Please delete the Services page from my site completely - I don't offer those services anymore. Take it out of the menu as well, but leave everything else exactly as it is.",
+  "setup": [
+    {
+      "path": "content/pages/about.mdx",
+      "content": "---\ntitle: \"About\"\ndescription: \"About our studio\"\npageLayout: \"default\"\n---\n<Hero\n  heading=\"About Us\"\n  subheading=\"We are a small family studio.\"\n  align=\"center\"\n/>\n"
+    },
+    {
+      "path": "content/pages/services.mdx",
+      "content": "---\ntitle: \"Services\"\ndescription: \"What we offer\"\npageLayout: \"default\"\n---\n<Hero\n  heading=\"Our Services\"\n  subheading=\"Consulting, design, and delivery.\"\n  align=\"center\"\n/>\n"
+    },
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\n  - label: \"Services\"\n    url: \"/services\"\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": ["delete_content_file", "branch_and_edit_content"],
+    "files_changed": ["content/settings.yaml"],
+    "files_absent": ["content/pages/services.mdx"],
+    "file_contains": {
+      "content/settings.yaml": [
+        "label: \"Home\"",
+        "label: \"About\""
+      ]
+    },
+    "build": true,
+    "dom": [
+      { "page": "/", "selector": "nav", "contains": "Home" },
+      { "page": "/", "selector": "nav", "contains": "About" }
+    ],
+    "judge": "The Services page file was genuinely deleted - content/pages/services.mdx no longer exists (not merely emptied, stubbed, or unlinked) - and the 'Services' navigation entry was removed while the Home and About entries and pages stayed unchanged. Sam's reply truthfully reflects a real removal: it must NOT warn that an empty page may linger at the old address, and must NOT claim it cannot delete pages."
+  },
+  "negative": false,
+  "split": "train",
+  "dry_run": {
+    "text": "I've deleted the Services page completely and removed it from your menu - Home and About are untouched. Say \"publish\" whenever you'd like this to go live.",
+    "tool_calls": [
+      { "name": "delete_content_file", "args": {} },
+      { "name": "branch_and_edit_content", "args": {} },
+      { "name": "create_publish_request", "args": {} }
+    ],
+    "edits": {
+      "content/settings.yaml": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\n"
+    },
+    "deletes": ["content/pages/services.mdx"]
+  }
+}

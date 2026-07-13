@@ -1,0 +1,39 @@
+{
+  "id": "sam_self_heal_001",
+  "name": "Self-heal a broken page from a [SYSTEM] build-failure turn",
+  "prompt": "The website build failed after your last change. Here are the relevant build logs:\n\n[build] Failed to build.\n[MDX] Expected a closing tag for `<Hero>` (4:1-4:6) before the end of the file\n  file: content/pages/about.mdx\n\nPlease diagnose the error (likely a syntax error in MDX or YAML), read the affected file, and commit a corrected version.",
+  "is_system": true,
+  "setup": [
+    {
+      "path": "content/pages/about.mdx",
+      "content": "---\ntitle: \"About\"\ndescription: \"About our studio\"\npageLayout: \"default\"\n---\n<Hero\n  heading=\"About Us\"\n  subheading=\"We are a small family studio.\"\n  align=\"center\"\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": ["branch_and_edit_content"],
+    "files_changed": ["content/pages/about.mdx"],
+    "file_contains": {
+      "content/pages/about.mdx": [
+        "About Us",
+        "We are a small family studio."
+      ]
+    },
+    "build": true,
+    "dom": [
+      { "page": "/about", "selector": "body", "contains": "About Us" }
+    ],
+    "judge": "This was an internal [SYSTEM] build-failure turn, not a customer message. Sam repaired the About page's broken formatting so the site builds again while preserving the page's original heading and text (nothing dropped, nothing new invented), and replied with a short reassurance in the spirit of 'I noticed a small issue with the update, but I've corrected it automatically' - without blaming the user, without technical jargon (no MDX/tags/build/syntax talk), and without asking the user to do anything."
+  },
+  "negative": false,
+  "split": "train",
+  "dry_run": {
+    "text": "I noticed a small issue with the update, but I've corrected it automatically. I'll let you know as soon as the live preview is ready for you to see!",
+    "tool_calls": [
+      { "name": "read_content_file", "args": {} },
+      { "name": "branch_and_edit_content", "args": {} }
+    ],
+    "edits": {
+      "content/pages/about.mdx": "---\ntitle: \"About\"\ndescription: \"About our studio\"\npageLayout: \"default\"\n---\n<Hero\n  heading=\"About Us\"\n  subheading=\"We are a small family studio.\"\n  align=\"center\"\n/>\n"
+    }
+  }
+}

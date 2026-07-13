@@ -1,0 +1,33 @@
+---
+title: "Home"
+description: "Fresh coffee and delicious baked goods"
+pageLayout: "full"
+---
+<Hero 
+  heading="Artisanal Coffee & Fresh Bakes" 
+  subheading="Crafting the perfect start to your morning. Visit us for pour-overs, pastries, and a warm workspace." 
+  badge="Daily Grind Cafe"
+  align="center"
+  actions={[
+    { label: "View Menu", href: "/menu", variant: "primary" },
+    { label: "Book a Table", href: "/contact", variant: "secondary" }
+  ]}
+  image={{ src: "/static/sam.webp", alt: "Cozy coffee shop interior" }}
+/>
+
+<Features 
+  heading="What Makes Us Special" 
+  subheading="We care about the origin of our beans and the quality of our ingredients."
+  features={[
+    { title: "Single Origin Beans", description: "Directly sourced from organic growers globally.", icon: "coffee" },
+    { title: "Baked Fresh Daily", description: "Sourdough breads and pastries baked in-house.", icon: "sun" },
+    { title: "Cozy Space", description: "Fast Wi-Fi and plenty of outlets for remote work.", icon: "home" }
+  ]}
+/>
+
+<Testimonials 
+  heading="Loved By Locals"
+  testimonials={[
+    { quote: "Hands down the best flat white in town. The almond croissants are legendary.", author: "Claire Higgins", role: "Local Guide", avatar: "/static/sam.webp" }
+  ]}
+/>

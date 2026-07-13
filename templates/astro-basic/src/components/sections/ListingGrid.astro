@@ -1,0 +1,265 @@
+---
+/**
+ * ListingGrid Component - Displays a grid of items with metadata (e.g., properties, products).
+ * Ideal for real estate, e-commerce, or directory sites.
+ */
+interface Props {
+  /** Optional ID for anchor linking */
+  id?: string;
+  /** Section heading */
+  heading?: string;
+  /** Section subheading */
+  subheading?: string;
+  /** Layout variant */
+  variant?: 'grid' | 'carousel';
+  /** Layout arrangement: 'grid' for card grid (default), 'list' for full-width stacked rows */
+  layout?: 'grid' | 'list';
+  /** Number of columns for grid (md and up) */
+  columns?: 2 | 3 | 4;
+  /** Optional sidebar content */
+  sidebar?: {
+    title?: string;
+    /** Generic grouped list sections (e.g., contact info, service lists) */
+    sections?: Array<{
+      title: string;
+      items: Array<{ label: string; href?: string; }>;
+    }>;
+    categories?: Array<{
+        label: string;
+        href: string;
+        count?: number;
+    }>;
+    filters?: Array<{
+        label: string;
+        options: string[];
+    }>;
+  };
+  /** Background color for the outer section (Tailwind class, e.g., 'bg-gray-100') */
+  backgroundColor?: string;
+  /** Background image URL for the outer section (e.g., 'https://example.com/bg.jpg') */
+  backgroundImage?: string;
+  /** Text color for headings and labels (Tailwind class, e.g., 'text-white') */
+  textColor?: string;
+  /** Text alignment for heading and subheading: 'center' (default), 'left', or 'right' */
+  align?: 'left' | 'center' | 'right';
+  /** Whether to show a search bar above the grid */
+  showSearch?: boolean;
+  /** Placeholder text for the search bar */
+  searchPlaceholder?: string;
+  /** Array of search/filter fields to show above the grid (overrides showSearch/searchPlaceholder when provided) */
+  searchFields?: Array<{
+    /** Placeholder text for the field */
+    placeholder: string;
+    /** Input type (default: 'text') */
+    type?: string;
+  }>;
+  /** Label for the search submit button shown alongside searchFields (default: 'Search') */
+  searchButtonLabel?: string;
+  /** Array of items to display */
+  items: Array<{
+    /** Title of the item */
+    title: string;
+    /** Short description or details */
+    description?: string;
+    /** Price or secondary label */
+    price?: string;
+    /** Image URL */
+    image: string;
+    /** Alt text for the image */
+    alt?: string;
+    /** Link to the item's page */
+    href?: string;
+    /** Array of tags or badges (e.g., ["3 Bed", "2 Bath"]) */
+    tags?: string[];
+  }>;
+}
+
+const {
+  id,
+  heading,
+  subheading,
+  items = [],
+  variant = 'grid',
+  layout = 'grid',
+  columns = 3,
+  sidebar,
+  backgroundColor = 'bg-white',
+  backgroundImage,
+  textColor = 'text-gray-900',
+  showSearch = false,
+  searchPlaceholder = 'Search...',
+  searchFields,
+  searchButtonLabel = 'Search',
+  align = 'center'
+} = Astro.props;
+
+const alignClass = align === 'left' ? 'text-left' : align === 'right' ? 'text-right' : 'text-center';
+
+const gridCols = {
+  2: 'md:grid-cols-2',
+  3: 'md:grid-cols-2 lg:grid-cols-3',
+  4: 'md:grid-cols-2 lg:grid-cols-4'
+}[columns];
+---
+
+<section id={id} class={`py-24 px-6 overflow-hidden ${backgroundColor}`} style={backgroundImage ? `background-image: url('${backgroundImage}'); background-size: cover; background-position: center;` : undefined}>
+  <div class="max-w-7xl mx-auto">
+    {(heading || subheading) && (
+      <div class={`${alignClass} mb-16`}>
+        {heading && <h2 class={`text-4xl font-bold mb-4 ${textColor}`}>{heading}</h2>}
+        {subheading && <p class={`text-lg max-w-2xl mx-auto ${textColor} opacity-70`}>{subheading}</p>}
+      </div>
+    )}
+
+    {searchFields && searchFields.length > 0 ? (
+      <div class="mb-10 flex flex-wrap gap-3">
+        {searchFields.map(field => (
+          <input
+            type={field.type || 'text'}
+            placeholder={field.placeholder}
+            class="flex-1 min-w-[160px] px-5 py-3 border border-gray-300 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        ))}
+        <button type="button" class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors">{searchButtonLabel}</button>
+      </div>
+    ) : showSearch && (
+      <div class="mb-10">
+        <input
+          type="text"
+          placeholder={searchPlaceholder}
+          class="w-full px-5 py-3 border border-gray-300 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+      </div>
+    )}
+
+    <div class={`flex flex-col ${sidebar ? 'lg:flex-row' : ''} gap-12`}>
+      {sidebar && (
+        <aside class="w-full lg:w-64 flex-shrink-0">
+          <div class="sticky top-24 space-y-10">
+            {sidebar.title && <h3 class={`text-xl font-bold ${textColor}`}>{sidebar.title}</h3>}
+
+            {sidebar.sections && sidebar.sections.map(section => (
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">{section.title}</h4>
+                <ul class="space-y-2">
+                  {section.items.map(item => (
+                    <li>
+                      {item.href
+                        ? <a href={item.href} class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">{item.label}</a>
+                        : <span class="text-sm text-gray-600">{item.label}</span>
+                      }
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+
+            {sidebar.categories && (
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">Categories</h4>
+                <ul class="space-y-2">
+                  {sidebar.categories.map(cat => (
+                    <li>
+                      <a href={cat.href} class="flex items-center justify-between text-gray-600 hover:text-indigo-600 transition-colors">
+                        <span>{cat.label}</span>
+                        {cat.count !== undefined && <span class="text-xs bg-gray-100 px-2 py-1 rounded-full">{cat.count}</span>}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {sidebar.filters && sidebar.filters.map(filter => (
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">{filter.label}</h4>
+                <div class="space-y-2">
+                  {filter.options.map(option => (
+                    <label class="flex items-center gap-3 text-sm text-gray-600 cursor-pointer hover:text-indigo-600">
+                      <input type="checkbox" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" />
+                      {option}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </aside>
+      )}
+
+      <div class="flex-1">
+        <div class={variant === 'carousel'
+          ? "flex overflow-x-auto space-x-6 pb-8 snap-x"
+          : layout === 'list'
+            ? "flex flex-col gap-6"
+            : `grid grid-cols-1 ${gridCols} gap-10`}>
+          {items.map(item => layout === 'list' ? (
+            <a
+              href={item.href || '#'}
+              class="group flex flex-row overflow-hidden rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300"
+            >
+              <div class="relative overflow-hidden w-48 flex-shrink-0">
+                <img
+                  src={item.image}
+                  alt={item.alt || item.title}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                {item.price && (
+                  <div class="absolute top-3 left-3 bg-indigo-600 text-white px-3 py-1 rounded-full font-bold text-sm">
+                    {item.price}
+                  </div>
+                )}
+              </div>
+              <div class="p-6 flex flex-col justify-center flex-1">
+                <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">{item.title}</h3>
+                {item.description && <p class="text-gray-500 text-sm mb-4 leading-relaxed">{item.description}</p>}
+                {item.tags && item.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-2">
+                    {item.tags.map(tag => (
+                      <span class="text-[10px] font-bold uppercase tracking-wider bg-gray-50 text-gray-500 px-2 py-1 rounded-md">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </a>
+          ) : (
+            <a
+              href={item.href || '#'}
+              class={`group block overflow-hidden rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 snap-start ${variant === 'carousel' ? 'min-w-[300px] md:min-w-[400px] flex-shrink-0' : ''}`}
+            >
+              <div class="relative overflow-hidden aspect-[4/3]">
+                <img
+                  src={item.image}
+                  alt={item.alt || item.title}
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                {item.price && (
+                  <div class="absolute top-4 left-4 bg-indigo-600 text-white px-4 py-1.5 rounded-full font-bold text-sm">
+                    {item.price}
+                  </div>
+                )}
+              </div>
+              <div class="p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">{item.title}</h3>
+                {item.description && <p class="text-gray-500 text-sm mb-6 leading-relaxed line-clamp-2">{item.description}</p>}
+
+                {item.tags && item.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-2 pt-4 border-t border-gray-50">
+                    {item.tags.map(tag => (
+                      <span class="text-[10px] font-bold uppercase tracking-wider bg-gray-50 text-gray-500 px-2 py-1 rounded-md">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+

@@ -1,0 +1,28 @@
+{
+  "id": "gallery_homepage_001",
+  "name": "Photo Gallery Added to Homepage",
+  "prompt": "Add a photo gallery to my homepage to show off our recent work. Use placeholder images for now.",
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/index.mdx"
+    ],
+    "build": true,
+    "judge": "A gallery or image grid section appears on the homepage displaying placeholder images labeled as recent work or similar"
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "I've added a photo gallery section to your homepage with placeholder images for your recent work.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/index.mdx": "---\ntitle: Home\ndescription: Welcome to our site\n---\n\n<Hero\n  heading=\"Welcome to Our Business\"\n  subheading=\"Quality products and services for everyone\"\n  actions={[{ label: \"Contact Us\", href: \"/contact\", variant: \"primary\" }]}\n/>\n<Gallery\n  heading=\"Recent Work\"\n  subheading=\"A look at some of our latest projects\"\n  columns={3}\n  images={[\n    { src: \"/images/placeholder-1.jpg\", alt: \"Project 1\" },\n    { src: \"/images/placeholder-2.jpg\", alt: \"Project 2\" },\n    { src: \"/images/placeholder-3.jpg\", alt: \"Project 3\" }\n  ]}\n/>"
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "id": "events_page_001",
+  "name": "Events Page with Calendar and Nav Update",
+  "prompt": "Create an Events page that lists our two upcoming workshops: 'Intro to Baking' on July 10th and 'Advanced Pastry' on July 24th. Add it to the navigation.",
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/events.mdx",
+      "content/settings.yaml"
+    ],
+    "file_contains": {
+      "content/pages/events.mdx": [
+        "Intro to Baking",
+        "Advanced Pastry"
+      ]
+    },
+    "dom": [
+      {
+        "page": "/events",
+        "selector": "body",
+        "contains": "Intro to Baking"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Events"
+      }
+    ],
+    "build": true,
+    "judge": "An Events page exists with both workshops listed, and a link to /events labeled 'Events' (or similar) appears in the site navigation"
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "I've created an Events page with both workshops listed in a calendar section and added 'Events' to your site navigation.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/events.mdx": "---\ntitle: Events\ndescription: Upcoming workshops and events\n---\n\n<Hero\n  heading=\"Upcoming Events\"\n  subheading=\"Join us for hands-on workshops and community gatherings\"\n/>\n<Calendar\n  heading=\"Workshop Schedule\"\n  events={[\n    { date: \"2025-07-10\", title: \"Intro to Baking\", description: \"Learn the fundamentals of baking in this beginner-friendly workshop\" },\n    { date: \"2025-07-24\", title: \"Advanced Pastry\", description: \"Elevate your pastry skills with expert techniques\" }\n  ]}\n/>",
+      "content/settings.yaml": "siteName: My Business\ndescription: Quality products and services\nnav:\n  - label: Home\n    href: /\n  - label: Events\n    href: /events\n  - label: About\n    href: /about\n  - label: Contact\n    href: /contact\n"
+    }
+  }
+}

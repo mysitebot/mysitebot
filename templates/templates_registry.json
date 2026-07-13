@@ -1,0 +1,766 @@
+{
+  "layouts": [
+    {
+      "id": "landing-page",
+      "name": "Landing Page",
+      "tagline": "High-Converting Single Page",
+      "description": "Designed to drive action. Ideal for campaigns, product launches, or single-product businesses.",
+      "code": "---\ntitle: \"Home\"\ndescription: \"Welcome to our landing page\"\npageLayout: \"full\"\n---\n<Hero \n  heading=\"Grow Your Business Faster\" \n  subheading=\"We build highly optimized, secure, and beautiful websites tailored for local businesses.\" \n  badge=\"Introducing MYSITEBOT\"\n  align=\"center\"\n  actions={[\n    { label: \"Get Started\", href: \"/#contact\", variant: \"primary\" },\n    { label: \"Learn More\", href: \"/#features\", variant: \"secondary\" }\n  ]}\n/>\n\n<Features \n  heading=\"Why Choose Us\" \n  subheading=\"We deliver top-tier static sites with modern design and blazing fast performance.\"\n  features={[\n    { title: \"Blazing Fast\", description: \"Fully static pages load in milliseconds.\", icon: \"zap\" },\n    { title: \"SEO Optimized\", description: \"Built with search engines in mind from day one.\", icon: \"search\" },\n    { title: \"Modern Design\", description: \"Stunning layouts that wow your visitors.\", icon: \"layout\" }\n  ]}\n/>\n\n<Testimonials \n  heading=\"What Our Clients Say\"\n  testimonials={[\n    { quote: \"This website completely transformed our business representation online!\", author: \"Sarah Jenkins\", role: \"Founder, Bloom Floral\", avatar: \"/static/sam.webp\" },\n    { quote: \"Fast load times and a premium look. Very happy with the result.\", author: \"Marcus Vance\", role: \"CEO, Vance Tech\", avatar: \"/static/sam.webp\" }\n  ]}\n/>\n\n<ContactForm \n  heading=\"Get In Touch\" \n  subheading=\"Ready to start? Send us a message and we will get back to you shortly.\"\n  email=\"hello@example.com\"\n  fields={[\n    { label: \"Your Name\", type: \"text\", required: true },\n    { label: \"Your Email\", type: \"email\", required: true },\n    { label: \"Message\", type: \"textarea\", required: true }\n  ]}\n/>",
+      "details": "The Landing Page layout is optimized for conversion and page load speeds. It comes ready with a Hero header, feature highlights, customer testimonials, and a lead capture form.",
+      "props": {
+        "homepage": "index.mdx",
+        "sections": "<Hero />, <Features />, <Testimonials />, <ContactForm />",
+        "settings": "content/settings.yaml (Site Name, Accent Color)",
+        "fallback": "false"
+      },
+      "sections": [
+        {
+          "componentId": "hero",
+          "props": {
+            "badge": "Introducing mysite.bot 2.0",
+            "heading": "Build your dream business with Sam.",
+            "subheading": "The AI agent that builds, deploys and manages your entire website.",
+            "align": "center",
+            "actions": [
+              {
+                "label": "Get Started",
+                "href": "/contact",
+                "variant": "primary"
+              }
+            ]
+          }
+        },
+        {
+          "componentId": "features",
+          "props": {
+            "heading": "Everything you need",
+            "features": [
+              {
+                "title": "Fast Speeds",
+                "description": "Blazing fast global CDN delivery.",
+                "icon": "zap"
+              },
+              {
+                "title": "SEO Ready",
+                "description": "Optimized for Google search.",
+                "icon": "search"
+              }
+            ]
+          }
+        },
+        {
+          "componentId": "testimonials",
+          "props": {
+            "testimonials": [
+              {
+                "quote": "Sam built our restaurant site in less than 5 minutes. Amazing!",
+                "author": "Sarah L.",
+                "role": "Cafe Owner"
+              }
+            ]
+          }
+        },
+        {
+          "componentId": "contact",
+          "props": {
+            "heading": "Sign Up Today",
+            "email": "leads@example.com"
+          }
+        }
+      ],
+      "editableFields": [
+        {
+          "label": "Site Name",
+          "id": "site-name",
+          "type": "text",
+          "default": "mysite.bot Site",
+          "targetClass": "preview-site-name-text",
+          "selector": ".bg-indigo-50"
+        },
+        {
+          "label": "Primary Color",
+          "id": "primary-color",
+          "type": "color",
+          "default": "#4f46e5",
+          "targetStyle": "backgroundColor"
+        },
+        {
+          "label": "Hero Heading",
+          "id": "hero-heading",
+          "type": "text",
+          "default": "Build your dream business with Sam.",
+          "selector": "h1"
+        },
+        {
+          "label": "Hero Subheading",
+          "id": "hero-subheading",
+          "type": "text",
+          "default": "The AI agent that builds, deploys and manages your entire website.",
+          "selector": "p"
+        },
+        {
+          "label": "Contact Email",
+          "id": "contact-email",
+          "type": "text",
+          "default": "hello@example.com",
+          "targetClass": "preview-contact-email-text"
+        }
+      ]
+    },
+    {
+      "id": "business-standard",
+      "name": "Business Standard",
+      "tagline": "Professional Multi-Page Presence",
+      "description": "Perfect for local service providers, consultants, or corporate teams. Includes Home, About, Services, and Contact.",
+      "code": "# content/pages/index.mdx\n---\ntitle: \"Home\"\ndescription: \"Professional services and solutions\"\npageLayout: \"full\"\n---\n<Hero \n  heading=\"Professional Business Solutions\" \n  subheading=\"We offer cutting-edge consulting and management services to accelerate your growth.\" \n  badge=\"Premium Consulting Group\"\n  align=\"left\"\n  actions={[\n    { label: \"Our Services\", href: \"/services\", variant: \"primary\" },\n    { label: \"About Us\", href: \"/about\", variant: \"secondary\" }\n  ]}\n  image={{ src: \"/static/sam.webp\", alt: \"Corporate Office Building\" }}\n/>\n\n<Features \n  heading=\"Core Capabilities\" \n  subheading=\"Our expertise spans strategy, operations, and technical implementation.\"\n  features={[\n    { title: \"Strategic Planning\", description: \"Helping you navigate complex business horizons.\", icon: \"trending-up\" },\n    { title: \"Process Optimization\", description: \"Maximizing efficiency and reducing overhead.\", icon: \"cpu\" },\n    { title: \"Market Research\", description: \"In-depth insights to capture new audiences.\", icon: \"pie-chart\" }\n  ]}\n/>\n\n# content/pages/about.mdx\n---\ntitle: \"About Us\"\ndescription: \"Learn more about our team and values\"\npageLayout: \"full\"\n---\n<Hero \n  heading=\"Driven By Values, Guided By Strategy\" \n  subheading=\"Founded in 2018, we have helped over 150 companies unlock sustainable performance improvements.\" \n  badge=\"Our Story\"\n  align=\"center\"\n  actions={[]}\n/>\n\n<Testimonials \n  heading=\"Executive Endorsements\"\n  testimonials={[\n    { quote: \"Their team provided invaluable insights that directly shaped our 5-year growth strategy.\", author: \"Elizabeth Thorne\", role: \"VP of Operations, NovaCorp\", avatar: \"/static/sam.webp\" }\n  ]}\n/>\n\n# content/pages/contact.mdx\n---\ntitle: \"Contact\"\ndescription: \"Reach out to our consultants today\"\npageLayout: \"full\"\n---\n<ContactForm \n  heading=\"Schedule a Consultation\" \n  subheading=\"Speak to a lead consultant. Leave your details below and we will reach out within 24 hours.\"\n  email=\"info@example.com\"\n  fields={[\n    { label: \"Full Name\", type: \"text\", required: true },\n    { label: \"Company Name\", type: \"text\", required: false },\n    { label: \"Email Address\", type: \"email\", required: true },\n    { label: \"Message\", type: \"textarea\", required: true }\n  ]}\n/>\n\n# content/pages/services.mdx\n---\ntitle: \"Services\"\ndescription: \"Detailed catalog of consulting services\"\npageLayout: \"full\"\n---\n<Pricing \n  heading=\"Our Pricing & Plans\" \n  subheading=\"Select the plan that matches your business scale and consulting needs.\"\n  plans={[\n    { name: \"Starter Setup\", price: \"$999\", period: \"one-off\", description: \"Audit and strategy roadmap generation.\", features: [\"2-Hour Strategy Workshop\", \"Written Operational Audit\", \"Competitor Review\"], ctaLabel: \"Book Setup\", ctaHref: \"/contact\", highlighted: false },\n    { name: \"Growth Partnership\", price: \"$2,499\", period: \"month\", description: \"Active monthly coaching and strategy iteration.\", features: [\"Weekly 1-on-1 Strategy Calls\", \"Continuous Operational Auditing\", \"Priority Email Support\", \"Process Optimizations\"], ctaLabel: \"Enlist Partner\", ctaHref: \"/contact\", highlighted: true }\n  ]}\n/>",
+      "details": "A comprehensive multi-page layout preconfigured with modern navigation links in the header and footer. It provides structured subpages for company details, service descriptions, and contact options.",
+      "props": {
+        "homepage": "index.mdx (Hero, Features)",
+        "about page": "about.mdx (Company Bio, Testimonials)",
+        "services page": "services.mdx (Offerings grid, Pricing)",
+        "contact page": "contact.mdx (Interactive ContactForm)",
+        "navigation": "Home (/), About (/about), Services (/services), Contact (/contact)"
+      },
+      "hasNavbar": true,
+      "sections": [
+        {
+          "componentId": "hero",
+          "props": {
+            "heading": "Transforming Visions Into Success.",
+            "subheading": "Strategic consulting and digital solutions to elevate your business.",
+            "align": "left"
+          }
+        },
+        {
+          "componentId": "features",
+          "props": {
+            "heading": "Our Core Value",
+            "features": [
+              {
+                "title": "Standard Service",
+                "description": "Quality you can trust."
+              }
+            ]
+          }
+        }
+      ],
+      "editableFields": [
+        {
+          "label": "Site Name",
+          "id": "site-name",
+          "type": "text",
+          "default": "Synthesis Global",
+          "targetClass": "preview-site-name-text"
+        },
+        {
+          "label": "Primary Color",
+          "id": "primary-color",
+          "type": "color",
+          "default": "#4f46e5",
+          "targetStyle": "backgroundColor"
+        },
+        {
+          "label": "Hero Heading",
+          "id": "hero-heading",
+          "type": "text",
+          "default": "Transforming Visions Into Success.",
+          "selector": "h1"
+        },
+        {
+          "label": "Contact Email",
+          "id": "contact-email",
+          "type": "text",
+          "default": "info@synthesis.com",
+          "targetClass": "preview-contact-email-text"
+        }
+      ]
+    },
+    {
+      "id": "portfolio",
+      "name": "Portfolio",
+      "tagline": "Stunning Creative Showcase",
+      "description": "Tailored for designers, photographers, artists, and creators. Highlights your projects in a grid gallery.",
+      "code": "---\ntitle: \"Home\"\ndescription: \"Creative Design Portfolio\"\npageLayout: \"full\"\n---\n<Hero \n  heading=\"Capturing Ideas Through Design\" \n  subheading=\"I design high-end digital products, brand identities, and memorable interfaces.\" \n  badge=\"Hi, I'm Alex\"\n  align=\"left\"\n  actions={[\n    { label: \"View Work\", href: \"/#work\", variant: \"primary\" },\n    { label: \"Let's Chat\", href: \"/#contact\", variant: \"secondary\" }\n  ]}\n  image={{ src: \"/static/sam.webp\", alt: \"Designer sketching at a desk\" }}\n/>\n\n<Gallery \n  heading=\"Selected Work\"\n  columns={3}\n  images={[\n    { src: \"/static/sam.webp\", alt: \"Brand Mockup UI Project\", caption: \"Brand Identity Systems\" },\n    { src: \"/static/sam.webp\", alt: \"Mobile Dashboard Interface\", caption: \"FinTech Mobile Interface\" },\n    { src: \"/static/sam.webp\", alt: \"SaaS Website Design\", caption: \"Premium SaaS Design Layout\" }\n  ]}\n/>\n\n<Testimonials \n  heading=\"Kind Words From Directors\"\n  testimonials={[\n    { quote: \"Alex brought a level of visual craftsmanship that instantly elevated our web application UI.\", author: \"Theresa K.\", role: \"Product Director, SyncLoop\", avatar: \"/static/sam.webp\" }\n  ]}\n/>\n\n<ContactForm \n  heading=\"Work With Me\" \n  subheading=\"Looking to kick off a design project? Drop me a line and let's build something beautiful.\"\n  email=\"hello@example.com\"\n  fields={[\n    { label: \"Your Name\", type: \"text\", required: true },\n    { label: \"Email Address\", type: \"email\", required: true },\n    { label: \"Project Description\", type: \"textarea\", required: true }\n  ]}\n/>",
+      "details": "A minimal, visual-heavy design layout featuring a robust dynamic grid gallery for project case studies or photo collections. Comes with social proof and inquiry sections.",
+      "props": {
+        "homepage": "index.mdx",
+        "sections": "<Hero />, <Gallery />, <Testimonials />, <ContactForm />",
+        "gallery layout": "Dynamic grid supporting hover states & lightbox features",
+        "social links": "Header and footer configuration for Instagram, LinkedIn, Dribbble"
+      },
+      "hasNavbar": true,
+      "sections": [
+        {
+          "componentId": "hero",
+          "props": {
+            "heading": "ELIZA REED | CREATIVE DIRECTOR",
+            "subheading": "A curated collection of branding, design, and art direction.",
+            "align": "center"
+          }
+        },
+        {
+          "componentId": "gallery",
+          "props": {
+            "heading": "Work",
+            "columns": 3,
+            "images": [
+              {
+                "src": "/static/sam_hero.png",
+                "alt": "Brand Design Showcase",
+                "caption": "SyncFlow identity"
+              },
+              {
+                "src": "/static/sam.webp",
+                "alt": "Mobile Application",
+                "caption": "iOS design"
+              }
+            ]
+          }
+        }
+      ],
+      "editableFields": [
+        {
+          "label": "Site Name",
+          "id": "site-name",
+          "type": "text",
+          "default": "Eliza Reed",
+          "targetClass": "preview-site-name-text"
+        },
+        {
+          "label": "Primary Color",
+          "id": "primary-color",
+          "type": "color",
+          "default": "#4f46e5",
+          "targetStyle": "backgroundColor"
+        },
+        {
+          "label": "Hero Heading",
+          "id": "hero-heading",
+          "type": "text",
+          "default": "ELIZA REED | CREATIVE DIRECTOR",
+          "selector": "h1"
+        }
+      ]
+    },
+    {
+      "id": "restaurant-cafe",
+      "name": "Restaurant & Cafe",
+      "tagline": "Delectable Dining Showcase",
+      "description": "Designed specifically for cafes, bistros, and restaurants. Features menus, hours, and reservation booking.",
+      "code": "# content/pages/index.mdx\n---\ntitle: \"Home\"\ndescription: \"Fresh coffee and delicious baked goods\"\npageLayout: \"full\"\n---\n<Hero \n  heading=\"Artisanal Coffee & Fresh Bakes\" \n  subheading=\"Crafting the perfect start to your morning. Visit us for pour-overs, pastries, and a warm workspace.\" \n  badge=\"Daily Grind Cafe\"\n  align=\"center\"\n  actions={[\n    { label: \"View Menu\", href: \"/menu\", variant: \"primary\" },\n    { label: \"Book a Table\", href: \"/contact\", variant: \"secondary\" }\n  ]}\n  image={{ src: \"/static/sam.webp\", alt: \"Cozy coffee shop interior\" }}\n/>\n\n<Features \n  heading=\"What Makes Us Special\" \n  subheading=\"We care about the origin of our beans and the quality of our ingredients.\"\n  features={[\n    { title: \"Single Origin Beans\", description: \"Directly sourced from organic growers globally.\", icon: \"coffee\" },\n    { title: \"Baked Fresh Daily\", description: \"Sourdough breads and pastries baked in-house.\", icon: \"sun\" },\n    { title: \"Cozy Space\", description: \"Fast Wi-Fi and plenty of outlets for remote work.\", icon: \"home\" }\n  ]}\n/>\n\n<Testimonials \n  heading=\"Loved By Locals\"\n  testimonials={[\n    { quote: \"Hands down the best flat white in town. The almond croissants are legendary.\", author: \"Claire Higgins\", role: \"Local Guide\", avatar: \"/static/sam.webp\" }\n  ]}\n/>\n\n# content/pages/contact.mdx\n---\ntitle: \"Bookings & Contact\"\ndescription: \"Book a table or get in touch\"\npageLayout: \"full\"\n---\n<Hero \n  heading=\"Join Us for Coffee\" \n  subheading=\"Located at 104 Main Street, downtown. Open Mon-Fri 7 AM - 4 PM, Sat-Sun 8 AM - 4 PM.\" \n  badge=\"Find Us\"\n  align=\"left\"\n  actions={[]}\n/>\n\n<ContactForm \n  heading=\"Book a Table\" \n  subheading=\"Reservations are recommended for weekend brunch. Fill in the form and we will confirm your table.\"\n  email=\"bookings@example.com\"\n  fields={[\n    { label: \"Your Name\", type: \"text\", required: true },\n    { label: \"Phone Number\", type: \"text\", required: true },\n    { label: \"Number of Guests\", type: \"text\", required: true },\n    { label: \"Date & Time\", type: \"text\", required: true }\n  ]}\n/>\n\n# content/pages/menu.mdx\n---\ntitle: \"Our Menu\"\ndescription: \"Explore our specialty coffee and fresh pastries\"\npageLayout: \"default\"\n---\n# Our Menu\n\nWe prepare all our food and drinks fresh with local, organic ingredients.\n\n## ☕ Specialty Espresso & Coffee\n| Item | Description | Price |\n| :--- | :--- | :--- |\n| **Espresso** | Double shot of our single-origin bean of the day | $3.50 |\n| **Flat White** | Espresso with velvety micro-foamed milk | $4.50 |\n| **Cold Brew** | Steepped 18 hours for a sweet, low-acidity profile | $4.80 |\n| **Batch Brew** | Clean filter drip coffee | $3.80 |\n\n## 🥐 Fresh Baked Goods (In-House Daily)\n| Item | Description | Price |\n| :--- | :--- | :--- |\n| **Almond Croissant** | Flaky butter pastry filled with sweet frangipane | $5.20 |\n| **Sourdough Slice** | Toast served with organic cultured butter & jam | $4.00 |\n| **Chocolate Babka** | Rich braided chocolate sweet bread | $4.80 |\n\n## 🥗 Light Lunch\n| Item | Description | Price |\n| :--- | :--- | :--- |\n| **Avocado Toast** | Sourdough slice with smashed avo, feta, and seeds | $12.00 |\n| **Granola Bowl** | House-made pecan granola with Greek yogurt & berries | $9.50 |",
+      "details": "An elegant, food-centric layout crafted to highlight menu items, dietary tags, operating hours, and location. Integrates a reservation booking contact form.",
+      "props": {
+        "homepage": "index.mdx (Intro, Hours, Reservation CTA)",
+        "menu page": "menu.mdx (Dishes, pricing, categories, tables)",
+        "contact page": "contact.mdx (Reservation ContactForm)",
+        "navigation": "Home (/), Menu (/menu), Contact (/contact)"
+      },
+      "hasNavbar": true,
+      "sections": [
+        {
+          "componentId": "hero",
+          "props": {
+            "heading": "Savor the Art of Fine Dining",
+            "subheading": "An immersive culinary experience in a sophisticated atmosphere.",
+            "align": "center",
+            "actions": [
+              {
+                "label": "View Menu",
+                "href": "#menu"
+              }
+            ]
+          }
+        }
+      ],
+      "hasCustomTable": true,
+      "editableFields": [
+        {
+          "label": "Site Name",
+          "id": "site-name",
+          "type": "text",
+          "default": "L'Atelier",
+          "targetClass": "preview-site-name-text"
+        },
+        {
+          "label": "Primary Color",
+          "id": "primary-color",
+          "type": "color",
+          "default": "#4f46e5",
+          "targetStyle": "backgroundColor"
+        },
+        {
+          "label": "Hero Heading",
+          "id": "hero-heading",
+          "type": "text",
+          "default": "Savor the Art of Fine Dining",
+          "selector": "h1"
+        }
+      ]
+    },
+    {
+      "id": "blog",
+      "name": "Blog",
+      "tagline": "Engaging Content Publisher",
+      "description": "Built for writers, news creators, and content marketers. Fully optimized for text readability and post indexing.",
+      "code": "# content/pages/index.mdx\n---\ntitle: \"Blog Home\"\ndescription: \"Insights, ideas, and updates\"\npageLayout: \"full\"\n---\n<Hero \n  heading=\"The Modern Publisher\" \n  subheading=\"Exploring the intersection of tech, design, and business strategy. Subscribe to get our weekly digest.\" \n  badge=\"Our Thoughts\"\n  align=\"center\"\n  actions={[\n    { label: \"Read Welcome Post\", href: \"/posts/welcome\", variant: \"primary\" }\n  ]}\n/>\n\n<ContactForm \n  heading=\"Subscribe to Newsletter\" \n  subheading=\"Join our community of over 5,000 readers. No spam, cancel anytime.\"\n  email=\"newsletter@example.com\"\n  fields={[\n    { label: \"Your Name\", type: \"text\", required: true },\n    { label: \"Email Address\", type: \"email\", required: true }\n  ]}\n/>\n\n# content/pages/posts/first-post.mdx\n---\ntitle: \"The Speed of Static Sites\"\ndescription: \"Why static HTML beats heavy dynamic applications for content presentation\"\npageLayout: \"default\"\n---\n# The Speed of Static Sites\n\nWhen it comes to delivering content, speed is everything. Slow pages lead to high bounce rates and lower conversions.\n\n## Why Static is Faster\n- **No Database Overhead**: Traditional sites query a database for every page request. Static sites are compiled once and served directly as raw HTML/CSS.\n- **Global CDN Delivery**: Static files can be cached and distributed globally to the edge, close to your users.\n- **Improved Security**: Without an active database or server-side scripting runtime, the attack surface is virtually zero.\n\nThat's why we build MYSITEBOT with **Astro**—a modern static site builder designed for content-focused sites.\n\n# content/pages/posts/welcome.mdx\n---\ntitle: \"Welcome to Our Blog\"\ndescription: \"Why we started this blog and what to expect\"\npageLayout: \"default\"\n---\n# Welcome to Our Blog!\n\nWelcome! We are incredibly excited to launch this new publication space. \n\n## What We'll Write About\nOur focus is on three key areas:\n1. **Design Systems**: Crafting reusable layout interfaces that make building sites faster.\n2. **AI-driven Automation**: How LLMs and autonomous agents are shaping coding workflows.\n3. **Static Sites**: Performance benefits of compiling content statically.\n\nThank you for reading, and make sure to subscribe on our homepage to never miss an update!",
+      "details": "A content-driven blog website configured with chronological post listing, featured article highlight slots, and tags. Designed for readability and SEO indexing.",
+      "props": {
+        "homepage": "index.mdx (Newsletter subscribe, Article feed list)",
+        "welcome post": "posts/welcome.mdx (Sample markdown post)",
+        "first post": "posts/first-post.mdx (First actual post structure)",
+        "navigation": "Home (/)"
+      },
+      "hasNavbar": true,
+      "hasBlogPosts": true,
+      "editableFields": [
+        {
+          "label": "Site Name",
+          "id": "site-name",
+          "type": "text",
+          "default": "Modern Breadth",
+          "targetClass": "preview-site-name-text"
+        },
+        {
+          "label": "Primary Color",
+          "id": "primary-color",
+          "type": "color",
+          "default": "#4f46e5",
+          "targetStyle": "backgroundColor"
+        },
+        {
+          "label": "Blog Header",
+          "id": "blog-header",
+          "type": "text",
+          "default": "Modern Breadth",
+          "selector": "h3"
+        }
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "hero",
+      "name": "Hero",
+      "tagline": "First Impressions Matter",
+      "description": "High-impact opening section with clear CTAs, badges, and edge-to-edge imagery. Optimized for conversion.",
+      "code": "<Hero \n  badge=\"Introducing mysite.bot 2.0\"\n  heading=\"Build your dream business with Sam.\"\n  subheading=\"The AI agent that builds, deploys and manages your entire website.\"\n  align=\"center\"\n  actions={[\n    { label: \"Get Started Free\", href: \"/get-started\", variant: \"primary\" },\n    { label: \"Request a Demo\", href: \"/demo\", variant: \"secondary\" }\n  ]}\n/>",
+      "details": "The Hero component is the crown jewel of our atomic library. It features ultra-bold typography, responsive layout switching (center vs left), and intelligent badge placement. It's designed to reduce bounce rates and guide users immediately toward your primary call to action.",
+      "props": {
+        "heading": "Build your dream business with Sam.",
+        "subheading": "The AI agent that builds, deploys and manages your entire website.",
+        "badge": "Introducing mysite.bot 2.0",
+        "align": "center | left",
+        "actions": "[{ label, href, variant }]"
+      },
+      "previewProps": {
+        "badge": "Introducing mysite.bot 2.0",
+        "heading": "Build your dream business with Sam.",
+        "subheading": "The AI agent that builds, deploys and manages your entire website.",
+        "align": "center",
+        "actions": [
+          {
+            "label": "Get Started Free",
+            "href": "/get-started",
+            "variant": "primary"
+          },
+          {
+            "label": "Request a Demo",
+            "href": "/demo",
+            "variant": "secondary"
+          }
+        ]
+      },
+      "editableFields": [
+        {
+          "label": "Badge Text",
+          "id": "badge",
+          "type": "text",
+          "default": "Introducing mysite.bot 2.0",
+          "selector": "span"
+        },
+        {
+          "label": "Hero Heading",
+          "id": "hero-heading",
+          "type": "text",
+          "default": "Build your dream business with Sam.",
+          "selector": "h1"
+        },
+        {
+          "label": "Hero Subheading",
+          "id": "hero-subheading",
+          "type": "text",
+          "default": "The AI agent that builds, deploys and manages your entire website.",
+          "selector": "p"
+        },
+        {
+          "label": "Primary Color",
+          "id": "primary-color",
+          "type": "color",
+          "default": "#6366f1",
+          "targetStyle": "backgroundColor"
+        }
+      ]
+    },
+    {
+      "id": "pricing",
+      "name": "Pricing",
+      "tagline": "Conversion Focused",
+      "description": "Transparent, tiered pricing tables with feature lists, monthly/yearly toggles, and 'Most Popular' highlights.",
+      "code": "<Pricing \n  heading=\"Simple & Transparent Pricing\"\n  subheading=\"Choose the perfect plan for your business needs.\"\n  plans={[\n    { \n      name: \"Basic\", \n      price: \"$19\", \n      period: \"month\", \n      features: [\"5 Users\", \"10 GB Storage\", \"Core Analytics\"], \n      ctaLabel: \"Get Started\" \n    },\n    { \n      name: \"Pro\", \n      price: \"$49\", \n      period: \"month\", \n      features: [\"25 Users\", \"100 GB Storage\", \"Advanced Analytics\", \"Priority Support\"], \n      highlighted: true, \n      ctaLabel: \"Upgrade to Pro\" \n    }\n  ]}\n/>",
+      "details": "Our Pricing component is engineered for trust. It includes a flexible grid that handles up to 4 tiers, automatic currency formatting, and a 'Most Popular' ribbon that increases conversion by up to 15%. Fully schema-aware, meaning Sam can update your rates in seconds.",
+      "props": {
+        "heading": "Simple pricing for everyone.",
+        "plans": "[{ name, price, features, highlighted }]"
+      },
+      "previewProps": {
+        "heading": "Simple & Transparent Pricing",
+        "subheading": "Choose the perfect plan for your business needs.",
+        "plans": [
+          {
+            "name": "Basic",
+            "price": "$19",
+            "period": "month",
+            "features": [
+              "5 Users",
+              "10 GB Storage",
+              "Core Analytics"
+            ],
+            "ctaLabel": "Get Started",
+            "ctaHref": "#"
+          },
+          {
+            "name": "Pro",
+            "price": "$49",
+            "period": "month",
+            "features": [
+              "25 Users",
+              "100 GB Storage",
+              "Advanced Analytics",
+              "Priority Support"
+            ],
+            "highlighted": true,
+            "ctaLabel": "Upgrade to Pro",
+            "ctaHref": "#"
+          }
+        ]
+      },
+      "editableFields": [
+        {
+          "label": "Pricing Heading",
+          "id": "pricing-heading",
+          "type": "text",
+          "default": "Simple & Transparent Pricing",
+          "selector": "h2"
+        },
+        {
+          "label": "Primary Color",
+          "id": "primary-color",
+          "type": "color",
+          "default": "#4f46e5",
+          "targetStyle": "backgroundColor"
+        }
+      ]
+    },
+    {
+      "id": "features",
+      "name": "Features",
+      "tagline": "Value Propositions",
+      "description": "Grid-based benefit sections with icon support. Perfect for explaining complex product offerings simply.",
+      "code": "<Features \n  heading=\"Everything you need.\"\n  subheading=\"Powerful tools designed to simplify your workflow.\"\n  features={[\n    { \n      title: \"Task Automation\", \n      description: \"Automate repetitive tasks with built-in triggers.\", \n      icon: \"settings\" \n    },\n    { \n      title: \"Real-time Collaboration\", \n      description: \"Sync with your team instantly across all boards.\", \n      icon: \"users\" \n    },\n    { \n      title: \"Advanced Analytics\", \n      description: \"Gain actionable insights with detailed reports.\", \n      icon: \"bar-chart\" \n    }\n  ]}\n/>",
+      "details": "Explain your value clearly. The Features component supports 150+ Lucide icons and a 3-column grid that collapses gracefully on mobile. Each card is optimized for readability and scan-ability.",
+      "props": {
+        "heading": "Everything you need.",
+        "features": "[{ title, description, icon }]"
+      },
+      "previewProps": {
+        "heading": "Everything you need.",
+        "subheading": "Powerful tools designed to simplify your workflow.",
+        "features": [
+          {
+            "title": "Task Automation",
+            "description": "Automate repetitive tasks with built-in triggers.",
+            "icon": "settings"
+          },
+          {
+            "title": "Real-time Collaboration",
+            "description": "Sync with your team instantly across all boards.",
+            "icon": "users"
+          },
+          {
+            "title": "Advanced Analytics",
+            "description": "Gain actionable insights with detailed reports.",
+            "icon": "bar-chart"
+          }
+        ]
+      },
+      "editableFields": [
+        {
+          "label": "Features Heading",
+          "id": "features-heading",
+          "type": "text",
+          "default": "Everything you need.",
+          "selector": "h2"
+        },
+        {
+          "label": "Primary Color",
+          "id": "primary-color",
+          "type": "color",
+          "default": "#4f46e5",
+          "targetStyle": "backgroundColor"
+        }
+      ]
+    },
+    {
+      "id": "testimonials",
+      "name": "Testimonials",
+      "tagline": "Social Proof",
+      "description": "Elegant review cards with author metadata, star ratings, and avatars. Build instant trust with visitors.",
+      "code": "<Testimonials \n  heading=\"Loved by thousands.\"\n  testimonials={[\n    { \n      quote: \"SyncFlow transformed our team efficiency overnight!\", \n      author: \"Jessica L.\", \n      role: \"CTO at TechCorp\" \n    },\n    { \n      quote: \"A must-have platform for modern startups.\", \n      author: \"David K.\", \n      role: \"Founder at InnovateUI\" \n    }\n  ]}\n/>",
+      "details": "Social proof is the strongest sales tool. This component pulls data from your verified reviews and presents them in a carousel or grid. Includes star rating support and automated author avatar clipping.",
+      "props": {
+        "heading": "Loved by thousands.",
+        "testimonials": "[{ quote, author, role, avatar }]"
+      },
+      "previewProps": {
+        "heading": "Loved by thousands.",
+        "testimonials": [
+          {
+            "quote": "SyncFlow transformed our team efficiency overnight!",
+            "author": "Jessica L.",
+            "role": "CTO at TechCorp"
+          },
+          {
+            "quote": "A must-have platform for modern startups.",
+            "author": "David K.",
+            "role": "Founder at InnovateUI"
+          }
+        ]
+      },
+      "editableFields": [
+        {
+          "label": "Testimonials Heading",
+          "id": "testimonials-heading",
+          "type": "text",
+          "default": "Loved by thousands.",
+          "selector": "h2"
+        }
+      ]
+    },
+    {
+      "id": "gallery",
+      "name": "Gallery",
+      "tagline": "Visual Showcase",
+      "description": "Dynamic image grids with hover effects, lightboxes, and captions. Perfect for portfolios or product shots.",
+      "code": "<Gallery \n  heading=\"Our Work\"\n  columns={3}\n  images={[\n    { src: \"/static/sam_hero.png\", alt: \"Brand Design Showcase\", caption: \"SyncFlow identity\" },\n    { src: \"/static/sam.webp\", alt: \"Mobile Application\", caption: \"iOS design\" }\n  ]}\n/>",
+      "details": "A high-performance image gallery that uses Astro's built-in image optimization. Features include masonry layout support, interactive captions, and zero-JS lightbox previews.",
+      "props": {
+        "heading": "Our Work",
+        "columns": "2 | 3 | 4",
+        "images": "[{ src, alt, caption }]"
+      },
+      "previewProps": {
+        "heading": "Our Work",
+        "columns": 3,
+        "images": [
+          {
+            "src": "/static/sam_hero.png",
+            "alt": "Brand Design Showcase",
+            "caption": "SyncFlow identity"
+          },
+          {
+            "src": "/static/sam.webp",
+            "alt": "Mobile Application",
+            "caption": "iOS design"
+          }
+        ]
+      },
+      "editableFields": [
+        {
+          "label": "Gallery Heading",
+          "id": "gallery-heading",
+          "type": "text",
+          "default": "Our Work",
+          "selector": "h2"
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "name": "ContactForm",
+      "tagline": "Lead Generation",
+      "description": "Customizable capture forms with smart validation and automatic email routing to your business inbox.",
+      "code": "<ContactForm \n  heading=\"Get in Touch\"\n  subheading=\"Send us a message and we'll reply shortly.\"\n  email=\"hello@example.com\"\n  fields={[\n    { label: \"Your Name\", type: \"text\", required: true },\n    { label: \"Email Address\", type: \"email\", required: true },\n    { label: \"Message\", type: \"textarea\", required: true }\n  ]}\n/>",
+      "details": "Never miss a lead. Our ContactForm is pre-integrated with Sam's notification engine. It supports custom fields, real-time validation, and follows strict GDPR-compliant privacy standards with zero third-party tracking cookies.",
+      "props": {
+        "heading": "Get in touch",
+        "email": "hello@example.com",
+        "fields": "[{ label, type, required }]"
+      },
+      "previewProps": {
+        "heading": "Get in Touch",
+        "subheading": "Send us a message and we'll reply shortly.",
+        "email": "hello@example.com",
+        "fields": [
+          {
+            "label": "Your Name",
+            "type": "text",
+            "required": true
+          },
+          {
+            "label": "Email Address",
+            "type": "email",
+            "required": true
+          },
+          {
+            "label": "Message",
+            "type": "textarea",
+            "required": true
+          }
+        ]
+      },
+      "editableFields": [
+        {
+          "label": "Form Heading",
+          "id": "contact-heading",
+          "type": "text",
+          "default": "Get in Touch",
+          "selector": "h2"
+        },
+        {
+          "label": "Contact Email",
+          "id": "contact-email",
+          "type": "text",
+          "default": "hello@example.com",
+          "targetClass": "preview-contact-email-text"
+        }
+      ]
+    }
+  ],
+  "uiComponents": [
+    {
+      "id": "ui-button",
+      "name": "Button",
+      "tagline": "Atomic UI Component",
+      "description": "A dynamic element that renders an anchor link when href is present, otherwise a standard HTML button.",
+      "details": "The Button component handles action states, styles, and transitions. It can be primary or secondary.",
+      "props": {
+        "href": "Optional link URL (string)",
+        "type": "'button' | 'submit' | 'reset' (string)",
+        "variant": "'primary' | 'secondary' (string)"
+      },
+      "previewProps": {
+        "variant": "primary"
+      },
+      "editableFields": [
+        {
+          "label": "Button Text",
+          "id": "button-text",
+          "type": "text",
+          "default": "Click Me",
+          "selector": "button, a"
+        },
+        {
+          "label": "Variant (primary / secondary)",
+          "id": "button-variant",
+          "type": "text",
+          "default": "primary",
+          "selector": "button, a",
+          "targetAttribute": "data-variant"
+        },
+        {
+          "label": "Link Href",
+          "id": "button-href",
+          "type": "text",
+          "default": "",
+          "selector": "button, a",
+          "targetAttribute": "href"
+        }
+      ]
+    },
+    {
+      "id": "ui-input",
+      "name": "Input",
+      "tagline": "Atomic UI Component",
+      "description": "A wrapper around the standard HTML <input> tag, styled with premium focus animations.",
+      "details": "Standardized text input element that fits cleanly into any form layout.",
+      "props": {
+        "type": "Input type (e.g. 'text', 'email', etc., string)",
+        "placeholder": "Input placeholder (string)",
+        "required": "Mark field as required (boolean)",
+        "name": "Form variable name (string)"
+      },
+      "previewProps": {
+        "placeholder": "Type something..."
+      },
+      "editableFields": [
+        {
+          "label": "Placeholder",
+          "id": "input-placeholder",
+          "type": "text",
+          "default": "Type something...",
+          "selector": "input",
+          "targetAttribute": "placeholder"
+        },
+        {
+          "label": "Input Name",
+          "id": "input-name",
+          "type": "text",
+          "default": "email",
+          "selector": "input",
+          "targetAttribute": "name"
+        },
+        {
+          "label": "Required (true / false)",
+          "id": "input-required",
+          "type": "text",
+          "default": "true",
+          "selector": "input",
+          "targetAttribute": "required"
+        }
+      ]
+    },
+    {
+      "id": "ui-textarea",
+      "name": "Textarea",
+      "tagline": "Atomic UI Component",
+      "description": "A wrapper around the standard HTML <textarea> tag, designed for multiline message boxes.",
+      "details": "Pre-styled multi-line input field supporting custom row heights.",
+      "props": {
+        "rows": "Number of text lines (number)",
+        "placeholder": "Input placeholder (string)",
+        "required": "Mark field as required (boolean)",
+        "name": "Form variable name (string)"
+      },
+      "previewProps": {
+        "placeholder": "Enter message...",
+        "rows": "4"
+      },
+      "editableFields": [
+        {
+          "label": "Placeholder",
+          "id": "textarea-placeholder",
+          "type": "text",
+          "default": "Enter message...",
+          "selector": "textarea",
+          "targetAttribute": "placeholder"
+        },
+        {
+          "label": "Textarea Name",
+          "id": "textarea-name",
+          "type": "text",
+          "default": "message",
+          "selector": "textarea",
+          "targetAttribute": "name"
+        },
+        {
+          "label": "Rows",
+          "id": "textarea-rows",
+          "type": "text",
+          "default": "4",
+          "selector": "textarea",
+          "targetAttribute": "rows"
+        }
+      ]
+    }
+  ]
+}

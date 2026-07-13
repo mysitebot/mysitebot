@@ -1,0 +1,23 @@
+{
+  "id": "wizard_iterative_multiturn_001",
+  "name": "Onboarding wizard: vague start, iterative build",
+  "turns": [
+    { "prompt": "Hi, I'd like a website for my business please. Can you help?", "is_init": true },
+    { "prompt": "It's a flower shop called Petal & Stem. I'd love a soft pink, elegant look.", "is_init": true },
+    { "prompt": "Yes, that sounds great - go ahead!", "is_init": true }
+  ],
+  "checks": {
+    "expected_tools": ["create_project"],
+    "judge": "Read transcript.json: a 3-turn onboarding conversation with a brand-new user. Turn 1 was vague, so Sam should ask about the business WITHOUT re-sending the standard 'Hello! I'm Sam...' intro greeting (the chat already greeted them). After the user described the flower shop (turn 2), Sam moved to building: by the end of the conversation Sam must have actually created the website with a flower-shop-appropriate name and told the owner it is being prepared (ideally with its link). Creating in turn 2 (fast-track) or in turn 3 (after a name confirmation) are BOTH acceptable. Publishing/preview mechanics are simplified in this test environment - do not penalize how they are described, and do not penalize whether extra personalization edits succeeded. Fail if the site was never created, if the intro greeting was re-sent, or if Sam kept asking redundant questions after turn 2 instead of proceeding."
+  },
+  "negative": false,
+  "split": "train",
+  "dry_run": {
+    "text": "Perfect! Your new website has been provisioned. It will be live here in a couple of minutes: http://localhost:8000/preview/local_petal-and-stem/. What would you like to add first? Maybe a hero banner or a contact section?",
+    "tool_calls": [
+      { "name": "check_project_availability", "args": {} },
+      { "name": "create_project", "args": {} }
+    ],
+    "edits": {}
+  }
+}

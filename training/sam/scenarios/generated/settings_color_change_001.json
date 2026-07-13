@@ -1,0 +1,23 @@
+{
+  "id": "settings_color_change_001",
+  "name": "Site-wide brand color change",
+  "prompt": "Our brand color has changed to forest green. Please update my site to use it.",
+  "checks": {
+    "expected_tools": ["branch_and_edit_content"],
+    "files_changed": ["content/settings.yaml"],
+    "build": true,
+    "judge": "The site's primary color in the settings was changed to a plausible forest-green value, nothing unrelated was modified, and Sam described the change in plain non-technical terms."
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "I've updated your site's main color to forest green - buttons and accents across your pages will use it once published.",
+    "tool_calls": [
+      { "name": "read_content_file", "args": {} },
+      { "name": "branch_and_edit_content", "args": {} },
+      { "name": "create_publish_request", "args": {} }
+    ],
+    "edits": {
+      "content/settings.yaml": "site:\n  name: \"My Business\"\n  tagline: \"The best in the business\"\n  primaryColor: \"#228B22\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nsocial:\n  twitter: \"\"\n  linkedin: \"\"\n  instagram: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n\nanalytics:\n  enabled: false\n  website_id: \"\"\n"
+    }
+  }
+}

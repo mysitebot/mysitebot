@@ -1,0 +1,51 @@
+{
+  "id": "selective_email_update_001",
+  "name": "Selective Email Update With a Protected Quote",
+  "prompt": "Our contact email changed to hello@newdomain.com \u2014 please update it in the site settings, but leave the founder's personal email that's quoted in our About page testimonial exactly as it is.",
+  "setup": [
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"Crumb & Crust\"\n  tagline: \"Fresh bread, baked daily\"\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\ncontact:\n  email: \"hello@olddomain.com\"\n"
+    },
+    {
+      "path": "content/pages/about.mdx",
+      "content": "---\ntitle: \"About\"\ndescription: \"Learn about our bakery\"\npageLayout: \"full\"\n---\n<Article\n  heading=\"Our Story\"\n  paragraphs={[\"Family-owned since 1998, baking fresh every day.\"]}\n/>\n\n<Article\n  badge=\"Testimonial\"\n  heading=\"What Our Customers Say\"\n  paragraphs={[\"'Reach out to our founder directly at jane@personalmail.com for custom orders.' \u2014 A loyal customer\"]}\n/>\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/settings.yaml"
+    ],
+    "file_contains": {
+      "content/settings.yaml": [
+        "hello@newdomain.com"
+      ],
+      "content/pages/about.mdx": [
+        "jane@personalmail.com"
+      ]
+    },
+    "file_not_contains": {
+      "content/settings.yaml": [
+        "hello@olddomain.com"
+      ]
+    },
+    "build": true,
+    "judge": "Sam updated only the site-wide contact email in settings.yaml to hello@newdomain.com and did not touch the About page, where the founder's personal email jane@personalmail.com remains exactly as quoted in the testimonial. Fail if about.mdx was modified at all, if the personal email was changed or removed, or if settings.yaml still shows the old email."
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "Sam confirms it updated the site's contact email to hello@newdomain.com in settings, and left the About page testimonial's personal email untouched.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/settings.yaml": "site:\n  name: \"Crumb & Crust\"\n  tagline: \"Fresh bread, baked daily\"\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\ncontact:\n  email: \"hello@newdomain.com\"\n"
+    }
+  }
+}

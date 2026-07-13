@@ -1,0 +1,44 @@
+{
+  "id": "article_image_left_001",
+  "name": "Add Left-Positioned Image to About Page Article",
+  "prompt": "On our About page, add a photo of our team to the left of the 'Our Story' text. A placeholder image is fine.",
+  "setup": [
+    {
+      "path": "content/pages/about.mdx",
+      "content": "---\ntitle: \"About\"\ndescription: \"Learn about us\"\npageLayout: \"full\"\n---\n<Article\n  heading=\"Our Story\"\n  paragraphs={[\n    \"We have been serving the community since 1995.\",\n    \"Our team of passionate bakers crafts every loaf with care.\"\n  ]}\n/>"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "file_contains": {
+      "content/pages/about.mdx": [
+        "imagePosition",
+        "Our Story"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/about",
+        "selector": "body",
+        "contains": "Our Story"
+      }
+    ],
+    "judge": "An image is added to the 'Our Story' Article section with imagePosition set to 'left', using a placeholder src and descriptive alt text; all existing heading and paragraph content is preserved unchanged"
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "I've added a placeholder team photo to the left side of the 'Our Story' section on your About page, with the text flowing to the right.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/about.mdx": "---\ntitle: \"About\"\ndescription: \"Learn about us\"\npageLayout: \"full\"\n---\n<Article\n  heading=\"Our Story\"\n  paragraphs={[\n    \"We have been serving the community since 1995.\",\n    \"Our team of passionate bakers crafts every loaf with care.\"\n  ]}\n  image={{ src: \"/images/team-placeholder.jpg\", alt: \"Our team\" }}\n  imagePosition=\"left\"\n/>"
+    }
+  }
+}

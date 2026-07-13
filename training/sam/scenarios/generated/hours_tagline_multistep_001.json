@@ -1,0 +1,63 @@
+{
+  "id": "hours_tagline_multistep_001",
+  "name": "Multi-Step Hours Update Across Page and Settings",
+  "prompt": "We're extending our hours \u2014 update the About page to say we're now open until 8pm on weekdays, and also update our tagline to 'Now open late!' so it matches.",
+  "setup": [
+    {
+      "path": "content/pages/about.mdx",
+      "content": "---\ntitle: \"About\"\ndescription: \"About our bakery\"\npageLayout: \"full\"\n---\n<Article\n  heading=\"Our Story\"\n  paragraphs={[\"Fresh Bread Co. has been serving the neighborhood since 1998.\", \"We're open Monday through Friday, 7am to 6pm.\"]}\n/>\n"
+    },
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"Fresh Bread Co.\"\n  tagline: \"Baked daily, with love\"\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\ncontact:\n  email: \"hello@freshbreadco.com\"\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/about.mdx",
+      "content/settings.yaml"
+    ],
+    "file_contains": {
+      "content/pages/about.mdx": [
+        "8pm"
+      ],
+      "content/settings.yaml": [
+        "Now open late!"
+      ]
+    },
+    "file_not_contains": {
+      "content/pages/about.mdx": [
+        "7am to 6pm"
+      ],
+      "content/settings.yaml": [
+        "Baked daily, with love"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/about",
+        "selector": "body",
+        "contains": "8pm"
+      }
+    ],
+    "judge": "Sam updates the About page's stated weekday closing time to 8pm and updates the site tagline to 'Now open late!', without altering the business name, navigation, contact email, or the rest of the About page content."
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "Sam updates the hours sentence on the About page to close at 8pm on weekdays and changes the site tagline in settings to 'Now open late!', leaving everything else in both files unchanged.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/about.mdx": "---\ntitle: \"About\"\ndescription: \"About our bakery\"\npageLayout: \"full\"\n---\n<Article\n  heading=\"Our Story\"\n  paragraphs={[\"Fresh Bread Co. has been serving the neighborhood since 1998.\", \"We're open Monday through Friday, 7am to 8pm.\"]}\n/>\n",
+      "content/settings.yaml": "site:\n  name: \"Fresh Bread Co.\"\n  tagline: \"Now open late!\"\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\ncontact:\n  email: \"hello@freshbreadco.com\"\n"
+    }
+  }
+}

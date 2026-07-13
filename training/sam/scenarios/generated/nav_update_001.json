@@ -1,0 +1,35 @@
+{
+  "id": "nav_update_001",
+  "name": "Update Navigation Menu",
+  "prompt": "Add a 'Resources' page to my site, and make sure it shows up in the top navigation menu, right after 'Home'.",
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/resources.mdx",
+      "content/settings.yaml"
+    ],
+    "file_contains": {
+      "content/settings.yaml": [
+        "label: \"Resources\"",
+        "label: \"Home\""
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Resources"
+      },
+      {
+        "page": "/",
+        "selector": "nav",
+        "contains": "Home"
+      }
+    ],
+    "judge": "A new Resources page exists and appears in the navigation menu defined in settings.yaml, positioned immediately after the pre-existing 'Home' entry. The 'Home' navigation entry must still be present — it must not have been removed when Resources was added."
+  },
+  "negative": false
+}

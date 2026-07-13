@@ -1,0 +1,104 @@
+---
+import { resolvePath } from '../../utils/paths';
+
+/**
+ * Testimonials Component - Property-Driven Architecture
+ */
+interface Props {
+  /** Optional anchor id for in-page links (e.g. href="#testimonials") */
+  id?: string;
+  heading?: string;
+  /** Supporting description shown below the heading */
+  subheading?: string;
+  /** Background color for the outer section (Tailwind class, e.g. 'bg-white') */
+  backgroundColor?: string;
+  /** Base text color applied to heading and subheading (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark. */
+  textColor?: string;
+  /** Override color for the section heading only (Tailwind class, e.g. 'text-red-600'). Takes precedence over textColor for the h2 element. */
+  headingColor?: string;
+  /** Layout variant: 'grid' for card grid (default), 'split' for left-text right-image */
+  layout?: 'grid' | 'split';
+  /** Number of columns in the card grid (default: 3). Only applies when layout='grid'. */
+  columns?: 2 | 3 | 4;
+  /** Tailwind max-width class constraining the inner content container (e.g. 'max-w-2xl', 'max-w-4xl'). Defaults to 'max-w-7xl'. */
+  maxWidth?: string;
+  /** Text alignment for heading and subheading: 'center' (default), 'left', or 'right' */
+  align?: 'left' | 'center' | 'right';
+  testimonials: Array<{
+    quote: string;
+    author: string;
+    role?: string;
+    avatar?: string;
+    image?: { src: string; alt: string; };
+  }>;
+}
+
+const { id, heading = "Trusted by businesses worldwide", subheading, backgroundColor = "bg-gray-50", textColor, headingColor, layout = 'grid', columns = 3, maxWidth = 'max-w-7xl', align = 'center', testimonials = [] } = Astro.props;
+const textAlignClass = align === 'left' ? 'text-left' : align === 'right' ? 'text-right' : 'text-center';
+const gridCols = columns === 2 ? 'lg:grid-cols-2' : columns === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3';
+---
+
+<section id={id} class={`py-24 px-6 ${backgroundColor} ${textColor ?? ''}`}>
+  <div class={`${maxWidth} mx-auto`}>
+    {heading && <h2 class={`text-4xl font-bold mb-4 ${textAlignClass} ${headingColor || textColor || 'text-gray-900'}`}>{heading}</h2>}
+    {subheading && <p class={`text-lg ${textAlignClass} mb-12 ${textColor ?? 'text-gray-600'}`}>{subheading}</p>}
+
+    {layout === 'split' ? (
+      <div class="space-y-16">
+        {testimonials.map((item, idx) => (
+          <div class={`flex flex-col md:flex-row gap-8 items-center ${idx % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
+            <div class="w-full md:w-1/2">
+              <p class="text-gray-600 italic mb-6 text-lg leading-relaxed">"{item.quote}"</p>
+              <div class="flex items-center">
+                {item.avatar ? (
+                  <img src={resolvePath(item.avatar)} alt={item.author} class="w-12 h-12 rounded-full mr-4 object-cover" />
+                ) : (
+                  <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold mr-4">
+                    {item.author[0]}
+                  </div>
+                )}
+                <div>
+                  <p class="font-bold text-gray-900">{item.author}</p>
+                  {item.role && <p class="text-xs text-gray-500 uppercase tracking-wider">{item.role}</p>}
+                </div>
+              </div>
+            </div>
+            {item.image && (
+              <div class="w-full md:w-1/2">
+                <img src={item.image.src} alt={item.image.alt} class="w-full h-64 object-cover rounded" />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div class={`grid grid-cols-1 md:grid-cols-2 ${gridCols} gap-8`}>
+        {testimonials.map(item => (
+          <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col">
+            <div class="flex-grow">
+              <div class="flex text-indigo-400 mb-4">
+                {[...Array(5)].map(() => (
+                  <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                ))}
+              </div>
+              <p class="text-gray-600 italic mb-8 leading-relaxed">"{item.quote}"</p>
+            </div>
+            <div class="flex items-center mt-6">
+              {item.avatar ? (
+                <img src={resolvePath(item.avatar)} alt={item.author} class="w-12 h-12 rounded-full mr-4 object-cover" />
+              ) : (
+                <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold mr-4">
+                  {item.author[0]}
+                </div>
+              )}
+              <div>
+                <p class="font-bold text-gray-900">{item.author}</p>
+                {item.role && <p class="text-xs text-gray-500 uppercase tracking-wider">{item.role}</p>}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</section>

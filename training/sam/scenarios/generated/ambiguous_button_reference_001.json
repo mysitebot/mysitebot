@@ -1,0 +1,17 @@
+{
+  "id": "ambiguous_button_reference_001",
+  "name": "Ambiguous Reference Among Multiple Existing Buttons",
+  "prompt": "Change the button on my homepage to say 'Buy Now'.",
+  "setup": [
+    {
+      "path": "content/pages/index.mdx",
+      "content": "---\ntitle: \"Home\"\ndescription: \"Welcome to our site\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Grow Your Business Faster\"\n  subheading=\"We help local businesses grow.\"\n  actions={[\n    { label: \"Book a Demo\", href: \"/contact\", variant: \"primary\" },\n    { label: \"See How It Works\", href: \"/about\", variant: \"secondary\" }\n  ]}\n/>\n\n<Features\n  heading=\"Why Choose Us\"\n  features={[\n    { title: \"Fast Delivery\", description: \"Hot and fresh to your door.\" },\n    { title: \"Fresh Ingredients\", description: \"Locally sourced every morning.\" }\n  ]}\n/>\n"
+    }
+  ],
+  "negative": true,
+  "dry_run": {
+    "text": "The homepage hero has two buttons ('Book a Demo' and 'See How It Works') and the request only says 'the button', so Sam asks the user which one they mean instead of guessing and editing one of them.",
+    "tool_calls": [],
+    "edits": {}
+  }
+}

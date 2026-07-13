@@ -1,0 +1,50 @@
+{
+  "id": "sam_self_heal_settings_001",
+  "name": "Self-Heal a YAML Indentation Break In Settings",
+  "prompt": "The website build failed after your last change. Here are the relevant build logs:\n\n[build] Failed to build.\nYAMLException: bad indentation of a mapping entry at line 8, column 9:\n        url: \"/about\"\n        ^\n  file: content/settings.yaml\n\nPlease diagnose the error (likely a syntax error in MDX or YAML), read the affected file, and commit a corrected version.",
+  "setup": [
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"Golden Hour Bakery\"\n  tagline: \"Baked fresh, every day\"\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n        url: \"/about\"\n  - label: \"Services\"\n    url: \"/services\"\ncontact:\n  email: \"hello@goldenhourbakery.com\"\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/settings.yaml"
+    ],
+    "file_contains": {
+      "content/settings.yaml": [
+        "name: \"Golden Hour Bakery\"",
+        "tagline: \"Baked fresh, every day\"",
+        "label: \"About\"",
+        "url: \"/about\"",
+        "email: \"hello@goldenhourbakery.com\""
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/about",
+        "selector": "nav",
+        "contains": "About"
+      }
+    ],
+    "judge": "Sam identifies the bad YAML indentation on the 'About' navigation entry in settings.yaml, corrects it to valid YAML while preserving the site name, tagline, all navigation items, and the contact email exactly, and the build succeeds."
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "Sam reads settings.yaml, finds the over-indented 'url' key under the About nav entry causing a YAML parse failure, and commits a corrected file with consistent indentation and all original values intact.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/settings.yaml": "site:\n  name: \"Golden Hour Bakery\"\n  tagline: \"Baked fresh, every day\"\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"About\"\n    url: \"/about\"\n  - label: \"Services\"\n    url: \"/services\"\ncontact:\n  email: \"hello@goldenhourbakery.com\"\n"
+    }
+  }
+}

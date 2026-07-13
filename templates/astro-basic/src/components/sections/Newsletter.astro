@@ -1,0 +1,148 @@
+---
+import { resolvePath } from '../../utils/paths';
+/**
+ * Newsletter Component - A simple lead capture form for mailing lists.
+ * Typically used in the footer area or as a call-to-action section.
+ * NOTE: this component collects an email address ONLY. If the request asks
+ * for any additional named field (e.g. first name, last name, phone), use the
+ * ContactForm component with a `fields` array instead — Newsletter cannot
+ * render extra fields.
+ */
+interface Props {
+  /** Optional anchor id for in-page links (e.g. href="#signup") */
+  id?: string;
+  /** The main title for the newsletter (e.g., "Join our newsletter") */
+  heading: string;
+  /** Supporting text (e.g., "Stay updated with our latest collections") */
+  subheading?: string;
+  /** Placeholder text for the email input field */
+  placeholder?: string;
+  /** Label for the submit button */
+  buttonLabel?: string;
+  /** Optional image for split layout */
+  image?: { src: string; alt: string; };
+  /** Layout style: 'stacked' (default) or 'split' (image on left, form on right) */
+  layout?: 'stacked' | 'split';
+  /** Background color (Tailwind class, e.g., 'bg-indigo-600') */
+  backgroundColor?: string;
+  /** Base text color for headings and body text (Tailwind class, e.g., 'text-white'). Use when backgroundColor is dark. */
+  textColor?: string;
+  /** Button color (Tailwind class, e.g., 'bg-pink-500'). Defaults to inheriting from section styling. */
+  buttonColor?: string;
+}
+
+type Slots = {
+  default?: any;
+};
+
+import Input from '../ui/Input.astro';
+import Button from '../ui/Button.astro';
+
+const {
+  id,
+  heading = "Subscribe to our newsletter",
+  subheading = "Get the latest news and updates delivered straight to your inbox.",
+  placeholder = "Enter your email",
+  buttonLabel = "Subscribe",
+  image,
+  layout = 'stacked',
+  backgroundColor = 'bg-indigo-600',
+  textColor,
+  buttonColor,
+} = Astro.props;
+
+const { default: slot } = Astro.slots;
+---
+
+{layout === 'split' && image ? (
+  <section id={id} role="region" aria-label="Newsletter" class={`py-16 px-6 ${backgroundColor} my-16 max-w-6xl mx-auto overflow-hidden`}>
+    <div class="flex flex-col md:flex-row gap-0">
+      <div class="w-full md:w-1/2 overflow-hidden">
+        <img src={resolvePath(image.src)} alt={image.alt} class="w-full h-full object-cover" />
+      </div>
+      <div class="w-full md:w-1/2 flex flex-col justify-center px-6 py-8 md:px-12 md:py-16 bg-gray-50">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          {heading}
+        </h2>
+        {subheading && (
+          <p class="text-gray-600 text-lg mb-8">
+            {subheading}
+          </p>
+        )}
+        <form class="flex flex-col gap-4" data-newsletter-form>
+          <Input
+            type="email"
+            placeholder={placeholder}
+            required
+            class="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-indigo-500"
+          />
+          <Button type="submit" variant="unstyled" class={`${buttonColor ?? 'bg-blue-500'} text-white hover:opacity-90 border-none px-6 py-3 whitespace-nowrap`}>
+            {buttonLabel}
+          </Button>
+        </form>
+        <div class="hidden mt-4 p-3 rounded-xl bg-green-100 text-green-800 text-center text-sm font-medium" data-success-msg>
+          Thanks! You've been subscribed.
+        </div>
+        {slot && (
+          <div class="mt-6 text-gray-700">
+            <slot />
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+) : (
+  <section id={id} role="region" aria-label="Newsletter" class={`py-16 px-6 ${backgroundColor} rounded-3xl my-16 max-w-6xl mx-auto overflow-hidden relative`}>
+    <!-- Decorative background circle -->
+    <div class="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500 rounded-full opacity-50 blur-3xl"></div>
+
+    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
+      <div class="flex-1 text-center md:text-left">
+        <h2 class={`text-3xl md:text-4xl font-bold mb-4 ${textColor ?? 'text-white'}`}>
+          {heading}
+        </h2>
+        {subheading && (
+          <p class={`text-lg max-w-xl ${textColor ?? 'text-indigo-100'}`}>
+            {subheading}
+          </p>
+        )}
+      </div>
+
+      <div class="flex-1 w-full max-w-md">
+        <form class="flex flex-col sm:flex-row gap-4" data-newsletter-form>
+          <div class="flex-1">
+            <Input
+              type="email"
+              placeholder={placeholder}
+              required
+              class="bg-white/10 border-white/20 text-white placeholder:text-indigo-200 focus:bg-white/20"
+            />
+          </div>
+          <Button type="submit" variant="unstyled" class={`${buttonColor ? `${buttonColor} text-white` : 'bg-white text-indigo-600'} hover:opacity-90 border-none px-8 whitespace-nowrap`}>
+            {buttonLabel}
+          </Button>
+        </form>
+        <div class="hidden mt-4 p-3 rounded-xl bg-indigo-500/30 text-white text-center text-sm font-medium" data-success-msg>
+          Thanks! You've been subscribed.
+        </div>
+      </div>
+    </div>
+    {slot && (
+      <div class="mt-6">
+        <slot />
+      </div>
+    )}
+  </section>
+)}
+
+<script>
+  const forms = document.querySelectorAll('[data-newsletter-form]');
+  forms.forEach(form => {
+    const successMsg = form.parentElement?.querySelector('[data-success-msg]');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      (form as HTMLFormElement).reset();
+      if (successMsg) successMsg.classList.remove('hidden');
+    });
+  });
+</script>

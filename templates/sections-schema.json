@@ -1,0 +1,3172 @@
+{
+  "version": 1,
+  "sections": {
+    "Article": {
+      "description": "Article Component - A content card with a heading and one or more body paragraphs. Use this for article intros, about-us prose, or any long-form text section.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#about\")",
+          "kind": "string"
+        },
+        {
+          "name": "badge",
+          "required": false,
+          "type": "string",
+          "description": "Optional small badge label shown above the heading (e.g. \"Featured\", \"News\")",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "Section heading",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Optional subtitle displayed directly below the heading",
+          "kind": "string"
+        },
+        {
+          "name": "paragraphs",
+          "required": true,
+          "type": "string[]",
+          "description": "One or more paragraphs of body text",
+          "kind": "string_list"
+        },
+        {
+          "name": "fontFamily",
+          "required": false,
+          "type": "'sans' | 'serif' | 'mono'",
+          "description": "Primary font family for paragraphs: 'sans' (default), 'serif', or 'mono'",
+          "kind": "enum",
+          "values": [
+            "sans",
+            "serif",
+            "mono"
+          ]
+        },
+        {
+          "name": "image",
+          "required": false,
+          "type": "{ src: string; alt: string; }",
+          "description": "Optional full-width image",
+          "kind": "image"
+        },
+        {
+          "name": "images",
+          "required": false,
+          "type": "Array<{ src: string; alt: string; }>",
+          "description": "Optional array of images for split layout (alternative to single image)",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "src",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "alt",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "imagePosition",
+          "required": false,
+          "type": "'top' | 'bottom' | 'left' | 'right'",
+          "description": "Where to render the image relative to the text: 'top' (above heading), 'bottom' (default, below paragraphs), 'left' or 'right' (side-by-side split layout)",
+          "kind": "enum",
+          "values": [
+            "top",
+            "bottom",
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "imageCircular",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, renders image as circular and overlapping the top of the card",
+          "kind": "boolean"
+        },
+        {
+          "name": "imageAlign",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Horizontal alignment for circular images: 'left' (default), 'center', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the outer section (Tailwind class, e.g., 'bg-gray-100')",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for heading and paragraphs (Tailwind class, e.g., 'text-white'). Overrides the default dark-on-light palette — use when backgroundColor is dark.",
+          "kind": "string"
+        },
+        {
+          "name": "headingColor",
+          "required": false,
+          "type": "string",
+          "description": "Override color for the heading only (Tailwind class, e.g., 'text-pink-500'). Takes precedence over textColor for the heading element.",
+          "kind": "string"
+        },
+        {
+          "name": "badgeColor",
+          "required": false,
+          "type": "string",
+          "description": "Override color for the badge label (Tailwind class, e.g., 'text-red-700'). Defaults to 'text-indigo-500'.",
+          "kind": "string"
+        },
+        {
+          "name": "card",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, renders paragraphs inside a raised card",
+          "kind": "boolean"
+        },
+        {
+          "name": "cardBackgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the raised card (Tailwind class, e.g., 'bg-gray-100'). Defaults to 'bg-white' when card=true.",
+          "kind": "string"
+        },
+        {
+          "name": "maxWidth",
+          "required": false,
+          "type": "string",
+          "description": "Max width constraint (Tailwind class, e.g., 'max-w-3xl')",
+          "kind": "string"
+        },
+        {
+          "name": "layout",
+          "required": false,
+          "type": "'default' | 'centered' | 'wide' | 'split'",
+          "description": "Section layout variant: 'default' (card + maxWidth), 'centered' (centered text, no card), 'wide' (full-width, no maxWidth constraint), 'split' (two-column: text on left, map/image on right)",
+          "kind": "enum",
+          "values": [
+            "default",
+            "centered",
+            "wide",
+            "split"
+          ]
+        },
+        {
+          "name": "action",
+          "required": false,
+          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }",
+          "description": "Optional CTA button rendered below the text",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "variant",
+              "required": false,
+              "kind": "enum",
+              "values": [
+                "primary",
+                "secondary",
+                "success"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "actions",
+          "required": false,
+          "type": "Array<{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }>",
+          "description": "Multiple CTA buttons rendered below the text",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "variant",
+              "required": false,
+              "kind": "enum",
+              "values": [
+                "primary",
+                "secondary",
+                "success"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "actionAlign",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Alignment for action buttons: 'left' (default), 'center', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "sidebar",
+          "required": false,
+          "type": "{ title?: string; links?: Array<{ label: string; href: string; }>; sections?: Array<{ title: string; content?: string; links?: Array<{ label: string; href: string; }> }>; image?: { src: string; alt: string; }; content?: string; backgroundColor?: string; textColor?: string; }",
+          "description": "Optional sidebar with a title and list of links; renders a two-column layout (position controlled by sidebarPosition)",
+          "kind": "unknown"
+        },
+        {
+          "name": "sidebarPosition",
+          "required": false,
+          "type": "'left' | 'right'",
+          "description": "Which side to render the sidebar: 'left' (default) or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "sidebarBackgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the sidebar (Tailwind class, e.g., 'bg-yellow-800'). Overrides sidebar.backgroundColor when present.",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundImage",
+          "required": false,
+          "type": "string",
+          "description": "Background image URL — creates a full-cover background with a subtle overlay",
+          "kind": "string"
+        },
+        {
+          "name": "map",
+          "required": false,
+          "type": "{ src: string; width?: string; height?: string; heading?: string; }",
+          "description": "Optional embedded iframe (e.g., Google Maps embed or YouTube video); rendered below paragraphs, or in the right column when layout='split'",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "src",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "width",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "height",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "heading",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "videoEmbed",
+          "required": false,
+          "type": "string",
+          "description": "YouTube or other iframe embed URL; rendered as a responsive 16:9 iframe below the paragraphs",
+          "kind": "string"
+        },
+        {
+          "name": "bulletPoints",
+          "required": false,
+          "type": "string[]",
+          "description": "Optional bulleted list of items rendered after paragraphs",
+          "kind": "string_list"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment: 'left' (default), 'center', or 'right' — mirrors Hero.align",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        }
+      ]
+    },
+    "Banner": {
+      "description": "Banner Component - A horizontal bar for notifications, secondary CTAs, or brand highlighting.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#promo\")",
+          "kind": "string"
+        },
+        {
+          "name": "text",
+          "required": true,
+          "type": "string",
+          "description": "The text content of the banner",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Optional background color (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Optional text color (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "action",
+          "required": false,
+          "type": "{ label: string; href: string; }",
+          "description": "Optional link/CTA",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "sticky",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, the banner is fixed to the top of the viewport",
+          "kind": "boolean"
+        },
+        {
+          "name": "fixedPosition",
+          "required": false,
+          "type": "'top' | 'bottom'",
+          "description": "Position for fixed banners: 'top' (default) or 'bottom'",
+          "kind": "enum",
+          "values": [
+            "top",
+            "bottom"
+          ]
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment: 'left', 'center' (default), or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        }
+      ]
+    },
+    "Calendar": {
+      "description": "Calendar Component - Displays a grid of events or a schedule.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#events\")",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the section (Tailwind class, e.g. 'bg-black')",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Base text color applied to the whole section (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark.",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "Section heading",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Supporting description",
+          "kind": "string"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment for heading and subheading: 'center' (default), 'left', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "events",
+          "required": true,
+          "type": "Array<{ date: string; title: string; description?: string; time?: string; }>",
+          "description": "Array of events",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "date",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "title",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "description",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "time",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        }
+      ]
+    },
+    "ContactForm": {
+      "description": "ContactForm Component - Property-Driven Architecture Inspired by Fulldev UI for maximum AI-compatibility.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#reservation\")",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Tailwind background-color utility applied to the section (e.g. \"bg-pink-50\", \"bg-white\")",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Tailwind text-color utility applied as the base text color (e.g. \"text-white\"). Use when backgroundColor is dark.",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundImage",
+          "required": false,
+          "type": "string",
+          "description": "Background image URL — creates a full-cover background with a subtle overlay",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "",
+          "kind": "string"
+        },
+        {
+          "name": "email",
+          "required": false,
+          "type": "string",
+          "description": "",
+          "kind": "string"
+        },
+        {
+          "name": "successMessage",
+          "required": false,
+          "type": "string",
+          "description": "",
+          "kind": "string"
+        },
+        {
+          "name": "card",
+          "required": false,
+          "type": "boolean",
+          "description": "If true (default), wraps the form in a raised card container",
+          "kind": "boolean"
+        },
+        {
+          "name": "cardBackgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the card container (Tailwind class, e.g., 'bg-gray-50', 'bg-white'). Only applied when card=true.",
+          "kind": "string"
+        },
+        {
+          "name": "buttonLabel",
+          "required": false,
+          "type": "string",
+          "description": "Label text for the submit button (e.g. \"Send\", \"Submit\", \"Get in touch\")",
+          "kind": "string"
+        },
+        {
+          "name": "buttonVariant",
+          "required": false,
+          "type": "'primary' | 'secondary' | 'success' | 'danger'",
+          "description": "",
+          "kind": "enum",
+          "values": [
+            "primary",
+            "secondary",
+            "success",
+            "danger"
+          ]
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment for heading and subheading: 'left' (default), 'center', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "layout",
+          "required": false,
+          "type": "'centered' | 'split'",
+          "description": "",
+          "kind": "enum",
+          "values": [
+            "centered",
+            "split"
+          ]
+        },
+        {
+          "name": "maxWidth",
+          "required": false,
+          "type": "string",
+          "description": "Max width constraint for the form container (Tailwind class, e.g., 'max-w-sm', 'max-w-md')",
+          "kind": "string"
+        },
+        {
+          "name": "fullHeight",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, the form section takes up at least the full height of the screen (useful with backgroundImage)",
+          "kind": "boolean"
+        },
+        {
+          "name": "sidebar",
+          "required": false,
+          "type": "{ title?: string; content?: string; address?: string[]; phone?: string; email?: string; }",
+          "description": "",
+          "kind": "unknown"
+        },
+        {
+          "name": "fields",
+          "required": false,
+          "type": "Array<{ label: string; type: 'text' | 'email' | 'textarea' | 'password' | 'select' | 'date' | 'time' | 'number'; required?: boolean; placeholder?: string; options?: string[]; }>",
+          "description": "Options for select field type",
+          "kind": "unknown"
+        },
+        {
+          "name": "image",
+          "required": false,
+          "type": "{ src: string; alt?: string; }",
+          "description": "Optional image shown in the right column when layout='split'",
+          "kind": "image"
+        }
+      ]
+    },
+    "Features": {
+      "description": "Features Component - Property-Driven Architecture",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#features\")",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "",
+          "kind": "string"
+        },
+        {
+          "name": "columns",
+          "required": false,
+          "type": "2 | 3 | 4",
+          "description": "",
+          "kind": "unknown"
+        },
+        {
+          "name": "layout",
+          "required": false,
+          "type": "'grid' | 'list'",
+          "description": "Layout variant: 'grid' for multi-column card grid (default), 'list' for full-width stacked rows",
+          "kind": "enum",
+          "values": [
+            "grid",
+            "list"
+          ]
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundImage",
+          "required": false,
+          "type": "string",
+          "description": "Background image URL — creates a full-cover background behind the features grid",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Base text color applied to heading, subheading, and feature titles/descriptions (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark.",
+          "kind": "string"
+        },
+        {
+          "name": "headingColor",
+          "required": false,
+          "type": "string",
+          "description": "Override color for the section heading only (Tailwind class, e.g. 'text-yellow-600'). Takes precedence over textColor for the h2 element.",
+          "kind": "string"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment for the section header and feature card content: 'center' (default), 'left', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "action",
+          "required": false,
+          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }",
+          "description": "Optional section-level CTA button rendered below the features grid",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "variant",
+              "required": false,
+              "kind": "enum",
+              "values": [
+                "primary",
+                "secondary",
+                "success"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "features",
+          "required": true,
+          "type": "Array<{ title: string; description: string; icon?: string; image?: string; backgroundColor?: string; headingColor?: string; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
+          "description": "Optional CTA button shown below the description",
+          "kind": "unknown"
+        }
+      ]
+    },
+    "Footer": {
+      "description": "Footer Component - A site footer with links and information. The template already renders an automatic site-wide footer from settings.yaml on every page; when you add this <Footer> section to a page, also set `hideFooter: true` in that page's frontmatter so your footer replaces the automatic one.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional id for anchor links",
+          "kind": "string"
+        },
+        {
+          "name": "columns",
+          "required": true,
+          "type": "Array<{ title: string; links?: Array<{ label: string; href: string; }>; text?: string[]; }>",
+          "description": "Plain text lines rendered as paragraphs (e.g. address, phone, email)",
+          "kind": "unknown"
+        },
+        {
+          "name": "logo",
+          "required": false,
+          "type": "{ src: string; alt?: string; }",
+          "description": "Optional logo image displayed next to siteName",
+          "kind": "image"
+        },
+        {
+          "name": "siteName",
+          "required": false,
+          "type": "string",
+          "description": "Site name or logo text",
+          "kind": "string"
+        },
+        {
+          "name": "description",
+          "required": false,
+          "type": "string",
+          "description": "Short description",
+          "kind": "string"
+        },
+        {
+          "name": "copyright",
+          "required": false,
+          "type": "string",
+          "description": "Copyright text",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Tailwind background color class",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Tailwind text color class",
+          "kind": "string"
+        },
+        {
+          "name": "fixedPosition",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, the footer is fixed to the bottom of the viewport",
+          "kind": "boolean"
+        },
+        {
+          "name": "newsletter",
+          "required": false,
+          "type": "{ heading?: string; placeholder?: string; buttonLabel?: string; }",
+          "description": "Optional newsletter subscribe form rendered as the last column",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "heading",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "placeholder",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "buttonLabel",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "action",
+          "required": false,
+          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }",
+          "description": "Optional CTA button rendered in the bottom copyright bar",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "variant",
+              "required": false,
+              "kind": "enum",
+              "values": [
+                "primary",
+                "secondary",
+                "success"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment for footer content: 'left' (default), 'center', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "linkColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for footer links (Tailwind class, e.g., 'text-pink-500')",
+          "kind": "string"
+        }
+      ]
+    },
+    "Gallery": {
+      "description": "Gallery Component - Property-Driven Architecture",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#gallery\")",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the section (Tailwind class, e.g. 'bg-gray-100')",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for heading and subheading (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark.",
+          "kind": "string"
+        },
+        {
+          "name": "headingColor",
+          "required": false,
+          "type": "string",
+          "description": "Specific heading color override (Tailwind class, e.g. 'text-pink-500'). Takes precedence over textColor for the heading.",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "",
+          "kind": "string"
+        },
+        {
+          "name": "columns",
+          "required": false,
+          "type": "2 | 3 | 4",
+          "description": "",
+          "kind": "unknown"
+        },
+        {
+          "name": "layout",
+          "required": false,
+          "type": "'stacked' | 'split'",
+          "description": "",
+          "kind": "enum",
+          "values": [
+            "stacked",
+            "split"
+          ]
+        },
+        {
+          "name": "sidebar",
+          "required": false,
+          "type": "{ title?: string; content?: string; image?: { src: string; alt: string; }; links?: Array<{ label: string; href: string; }>; action?: { label: string; href: string; }; }",
+          "description": "Optional sidebar content",
+          "kind": "unknown"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment for heading and subheading: 'center' (default), 'left', or 'right' — mirrors Hero.align",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "backgroundImage",
+          "required": false,
+          "type": "string",
+          "description": "Background image URL — creates a full-cover background with a subtle overlay",
+          "kind": "string"
+        },
+        {
+          "name": "action",
+          "required": false,
+          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }",
+          "description": "Optional CTA button rendered below the image grid",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "variant",
+              "required": false,
+              "kind": "enum",
+              "values": [
+                "primary",
+                "secondary",
+                "success"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "maxWidth",
+          "required": false,
+          "type": "string",
+          "description": "Max width constraint (Tailwind class, e.g., 'max-w-3xl')",
+          "kind": "string"
+        },
+        {
+          "name": "images",
+          "required": true,
+          "type": "Array<{ src: string; alt: string; caption?: string; title?: string; description?: string; artist?: string; overlayText?: string; overlayPosition?: 'center' | 'top' | 'bottom'; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
+          "description": "",
+          "kind": "unknown"
+        }
+      ]
+    },
+    "Header": {
+      "description": "Header Component - A horizontal header with logo on the left and contact info on the right.",
+      "props": [
+        {
+          "name": "logo",
+          "required": false,
+          "type": "{ src: string; alt?: string; size?: string; }",
+          "description": "Optional logo image shown on the left side",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "src",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "alt",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "size",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "siteName",
+          "required": false,
+          "type": "string",
+          "description": "Brand name rendered as bold text on the left when no logo is provided",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "Main heading text displayed prominently (e.g., \"Welcome to Tech Startup\")",
+          "kind": "string"
+        },
+        {
+          "name": "image",
+          "required": false,
+          "type": "{ src: string; alt?: string; }",
+          "description": "Optional image displayed alongside the site name (e.g. school emblem, badge)",
+          "kind": "image"
+        },
+        {
+          "name": "paragraphs",
+          "required": false,
+          "type": "string[]",
+          "description": "Body paragraphs displayed below the heading",
+          "kind": "string_list"
+        },
+        {
+          "name": "contactInfo",
+          "required": false,
+          "type": "Array<{ label: string; value: string; }>",
+          "description": "Contact information displayed on the right side",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "value",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "cta",
+          "required": false,
+          "type": "{ label: string; href: string; }",
+          "description": "Optional call-to-action button shown on the right side",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "links",
+          "required": false,
+          "type": "Array<{ label: string; href: string; }>",
+          "description": "Navigation links rendered as a horizontal nav bar",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "linkColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for navigation links (Tailwind class, e.g., 'text-yellow-500')",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the header (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundGradient",
+          "required": false,
+          "type": "string",
+          "description": "Background gradient for the header (e.g., 'from-purple-500 to-pink-500' for use with bg-gradient-to-r)",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for the header (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "showSearch",
+          "required": false,
+          "type": "boolean",
+          "description": "Whether to show a search input in the header",
+          "kind": "boolean"
+        },
+        {
+          "name": "searchPlaceholder",
+          "required": false,
+          "type": "string",
+          "description": "Placeholder text for the search input",
+          "kind": "string"
+        },
+        {
+          "name": "searchButtonLabel",
+          "required": false,
+          "type": "string",
+          "description": "Label for the search submit button (shown when showSearch is true)",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundImage",
+          "required": false,
+          "type": "string",
+          "description": "Background image URL — creates a full-cover background with optional overlay",
+          "kind": "string"
+        },
+        {
+          "name": "minHeight",
+          "required": false,
+          "type": "string",
+          "description": "Min height for the header when using backgroundImage (e.g., 'h-64')",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Optional subtitle displayed below the site name or heading",
+          "kind": "string"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text/content alignment within the header: 'left' (default), 'center', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "fixedTop",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, header is fixed to the top of the viewport",
+          "kind": "boolean"
+        },
+        {
+          "name": "loginForm",
+          "required": false,
+          "type": "{ usernameLabel?: string; usernamePlaceholder?: string; passwordLabel?: string; passwordPlaceholder?: string; buttonLabel?: string; buttonColor?: string; }",
+          "description": "Optional login form displayed on the right side",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "usernameLabel",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "usernamePlaceholder",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "passwordLabel",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "passwordPlaceholder",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "buttonLabel",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "buttonColor",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "showHamburger",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, shows a hamburger menu button on the right side",
+          "kind": "boolean"
+        },
+        {
+          "name": "imageCircular",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, renders the image as circular (rounded-full)",
+          "kind": "boolean"
+        },
+        {
+          "name": "logoAlign",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Logo horizontal alignment: 'left' (default), 'center', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "imageAlign",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Horizontal alignment for images: 'left' (default), 'center', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "selectOptions",
+          "required": false,
+          "type": "string[]",
+          "description": "Optional select dropdown options displayed in header",
+          "kind": "string_list"
+        },
+        {
+          "name": "selectLabel",
+          "required": false,
+          "type": "string",
+          "description": "Label for the select dropdown",
+          "kind": "string"
+        }
+      ]
+    },
+    "Hero": {
+      "description": "Hero Component - The primary visual hook at the top of a page. Use this for high-impact messaging and primary calls to action.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional ID for anchor linking",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "The main large title (e.g., \"Transform Your Business\"). Omit for image-only hero sections.",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Supporting text below the heading",
+          "kind": "string"
+        },
+        {
+          "name": "mono",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, uses monospace font for the subheading",
+          "kind": "boolean"
+        },
+        {
+          "name": "fontFamily",
+          "required": false,
+          "type": "'sans' | 'serif' | 'mono'",
+          "description": "Primary font family for heading",
+          "kind": "enum",
+          "values": [
+            "sans",
+            "serif",
+            "mono"
+          ]
+        },
+        {
+          "name": "fontWeight",
+          "required": false,
+          "type": "'bold' | 'extrabold' | 'black'",
+          "description": "Font weight for heading",
+          "kind": "enum",
+          "values": [
+            "bold",
+            "extrabold",
+            "black"
+          ]
+        },
+        {
+          "name": "badge",
+          "required": false,
+          "type": "string",
+          "description": "A small label shown above the heading",
+          "kind": "string"
+        },
+        {
+          "name": "logo",
+          "required": false,
+          "type": "{ src: string; alt?: string; size?: string; circular?: boolean; }",
+          "description": "Optional logo shown above everything",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "src",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "alt",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "size",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "circular",
+              "required": false,
+              "kind": "boolean"
+            }
+          ]
+        },
+        {
+          "name": "actions",
+          "required": false,
+          "type": "Array<{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }>",
+          "description": "Array of CTA buttons",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "variant",
+              "required": false,
+              "kind": "enum",
+              "values": [
+                "primary",
+                "secondary",
+                "success"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "cta",
+          "required": false,
+          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }",
+          "description": "Optional single CTA button (alternative to actions)",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "variant",
+              "required": false,
+              "kind": "enum",
+              "values": [
+                "primary",
+                "secondary",
+                "success"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "action",
+          "required": false,
+          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }",
+          "description": "Optional CTA button rendered below the text (alternative to cta)",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "variant",
+              "required": false,
+              "kind": "enum",
+              "values": [
+                "primary",
+                "secondary",
+                "success"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'center' | 'left' | 'right'",
+          "description": "Text alignment: 'center' (default), 'left' or 'right'",
+          "kind": "enum",
+          "values": [
+            "center",
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "layout",
+          "required": false,
+          "type": "'split' | 'stacked'",
+          "description": "Layout style: 'split' (side-by-side) or 'stacked' (vertical)",
+          "kind": "enum",
+          "values": [
+            "split",
+            "stacked"
+          ]
+        },
+        {
+          "name": "fullHeight",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, the section will take up at least the full height of the screen",
+          "kind": "boolean"
+        },
+        {
+          "name": "minHeight",
+          "required": false,
+          "type": "string",
+          "description": "Tailwind min-height class to set a custom minimum height (e.g., 'min-h-[600px]', 'min-h-96'). Ignored when fullHeight is true.",
+          "kind": "string"
+        },
+        {
+          "name": "showSearch",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, show a large search bar",
+          "kind": "boolean"
+        },
+        {
+          "name": "searchPlaceholder",
+          "required": false,
+          "type": "string",
+          "description": "Search bar placeholder text",
+          "kind": "string"
+        },
+        {
+          "name": "searchFields",
+          "required": false,
+          "type": "Array<{ placeholder: string; type?: string }>",
+          "description": "Custom search fields for multi-input search forms",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "placeholder",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "type",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "searchButtonLabel",
+          "required": false,
+          "type": "string",
+          "description": "Search form button label",
+          "kind": "string"
+        },
+        {
+          "name": "image",
+          "required": false,
+          "type": "{ src: string; alt: string; }",
+          "description": "Main visual image",
+          "kind": "image"
+        },
+        {
+          "name": "images",
+          "required": false,
+          "type": "Array<{ src: string; alt: string; }>",
+          "description": "Array of images for gallery/carousel layout (alternative to single image)",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "src",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "alt",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "backgroundImage",
+          "required": false,
+          "type": "string",
+          "description": "Background image URL (creates a full-cover background with overlay)",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundVideo",
+          "required": false,
+          "type": "string",
+          "description": "Background video URL (creates a full-cover background video with overlay)",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color (Tailwind class, e.g., 'bg-indigo-600')",
+          "kind": "string"
+        },
+        {
+          "name": "headingColor",
+          "required": false,
+          "type": "string",
+          "description": "Optional heading color (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "subheadingColor",
+          "required": false,
+          "type": "string",
+          "description": "Optional subheading color (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Base text color applied to the whole section (Tailwind class, e.g., 'text-white'). Use when backgroundColor is dark and you want all text to inherit a light color.",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundGradient",
+          "required": false,
+          "type": "string",
+          "description": "Background gradient for the hero (e.g., 'from-green-400 via-green-500 to-purple-500' for use with bg-gradient-to-r)",
+          "kind": "string"
+        },
+        {
+          "name": "videoEmbed",
+          "required": false,
+          "type": "string",
+          "description": "YouTube or other iframe embed URL; rendered as a responsive 16:9 iframe in place of the image",
+          "kind": "string"
+        },
+        {
+          "name": "videoSrc",
+          "required": false,
+          "type": "string",
+          "description": "Direct video file URL (mp4/webm); rendered as a native <video> element with controls in place of the image",
+          "kind": "string"
+        },
+        {
+          "name": "videoAutoplay",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, the videoSrc plays automatically (muted, looping, no controls) — use for ambient/background-style split-panel videos",
+          "kind": "boolean"
+        },
+        {
+          "name": "audioSrc",
+          "required": false,
+          "type": "string",
+          "description": "Direct audio file URL (mp3/wav/ogg); rendered as a native <audio> element with controls",
+          "kind": "string"
+        },
+        {
+          "name": "imagePosition",
+          "required": false,
+          "type": "'top' | 'bottom' | 'left' | 'right'",
+          "description": "Where to render the image relative to the text in stacked layout: 'top' (above heading) or 'bottom' (default, below content). 'left'/'right' act as aliases for layout='split'.",
+          "kind": "enum",
+          "values": [
+            "top",
+            "bottom",
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "showSidebar",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, renders a narrow sidebar panel on the left side of the hero",
+          "kind": "boolean"
+        },
+        {
+          "name": "sidebarBackgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color class for the sidebar panel (e.g., 'bg-white bg-opacity-75')",
+          "kind": "string"
+        },
+        {
+          "name": "sidebarContent",
+          "required": false,
+          "type": "Array<{ heading?: string; items?: string[]; text?: string; }>",
+          "description": "Right-side content panel for split layout: supports headings, lists, and text blocks",
+          "kind": "unknown"
+        },
+        {
+          "name": "newsletter",
+          "required": false,
+          "type": "{ heading?: string; placeholder?: string; buttonLabel?: string; }",
+          "description": "Optional newsletter signup card rendered on the right side of a split-layout hero (e.g. heading, email input, subscribe button)",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "heading",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "placeholder",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "buttonLabel",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "sidebar",
+          "required": false,
+          "type": "{ title?: string; content?: string; linksTitle?: string; links?: Array<{ label: string; href: string; }>; image?: { src: string; alt: string; }; }",
+          "description": "Left-side sidebar for split layout: supports headings, paragraph content, and links",
+          "kind": "unknown"
+        },
+        {
+          "name": "sidebarPosition",
+          "required": false,
+          "type": "'left' | 'right'",
+          "description": "Which side to render the sidebar: 'left' (default) or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "sidebarContentBackgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the right-side content panel (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "paragraphs",
+          "required": false,
+          "type": "string[]",
+          "description": "Additional body paragraphs rendered below the subheading",
+          "kind": "string_list"
+        },
+        {
+          "name": "bulletPoints",
+          "required": false,
+          "type": "string[]",
+          "description": "Bulleted list items rendered below paragraphs (or subheading if no paragraphs)",
+          "kind": "string_list"
+        },
+        {
+          "name": "maxWidth",
+          "required": false,
+          "type": "string",
+          "description": "Tailwind max-width class to constrain the inner content container (e.g., 'max-w-3xl', 'max-w-4xl'). Defaults to 'max-w-6xl'.",
+          "kind": "string"
+        },
+        {
+          "name": "imageCircular",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, renders the hero image as a circle (rounded-full). Useful for profile/avatar-style hero images.",
+          "kind": "boolean"
+        },
+        {
+          "name": "imageAlign",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Horizontal alignment for circular images: 'left' (default), 'center', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "card",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, wraps the text content in a semi-transparent card panel (e.g., for a hero with a background image)",
+          "kind": "boolean"
+        },
+        {
+          "name": "cardBackgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Tailwind background/style classes for the card panel (default: 'bg-white bg-opacity-75')",
+          "kind": "string"
+        },
+        {
+          "name": "links",
+          "required": false,
+          "type": "Array<{ label: string; href: string }>",
+          "description": "Inline navigation links rendered as an overlay nav bar across the top of the hero",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "siteName",
+          "required": false,
+          "type": "string",
+          "description": "Brand/site name shown on the left side of the overlay nav bar (used alongside links)",
+          "kind": "string"
+        },
+        {
+          "name": "linkColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for navigation links in the overlay nav bar (Tailwind class, e.g., 'text-pink-300')",
+          "kind": "string"
+        },
+        {
+          "name": "fixedTop",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, header is fixed to the top of the viewport",
+          "kind": "boolean"
+        },
+        {
+          "name": "showHamburger",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, shows a hamburger menu button on the right side",
+          "kind": "boolean"
+        },
+        {
+          "name": "loginForm",
+          "required": false,
+          "type": "{ usernameLabel?: string; usernamePlaceholder?: string; passwordLabel?: string; passwordPlaceholder?: string; buttonLabel?: string; buttonColor?: string; }",
+          "description": "Optional login form displayed on the right side",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "usernameLabel",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "usernamePlaceholder",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "passwordLabel",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "passwordPlaceholder",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "buttonLabel",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "buttonColor",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "selectOptions",
+          "required": false,
+          "type": "string[]",
+          "description": "Optional select dropdown options displayed in hero",
+          "kind": "string_list"
+        },
+        {
+          "name": "selectLabel",
+          "required": false,
+          "type": "string",
+          "description": "Label for the select dropdown",
+          "kind": "string"
+        }
+      ]
+    },
+    "HeroCarousel": {
+      "description": "HeroCarousel Component - Full-screen background slideshow with content.",
+      "props": [
+        {
+          "name": "slides",
+          "required": true,
+          "type": "Array<{ heading: string; subheading?: string; image: string; action?: { label: string; href: string }; }>",
+          "description": "",
+          "kind": "unknown"
+        }
+      ]
+    },
+    "ListingGrid": {
+      "description": "ListingGrid Component - Displays a grid of items with metadata (e.g., properties, products). Ideal for real estate, e-commerce, or directory sites.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional ID for anchor linking",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "Section heading",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Section subheading",
+          "kind": "string"
+        },
+        {
+          "name": "variant",
+          "required": false,
+          "type": "'grid' | 'carousel'",
+          "description": "Layout variant",
+          "kind": "enum",
+          "values": [
+            "grid",
+            "carousel"
+          ]
+        },
+        {
+          "name": "layout",
+          "required": false,
+          "type": "'grid' | 'list'",
+          "description": "Layout arrangement: 'grid' for card grid (default), 'list' for full-width stacked rows",
+          "kind": "enum",
+          "values": [
+            "grid",
+            "list"
+          ]
+        },
+        {
+          "name": "columns",
+          "required": false,
+          "type": "2 | 3 | 4",
+          "description": "Number of columns for grid (md and up)",
+          "kind": "unknown"
+        },
+        {
+          "name": "sidebar",
+          "required": false,
+          "type": "{ title?: string; sections?: Array<{ title: string; items: Array<{ label: string; href?: string; }>; }>; categories?: Array<{ label: string; href: string; count?: number; }>; filters?: Array<{ label: string; options: string[]; }>; }",
+          "description": "Generic grouped list sections (e.g., contact info, service lists)",
+          "kind": "unknown"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the outer section (Tailwind class, e.g., 'bg-gray-100')",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundImage",
+          "required": false,
+          "type": "string",
+          "description": "Background image URL for the outer section (e.g., 'https://example.com/bg.jpg')",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for headings and labels (Tailwind class, e.g., 'text-white')",
+          "kind": "string"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment for heading and subheading: 'center' (default), 'left', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "showSearch",
+          "required": false,
+          "type": "boolean",
+          "description": "Whether to show a search bar above the grid",
+          "kind": "boolean"
+        },
+        {
+          "name": "searchPlaceholder",
+          "required": false,
+          "type": "string",
+          "description": "Placeholder text for the search bar",
+          "kind": "string"
+        },
+        {
+          "name": "searchFields",
+          "required": false,
+          "type": "Array<{ placeholder: string; type?: string; }>",
+          "description": "Input type (default: 'text')",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "placeholder",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "type",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "searchButtonLabel",
+          "required": false,
+          "type": "string",
+          "description": "Label for the search submit button shown alongside searchFields (default: 'Search')",
+          "kind": "string"
+        },
+        {
+          "name": "items",
+          "required": true,
+          "type": "Array<{ title: string; description?: string; price?: string; image: string; alt?: string; href?: string; tags?: string[]; }>",
+          "description": "Array of tags or badges (e.g., [\"3 Bed\", \"2 Bath\"])",
+          "kind": "unknown"
+        }
+      ]
+    },
+    "Navbar": {
+      "description": "Navbar Component - A horizontal navigation bar with links.",
+      "props": [
+        {
+          "name": "siteName",
+          "required": false,
+          "type": "string",
+          "description": "Brand/site name displayed on the left side of the navbar",
+          "kind": "string"
+        },
+        {
+          "name": "logo",
+          "required": false,
+          "type": "{ src: string; alt?: string; size?: string; }",
+          "description": "Tailwind height class, e.g. 'h-10' or 'h-12'",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "src",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "alt",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "size",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "links",
+          "required": true,
+          "type": "Array<{ label: string; href: string; dropdown?: Array<{ label: string; href: string; }>; }>",
+          "description": "Array of navigation links",
+          "kind": "unknown"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Tailwind background color class",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Tailwind text color class",
+          "kind": "string"
+        },
+        {
+          "name": "linkColor",
+          "required": false,
+          "type": "string",
+          "description": "Tailwind text color class applied to the nav links (defaults to inheriting textColor)",
+          "kind": "string"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Alignment of links: 'left', 'center', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "sticky",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, the navbar will stick to the top on scroll",
+          "kind": "boolean"
+        },
+        {
+          "name": "fixedTop",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, the navbar will be fixed to the top of the viewport",
+          "kind": "boolean"
+        },
+        {
+          "name": "fixedBottom",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, the navbar will be fixed to the bottom of the viewport",
+          "kind": "boolean"
+        },
+        {
+          "name": "cta",
+          "required": false,
+          "type": "{ label: string; href: string; }",
+          "description": "Optional CTA button shown at the far right of the navbar",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "showSearch",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, show a search input on the right side of the navbar",
+          "kind": "boolean"
+        },
+        {
+          "name": "searchPlaceholder",
+          "required": false,
+          "type": "string",
+          "description": "Placeholder text for the search input",
+          "kind": "string"
+        },
+        {
+          "name": "searchButtonLabel",
+          "required": false,
+          "type": "string",
+          "description": "Label for the search submit button (default: \"Search\")",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundImage",
+          "required": false,
+          "type": "string",
+          "description": "Background image URL — renders as a full-cover background behind the navbar",
+          "kind": "string"
+        },
+        {
+          "name": "showHamburger",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, shows a hamburger menu button on the right side",
+          "kind": "boolean"
+        }
+      ]
+    },
+    "NewsGrid": {
+      "description": "NewsGrid Component - Displays multiple columns of news or content articles. Each column has a heading and contains a list of article cards. Optionally renders a sidebar (e.g. category list) to the left of the grid.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#news\")",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the outer section (Tailwind class, e.g. 'bg-gray-100')",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for headings and labels (Tailwind class, e.g. 'text-white')",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "Overall section heading displayed above the columns",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Supporting description shown below the section heading",
+          "kind": "string"
+        },
+        {
+          "name": "columns",
+          "required": false,
+          "type": "2 | 3 | 4",
+          "description": "Number of columns in the news grid area",
+          "kind": "unknown"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment for heading and subheading: 'center' (default), 'left', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "sidebar",
+          "required": false,
+          "type": "{ heading?: string; items: string[]; }",
+          "description": "List of sidebar item labels",
+          "kind": "unknown"
+        },
+        {
+          "name": "sections",
+          "required": true,
+          "type": "Array<{ heading: string; articles: Array<{ title: string; description?: string; image?: { src: string; alt: string }; action?: { label: string; href: string }; }>; }>",
+          "description": "Array of column sections, each with a heading and articles",
+          "kind": "unknown"
+        }
+      ]
+    },
+    "Newsletter": {
+      "description": "Newsletter Component - A simple lead capture form for mailing lists. Typically used in the footer area or as a call-to-action section. NOTE: this component collects an email address ONLY. If the request asks for any additional named field (e.g. first name, last name, phone), use the ContactForm component with a `fields` array instead — Newsletter cannot render extra fields.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#signup\")",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": true,
+          "type": "string",
+          "description": "The main title for the newsletter (e.g., \"Join our newsletter\")",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Supporting text (e.g., \"Stay updated with our latest collections\")",
+          "kind": "string"
+        },
+        {
+          "name": "placeholder",
+          "required": false,
+          "type": "string",
+          "description": "Placeholder text for the email input field",
+          "kind": "string"
+        },
+        {
+          "name": "buttonLabel",
+          "required": false,
+          "type": "string",
+          "description": "Label for the submit button",
+          "kind": "string"
+        },
+        {
+          "name": "image",
+          "required": false,
+          "type": "{ src: string; alt: string; }",
+          "description": "Optional image for split layout",
+          "kind": "image"
+        },
+        {
+          "name": "layout",
+          "required": false,
+          "type": "'stacked' | 'split'",
+          "description": "Layout style: 'stacked' (default) or 'split' (image on left, form on right)",
+          "kind": "enum",
+          "values": [
+            "stacked",
+            "split"
+          ]
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color (Tailwind class, e.g., 'bg-indigo-600')",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Base text color for headings and body text (Tailwind class, e.g., 'text-white'). Use when backgroundColor is dark.",
+          "kind": "string"
+        },
+        {
+          "name": "buttonColor",
+          "required": false,
+          "type": "string",
+          "description": "Button color (Tailwind class, e.g., 'bg-pink-500'). Defaults to inheriting from section styling.",
+          "kind": "string"
+        }
+      ]
+    },
+    "Parallax": {
+      "description": "Parallax Component - A multi-layer parallax scroll effect section. Ideal for creating depth and visual interest with layered content.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional ID for anchor linking",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the outer section (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for the section (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "layers",
+          "required": true,
+          "type": "Array<{ content: string; depth?: number; heading?: string; color?: string; fontSize?: string; }>",
+          "description": "Font size for the content (Tailwind class, e.g., 'text-xl', 'text-2xl')",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "content",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "depth",
+              "required": false,
+              "kind": "number"
+            },
+            {
+              "name": "heading",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "color",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "fontSize",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "minHeight",
+          "required": false,
+          "type": "string",
+          "description": "Minimum height for the parallax section (Tailwind class, default: 'min-h-96')",
+          "kind": "string"
+        }
+      ]
+    },
+    "Pricing": {
+      "description": "Pricing Component - Property-Driven Architecture",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#pricing\")",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the outer section (Tailwind class, e.g., 'bg-gray-100')",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for heading and subheading (Tailwind class, e.g., 'text-white'). Use when backgroundColor is dark.",
+          "kind": "string"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment for heading and subheading: 'center' (default), 'left', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "plans",
+          "required": true,
+          "type": "Array<{ name: string; price: string; period?: string; description?: string; features: string[]; ctaLabel: string; ctaHref: string; highlighted?: boolean; }>",
+          "description": "",
+          "kind": "unknown"
+        }
+      ]
+    },
+    "Sidebar": {
+      "description": "Sidebar Component - A three-column layout with optional left and right sidebars. Ideal for pages with search/navigation sidebars and main content with supplementary content.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links",
+          "kind": "string"
+        },
+        {
+          "name": "logo",
+          "required": false,
+          "type": "{ src: string; alt?: string; }",
+          "description": "Optional logo displayed centered at the top",
+          "kind": "image"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "Main section heading",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Main section subheading",
+          "kind": "string"
+        },
+        {
+          "name": "links",
+          "required": false,
+          "type": "Array<{ label: string; href: string; }>",
+          "description": "Navigation links rendered as a horizontal nav bar (e.g., for service categories)",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "linkColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for navigation links (Tailwind class, e.g., 'text-yellow-500')",
+          "kind": "string"
+        },
+        {
+          "name": "paragraphs",
+          "required": false,
+          "type": "string[]",
+          "description": "Optional paragraphs of body text rendered in the main content area",
+          "kind": "string_list"
+        },
+        {
+          "name": "leftSidebar",
+          "required": false,
+          "type": "{ title?: string; image?: { src: string; alt: string; }; content?: string; sections?: Array<{ title: string; content: string; }>; links?: Array<{ label: string; href: string; }>; showSearch?: boolean; searchPlaceholder?: string; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; backgroundColor?: string; textColor?: string; }",
+          "description": "Optional CTA button rendered below the links",
+          "kind": "unknown"
+        },
+        {
+          "name": "rightSidebar",
+          "required": false,
+          "type": "{ title?: string; images?: Array<{ src: string; alt: string; caption?: string; }>; sections?: Array<{ title: string; content: string; }>; links?: Array<{ label: string; href: string; }>; showSearch?: boolean; searchPlaceholder?: string; searchButtonLabel?: string; newsletter?: { heading?: string; placeholder?: string; buttonLabel?: string; buttonColor?: string; }; form?: { fields: Array<{ label: string; type: 'text' | 'email' | 'textarea' | 'password' | 'select' | 'date' | 'time' | 'number'; required?: boolean; placeholder?: string; options?: string[]; }>; buttonLabel?: string; buttonColor?: string; }; backgroundColor?: string; textColor?: string; actionTitle?: string; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }",
+          "description": "Optional CTA button rendered at the bottom of the right sidebar",
+          "kind": "unknown"
+        },
+        {
+          "name": "articles",
+          "required": false,
+          "type": "Array<{ title?: string; id?: string; description?: string; bulletPoints?: string[]; image?: { src: string; alt: string; }; backgroundColor?: string; textColor?: string; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; actions?: Array<{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }>; }>",
+          "description": "Multiple CTA buttons rendered below the description (use instead of action for 2+ buttons)",
+          "kind": "unknown"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for outer section",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for content",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundImage",
+          "required": false,
+          "type": "string",
+          "description": "Background image URL — creates a full-cover background with a subtle overlay",
+          "kind": "string"
+        },
+        {
+          "name": "action",
+          "required": false,
+          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }",
+          "description": "Optional CTA button rendered below the articles",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "variant",
+              "required": false,
+              "kind": "enum",
+              "values": [
+                "primary",
+                "secondary",
+                "success"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "Table": {
+      "description": "Table Component - Displays structured tabular data with optional search and filtering. Ideal for food menus, product catalogs, pricing tables, or any structured dataset.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional ID for anchor linking",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "Section heading",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Section subheading",
+          "kind": "string"
+        },
+        {
+          "name": "columns",
+          "required": true,
+          "type": "Array<{ label: string; key: string; }>",
+          "description": "Column headers",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "key",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "rows",
+          "required": true,
+          "type": "Array<Record<string, string>>",
+          "description": "Table rows",
+          "kind": "unknown"
+        },
+        {
+          "name": "showSearch",
+          "required": false,
+          "type": "boolean",
+          "description": "Whether to show a search bar above the table",
+          "kind": "boolean"
+        },
+        {
+          "name": "searchPlaceholder",
+          "required": false,
+          "type": "string",
+          "description": "Placeholder text for the search bar",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the outer section (Tailwind class, e.g., 'bg-white')",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundImage",
+          "required": false,
+          "type": "string",
+          "description": "Background image URL for the outer section",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for headings and content (Tailwind class, e.g., 'text-white')",
+          "kind": "string"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment for heading and subheading: 'left' (default), 'center', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "headerBackgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Header background color (Tailwind class, e.g., 'bg-gray-100')",
+          "kind": "string"
+        },
+        {
+          "name": "rowHoverColor",
+          "required": false,
+          "type": "string",
+          "description": "Hover row background color (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "maxWidth",
+          "required": false,
+          "type": "string",
+          "description": "Max width constraint (Tailwind class, e.g., 'max-w-4xl')",
+          "kind": "string"
+        },
+        {
+          "name": "card",
+          "required": false,
+          "type": "boolean",
+          "description": "Card styling for the table",
+          "kind": "boolean"
+        },
+        {
+          "name": "cardBackgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Card background color (Tailwind class)",
+          "kind": "string"
+        }
+      ]
+    },
+    "Team": {
+      "description": "Team Component - Showcases key staff members or contributors. Use this to build trust and humanize the brand.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional ID for anchor linking",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the outer section (Tailwind class, e.g., 'bg-white')",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Base text color for heading and body text (Tailwind class, e.g., 'text-white')",
+          "kind": "string"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Horizontal alignment of the section header: 'center' (default), 'left', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "columns",
+          "required": false,
+          "type": "2 | 3 | 4",
+          "description": "Number of columns in the grid layout (2, 3, or 4; default: 4)",
+          "kind": "unknown"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "Section heading",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Supporting description",
+          "kind": "string"
+        },
+        {
+          "name": "members",
+          "required": true,
+          "type": "Array<{ name: string; role: string; bio?: string; avatar?: string; }>",
+          "description": "URL to the member's profile picture",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "name",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "role",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "bio",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "avatar",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        }
+      ]
+    },
+    "Testimonials": {
+      "description": "Testimonials Component - Property-Driven Architecture",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#testimonials\")",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Supporting description shown below the heading",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the outer section (Tailwind class, e.g. 'bg-white')",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Base text color applied to heading and subheading (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark.",
+          "kind": "string"
+        },
+        {
+          "name": "headingColor",
+          "required": false,
+          "type": "string",
+          "description": "Override color for the section heading only (Tailwind class, e.g. 'text-red-600'). Takes precedence over textColor for the h2 element.",
+          "kind": "string"
+        },
+        {
+          "name": "layout",
+          "required": false,
+          "type": "'grid' | 'split'",
+          "description": "Layout variant: 'grid' for card grid (default), 'split' for left-text right-image",
+          "kind": "enum",
+          "values": [
+            "grid",
+            "split"
+          ]
+        },
+        {
+          "name": "columns",
+          "required": false,
+          "type": "2 | 3 | 4",
+          "description": "Number of columns in the card grid (default: 3). Only applies when layout='grid'.",
+          "kind": "unknown"
+        },
+        {
+          "name": "maxWidth",
+          "required": false,
+          "type": "string",
+          "description": "Tailwind max-width class constraining the inner content container (e.g. 'max-w-2xl', 'max-w-4xl'). Defaults to 'max-w-7xl'.",
+          "kind": "string"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment for heading and subheading: 'center' (default), 'left', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "testimonials",
+          "required": true,
+          "type": "Array<{ quote: string; author: string; role?: string; avatar?: string; image?: { src: string; alt: string; }; }>",
+          "description": "",
+          "kind": "unknown"
+        }
+      ]
+    },
+    "TwoColumn": {
+      "description": "TwoColumn Component - A two-column layout with independent left and right content areas. Use this for side-by-side comparisons, dual messaging, or balanced layouts.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links",
+          "kind": "string"
+        },
+        {
+          "name": "logo",
+          "required": false,
+          "type": "{ src: string; alt?: string; size?: string; }",
+          "description": "Optional logo image displayed centered above the two-column layout",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "src",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "alt",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "size",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "leftHeading",
+          "required": false,
+          "type": "string",
+          "description": "Left column heading",
+          "kind": "string"
+        },
+        {
+          "name": "leftParagraphs",
+          "required": false,
+          "type": "string[]",
+          "description": "Left column paragraphs",
+          "kind": "string_list"
+        },
+        {
+          "name": "leftImage",
+          "required": false,
+          "type": "{ src: string; alt: string; }",
+          "description": "Left column image",
+          "kind": "image"
+        },
+        {
+          "name": "leftLinks",
+          "required": false,
+          "type": "Array<{ label: string; href: string; }>",
+          "description": "Left column navigation links",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "leftContent",
+          "required": false,
+          "type": "Array<{ title?: string; description?: string; items?: Array<{ title: string; description?: string }>; form?: { fields: Array<{ label?: string; type: 'email' | 'text' | 'textarea'; placeholder: string }>, buttonLabel: string, buttonColor?: string }; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
+          "description": "Left column content sections (e.g., forms, cards with structured items)",
+          "kind": "unknown"
+        },
+        {
+          "name": "rightHeading",
+          "required": false,
+          "type": "string",
+          "description": "Right column heading",
+          "kind": "string"
+        },
+        {
+          "name": "rightParagraphs",
+          "required": false,
+          "type": "string[]",
+          "description": "Right column paragraphs",
+          "kind": "string_list"
+        },
+        {
+          "name": "rightImage",
+          "required": false,
+          "type": "{ src: string; alt: string; }",
+          "description": "Right column image",
+          "kind": "image"
+        },
+        {
+          "name": "rightImages",
+          "required": false,
+          "type": "Array<{ src: string; alt: string; }>",
+          "description": "Right column images for gallery grid",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "src",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "alt",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "rightContent",
+          "required": false,
+          "type": "Array<{ title?: string; description?: string; items?: Array<{ title: string; description?: string }>; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
+          "description": "Right column content sections (e.g., cards with structured items)",
+          "kind": "unknown"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the outer section (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "leftBackgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the left column (Tailwind class); overrides backgroundColor for that column",
+          "kind": "string"
+        },
+        {
+          "name": "rightBackgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the right column (Tailwind class); overrides backgroundColor for that column",
+          "kind": "string"
+        },
+        {
+          "name": "leftBackgroundImage",
+          "required": false,
+          "type": "string",
+          "description": "Background image URL for the left column",
+          "kind": "string"
+        },
+        {
+          "name": "rightBackgroundImage",
+          "required": false,
+          "type": "string",
+          "description": "Background image URL for the right column",
+          "kind": "string"
+        },
+        {
+          "name": "leftTextColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for left column (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "rightTextColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for right column (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for content (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "leftLinkColor",
+          "required": false,
+          "type": "string",
+          "description": "Link color for left column navigation (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "spacing",
+          "required": false,
+          "type": "'normal' | 'compact'",
+          "description": "Padding and spacing preset: 'normal' (default) or 'compact'",
+          "kind": "enum",
+          "values": [
+            "normal",
+            "compact"
+          ]
+        }
+      ]
+    }
+  }
+}

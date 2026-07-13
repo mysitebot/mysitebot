@@ -1,0 +1,21 @@
+{
+  "id": "portfolio_page_001",
+  "name": "Add Portfolio Page",
+  "prompt": "I want to add a portfolio page. Can you create a gallery section with three image placeholders for my recent projects?",
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/portfolio.mdx"
+    ],
+    "file_contains": {
+      "content/pages/portfolio.mdx": [
+        "<Gallery"
+      ]
+    },
+    "build": true,
+    "judge": "A portfolio page exists with a gallery section of three image placeholders and renders without broken layout."
+  },
+  "negative": false
+}

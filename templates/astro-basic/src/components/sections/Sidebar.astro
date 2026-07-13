@@ -1,0 +1,434 @@
+---
+/**
+ * Sidebar Component - A three-column layout with optional left and right sidebars.
+ * Ideal for pages with search/navigation sidebars and main content with supplementary content.
+ */
+interface Props {
+  /** Optional anchor id for in-page links */
+  id?: string;
+  /** Optional logo displayed centered at the top */
+  logo?: { src: string; alt?: string; };
+  /** Main section heading */
+  heading?: string;
+  /** Main section subheading */
+  subheading?: string;
+  /** Navigation links rendered as a horizontal nav bar (e.g., for service categories) */
+  links?: Array<{ label: string; href: string; }>;
+  /** Text color for navigation links (Tailwind class, e.g., 'text-yellow-500') */
+  linkColor?: string;
+  /** Optional paragraphs of body text rendered in the main content area */
+  paragraphs?: string[];
+  /** Left sidebar configuration */
+  leftSidebar?: {
+    title?: string;
+    image?: { src: string; alt: string; };
+    content?: string;
+    /** Optional list of titled text sections rendered after content */
+    sections?: Array<{ title: string; content: string; }>;
+    links?: Array<{ label: string; href: string; }>;
+    showSearch?: boolean;
+    searchPlaceholder?: string;
+    /** Optional CTA button rendered below the links */
+    action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
+    backgroundColor?: string;
+    textColor?: string;
+  };
+  /** Right sidebar configuration - images displayed as a gallery */
+  rightSidebar?: {
+    title?: string;
+    images?: Array<{ src: string; alt: string; caption?: string; }>;
+    sections?: Array<{ title: string; content: string; }>;
+    links?: Array<{ label: string; href: string; }>;
+    /** If true, renders a search input + submit button in the right sidebar */
+    showSearch?: boolean;
+    /** Placeholder text for the search input */
+    searchPlaceholder?: string;
+    /** Label for the search submit button */
+    searchButtonLabel?: string;
+    /** Optional newsletter sign-up form rendered in the right sidebar */
+    newsletter?: { heading?: string; placeholder?: string; buttonLabel?: string; buttonColor?: string; };
+    /** Optional form configuration for the right sidebar */
+    form?: {
+      fields: Array<{
+        label: string;
+        type: 'text' | 'email' | 'textarea' | 'password' | 'select' | 'date' | 'time' | 'number';
+        required?: boolean;
+        placeholder?: string;
+        options?: string[];
+      }>;
+      buttonLabel?: string;
+      buttonColor?: string;
+    };
+    backgroundColor?: string;
+    textColor?: string;
+    /** Optional heading shown above the action button */
+    actionTitle?: string;
+    /** Optional CTA button rendered at the bottom of the right sidebar */
+    action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
+  };
+  /** Main content articles */
+  articles?: Array<{
+    title?: string;
+    /** Optional anchor id so sidebar nav links can deep-link into this article (e.g. "health-tips") */
+    id?: string;
+    description?: string;
+    /** Optional bulleted list items rendered after the description */
+    bulletPoints?: string[];
+    image?: { src: string; alt: string; };
+    /** Background color for this article block (Tailwind class, e.g., 'bg-pink-500') */
+    backgroundColor?: string;
+    /** Text color for this article block (Tailwind class, e.g., 'text-white'). Use when backgroundColor is dark. */
+    textColor?: string;
+    /** Optional CTA button rendered below the description */
+    action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
+    /** Multiple CTA buttons rendered below the description (use instead of action for 2+ buttons) */
+    actions?: Array<{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }>;
+  }>;
+  /** Background color for outer section */
+  backgroundColor?: string;
+  /** Text color for content */
+  textColor?: string;
+  /** Background image URL — creates a full-cover background with a subtle overlay */
+  backgroundImage?: string;
+  /** Optional CTA button rendered below the articles */
+  action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
+}
+
+const {
+  id,
+  logo,
+  heading,
+  subheading,
+  links,
+  linkColor,
+  leftSidebar,
+  rightSidebar,
+  articles = [],
+  paragraphs = [],
+  backgroundColor = 'bg-white',
+  textColor = 'text-gray-900',
+  backgroundImage,
+  action
+} = Astro.props;
+---
+
+<section
+  id={id}
+  class={`py-16 px-4 ${backgroundColor} bg-cover bg-center relative`}
+  style={backgroundImage ? { backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${backgroundImage}')` } : {}}
+>
+  <div class={`max-w-7xl mx-auto ${backgroundImage ? 'relative z-10' : ''}`}>
+    {logo && (
+      <div class="flex justify-center mb-8">
+        <img
+          src={logo.src}
+          alt={logo.alt || 'Logo'}
+          class="h-auto object-contain"
+        />
+      </div>
+    )}
+
+    {(heading || subheading) && (
+      <div class="text-center mb-12">
+        {heading && <h2 class={`text-4xl font-bold mb-4 ${textColor}`}>{heading}</h2>}
+        {subheading && <p class={`text-lg ${textColor} opacity-70`}>{subheading}</p>}
+      </div>
+    )}
+
+    {links && links.length > 0 && (
+      <nav class="flex flex-col md:flex-row justify-center gap-6 mb-12">
+        {links.map((link) => (
+          <a href={link.href} class={`text-center md:text-right ${linkColor || textColor} hover:opacity-75 transition-opacity py-2`}>
+            {link.label}
+          </a>
+        ))}
+      </nav>
+    )}
+
+    <div class="flex flex-col lg:flex-row gap-8">
+      {/* Left Sidebar */}
+      {leftSidebar && (
+        <aside class={`w-full lg:w-1/4 flex-shrink-0 p-6 rounded-lg ${leftSidebar.backgroundColor || 'bg-gray-200'}`}>
+          {leftSidebar.image && (
+            <img
+              src={leftSidebar.image.src}
+              alt={leftSidebar.image.alt}
+              class="w-full h-auto rounded-lg mb-4 object-cover"
+            />
+          )}
+          {leftSidebar.title && (
+            <h3 class={`text-xl font-bold mb-4 ${leftSidebar.textColor || 'text-gray-900'}`}>
+              {leftSidebar.title}
+            </h3>
+          )}
+          {leftSidebar.content && (
+            <p class={`text-sm mb-4 ${leftSidebar.textColor || 'text-gray-900'} leading-relaxed`}>
+              {leftSidebar.content}
+            </p>
+          )}
+          {leftSidebar.sections && leftSidebar.sections.length > 0 && (
+            <div class="space-y-6 mb-4">
+              {leftSidebar.sections.map((section) => (
+                <div class="border-b border-gray-300 pb-4 last:border-b-0">
+                  <h4 class={`text-lg font-bold mb-2 ${leftSidebar.textColor || 'text-gray-900'}`}>
+                    {section.title}
+                  </h4>
+                  <p class={`text-sm ${leftSidebar.textColor || 'text-gray-700'} leading-relaxed`}>
+                    {section.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+          {leftSidebar.links && leftSidebar.links.length > 0 && (
+            <ul class="mb-4 space-y-2">
+              {leftSidebar.links.map((link) => (
+                <li>
+                  <a href={link.href} class={`text-sm ${leftSidebar.textColor || 'text-gray-900'} hover:opacity-75 transition-opacity`}>
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+          {leftSidebar.action && (
+            <a
+              href={leftSidebar.action.href}
+              class={`inline-block mt-2 px-4 py-2 rounded font-semibold border ${leftSidebar.action.variant === 'success' ? 'bg-green-500 text-white border-green-500 hover:bg-green-700' : leftSidebar.action.variant === 'secondary' ? 'bg-white text-gray-700 border-gray-400 hover:bg-gray-100' : 'bg-indigo-500 text-white border-indigo-500 hover:bg-indigo-700'}`}
+            >{leftSidebar.action.label}</a>
+          )}
+          {leftSidebar.showSearch && (
+            <form class="flex flex-col gap-2">
+              <input
+                type="text"
+                placeholder={leftSidebar.searchPlaceholder || 'Search...'}
+                class="w-full p-2 border border-gray-300 rounded"
+              />
+              <button
+                type="submit"
+                class="bg-indigo-500 text-white p-2 rounded font-semibold hover:bg-indigo-600 transition-colors"
+              >
+                Search
+              </button>
+            </form>
+          )}
+        </aside>
+      )}
+
+      {/* Main Content */}
+      <main class={`flex-1 ${leftSidebar ? rightSidebar ? 'lg:w-1/2' : 'lg:w-2/3' : rightSidebar ? 'lg:w-2/3' : 'w-full'}`}>
+        {paragraphs && paragraphs.length > 0 && (
+          <div class="space-y-4">
+            {paragraphs.map((para) => (
+              <p class={`text-base ${textColor} opacity-75 leading-relaxed`}>
+                {para}
+              </p>
+            ))}
+          </div>
+        )}
+        {articles && articles.length > 0 && (
+          <div class="space-y-8">
+            {articles.map((article) => (
+              <article id={article.id} class={`pb-6 border-b border-gray-200 last:border-b-0 ${article.backgroundColor ? `${article.backgroundColor} p-4` : ''}`}>
+                {article.title && (
+                  <h3 class={`text-xl font-bold mb-2 ${article.textColor || textColor}`}>
+                    {article.title}
+                  </h3>
+                )}
+                {article.description && (
+                  <p class={`text-base ${article.textColor || textColor} opacity-75 leading-relaxed mb-4`}>
+                    {article.description}
+                  </p>
+                )}
+                {article.bulletPoints && article.bulletPoints.length > 0 && (
+                  <ul class={`list-disc list-inside space-y-1 mb-4 ${article.textColor || textColor} opacity-75`}>
+                    {article.bulletPoints.map((point) => (
+                      <li class="text-base leading-relaxed">{point}</li>
+                    ))}
+                  </ul>
+                )}
+                {article.action && (
+                  <a
+                    href={article.action.href}
+                    class={`inline-block mt-2 px-4 py-2 rounded font-semibold border ${article.action.variant === 'success' ? 'bg-green-500 text-white border-green-500 hover:bg-green-700' : article.action.variant === 'secondary' ? 'bg-white text-gray-700 border-gray-400 hover:bg-gray-100' : 'bg-indigo-500 text-white border-indigo-500 hover:bg-indigo-700'}`}
+                  >{article.action.label}</a>
+                )}
+                {article.actions && article.actions.length > 0 && (
+                  <div class="flex flex-wrap gap-2 mt-2">
+                    {article.actions.map((act) => (
+                      <a
+                        href={act.href}
+                        class={`inline-block px-4 py-2 rounded font-semibold border ${act.variant === 'success' ? 'bg-green-500 text-white border-green-500 hover:bg-green-700' : act.variant === 'secondary' ? 'bg-white text-gray-700 border-gray-400 hover:bg-gray-100' : 'bg-indigo-500 text-white border-indigo-500 hover:bg-indigo-700'}`}
+                      >{act.label}</a>
+                    ))}
+                  </div>
+                )}
+                {article.image && (
+                  <img
+                    src={article.image.src}
+                    alt={article.image.alt}
+                    class="w-full h-auto rounded-lg object-cover mt-4"
+                  />
+                )}
+              </article>
+            ))}
+          </div>
+        )}
+      </main>
+
+      {action && (
+        <div class="flex justify-center lg:w-full mt-8">
+          <a
+            href={action.href}
+            class={`px-6 py-3 rounded font-semibold border ${action.variant === 'success' ? 'bg-green-500 text-white border-green-500 hover:bg-green-700' : action.variant === 'secondary' ? 'bg-white text-gray-700 border-gray-400 hover:bg-gray-100' : 'bg-indigo-500 text-white border-indigo-500 hover:bg-indigo-700'}`}
+          >{action.label}</a>
+        </div>
+      )}
+
+      {/* Right Sidebar */}
+      {rightSidebar && (
+        <aside class={`w-full lg:w-1/4 flex-shrink-0 p-6 rounded-lg ${rightSidebar.backgroundColor || 'bg-gray-200'}`}>
+          {rightSidebar.title && (
+            <h3 class={`text-xl font-bold mb-4 ${rightSidebar.textColor || 'text-gray-900'}`}>
+              {rightSidebar.title}
+            </h3>
+          )}
+          {rightSidebar.images && rightSidebar.images.length > 0 && (
+            <div class="space-y-4 mb-8">
+              {rightSidebar.images.map((img) => (
+                <div class="overflow-hidden rounded-lg bg-gray-300">
+                  <img
+                    src={img.src}
+                    alt={img.alt}
+                    class="w-full h-auto object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                  {img.caption && (
+                    <p class={`text-xs p-2 ${rightSidebar.textColor || 'text-gray-700'}`}>
+                      {img.caption}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          {rightSidebar.sections && rightSidebar.sections.length > 0 && (
+            <div class="space-y-6">
+              {rightSidebar.sections.map((section) => (
+                <div class="border-b border-gray-300 pb-4 last:border-b-0">
+                  <h4 class={`text-lg font-bold mb-2 ${rightSidebar.textColor || 'text-gray-900'}`}>
+                    {section.title}
+                  </h4>
+                  <p class={`text-sm ${rightSidebar.textColor || 'text-gray-700'} leading-relaxed`}>
+                    {section.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+          {rightSidebar.links && rightSidebar.links.length > 0 && (
+            <div class="flex flex-wrap gap-4 mt-4">
+              {rightSidebar.links.map((link) => (
+                <a href={link.href} class={`text-sm font-medium ${rightSidebar.textColor || 'text-gray-700'} hover:opacity-75 transition-opacity`}>
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          )}
+          {rightSidebar.form && (
+            <form class="flex flex-col gap-3 mb-6">
+              {rightSidebar.form.fields.map((field) => (
+                <div class="flex flex-col">
+                  {field.label && (
+                    <label class={`text-sm font-semibold mb-1 ${rightSidebar.textColor || 'text-gray-900'}`}>
+                      {field.label}
+                    </label>
+                  )}
+                  {field.type === 'textarea' ? (
+                    <textarea
+                      placeholder={field.placeholder || ''}
+                      required={field.required}
+                      class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  ) : field.type === 'select' ? (
+                    <select
+                      required={field.required}
+                      class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="">{field.placeholder || 'Select...'}</option>
+                      {field.options?.map((opt) => (
+                        <option value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type={field.type}
+                      placeholder={field.placeholder || ''}
+                      required={field.required}
+                      class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  )}
+                </div>
+              ))}
+              <button
+                type="submit"
+                class={`w-full ${rightSidebar.form.buttonColor || 'bg-red-500'} text-white p-2 rounded font-semibold hover:opacity-90 transition-opacity`}
+              >
+                {rightSidebar.form.buttonLabel || 'Submit'}
+              </button>
+            </form>
+          )}
+          {rightSidebar.newsletter && (
+            <div class="mb-6">
+              {rightSidebar.newsletter.heading && (
+                <h4 class={`text-lg font-bold mb-2 ${rightSidebar.textColor || 'text-gray-900'}`}>
+                  {rightSidebar.newsletter.heading}
+                </h4>
+              )}
+              <form class="flex flex-col gap-2">
+                <input
+                  type="email"
+                  placeholder={rightSidebar.newsletter.placeholder || 'Enter your email'}
+                  class="w-full p-2 border border-gray-300 rounded"
+                />
+                <button
+                  type="submit"
+                  class={`w-full ${rightSidebar.newsletter.buttonColor || 'bg-indigo-500'} text-white p-2 rounded font-semibold hover:opacity-90 transition-opacity`}
+                >
+                  {rightSidebar.newsletter.buttonLabel || 'Sign Up'}
+                </button>
+              </form>
+            </div>
+          )}
+          {rightSidebar.showSearch && (
+            <form class="flex flex-col gap-2 mt-4">
+              <input
+                type="text"
+                placeholder={rightSidebar.searchPlaceholder || 'Search...'}
+                class="w-full p-2 border border-gray-300 rounded"
+              />
+              <button
+                type="submit"
+                class="bg-blue-500 text-white p-2 rounded font-semibold hover:bg-blue-600 transition-colors"
+              >
+                {rightSidebar.searchButtonLabel || 'Search'}
+              </button>
+            </form>
+          )}
+          {rightSidebar.actionTitle && (
+            <h4 class={`text-lg font-bold mt-6 mb-3 ${rightSidebar.textColor || 'text-gray-900'}`}>
+              {rightSidebar.actionTitle}
+            </h4>
+          )}
+          {rightSidebar.action && (
+            <a
+              href={rightSidebar.action.href}
+              class={`inline-block px-4 py-2 rounded font-semibold ${rightSidebar.action.variant === 'success' ? 'bg-green-500 text-white hover:bg-green-700' : rightSidebar.action.variant === 'secondary' ? 'bg-white text-gray-700 border border-gray-400 hover:bg-gray-100' : 'bg-indigo-500 text-white hover:bg-indigo-700'}`}
+            >
+              {rightSidebar.action.label}
+            </a>
+          )}
+        </aside>
+      )}
+    </div>
+  </div>
+</section>

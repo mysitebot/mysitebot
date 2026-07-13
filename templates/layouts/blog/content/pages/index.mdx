@@ -1,0 +1,24 @@
+---
+title: "Blog Home"
+description: "Insights, ideas, and updates"
+pageLayout: "full"
+---
+<Hero 
+  heading="The Modern Publisher" 
+  subheading="Exploring the intersection of tech, design, and business strategy. Subscribe to get our weekly digest." 
+  badge="Our Thoughts"
+  align="center"
+  actions={[
+    { label: "Read Welcome Post", href: "/posts/welcome", variant: "primary" }
+  ]}
+/>
+
+<ContactForm 
+  heading="Subscribe to Newsletter" 
+  subheading="Join our community of over 5,000 readers. No spam, cancel anytime."
+  email="newsletter@example.com"
+  fields={[
+    { label: "Your Name", type: "text", required: true },
+    { label: "Email Address", type: "email", required: true }
+  ]}
+/>

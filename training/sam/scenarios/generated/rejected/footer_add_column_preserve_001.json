@@ -1,0 +1,51 @@
+{
+  "id": "footer_add_column_preserve_001",
+  "name": "Add a Footer Column While Preserving the Existing One",
+  "prompt": "Add a 'Follow Us' column to our homepage footer with links to our Instagram (https://instagram.com/crumbandcrust) and Twitter (https://twitter.com/crumbandcrust). Don't change the existing Navigate column.",
+  "setup": [
+    {
+      "path": "content/pages/index.mdx",
+      "content": "---\ntitle: \"Home\"\ndescription: \"Welcome to our site\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Fresh Bread, Baked Daily\"\n  subheading=\"Stop by for a taste of home.\"\n  actions={[\n    { label: \"Get Started\", href: \"/contact\", variant: \"primary\" }\n  ]}\n/>\n\n<Features\n  heading=\"Why Choose Us\"\n  features={[\n    { title: \"Fresh Ingredients\", description: \"Locally sourced every morning.\" },\n    { title: \"Friendly Service\", description: \"We know our regulars by name.\" }\n  ]}\n/>\n\n<Footer\n  columns={[\n    { title: \"Navigate\", links: [{ label: \"Home\", href: \"/\" }, { label: \"About\", href: \"/about\" }] }\n  ]}\n/>\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": [
+      "branch_and_edit_content"
+    ],
+    "files_changed": [
+      "content/pages/index.mdx"
+    ],
+    "file_contains": {
+      "content/pages/index.mdx": [
+        "Follow Us",
+        "https://instagram.com/crumbandcrust",
+        "https://twitter.com/crumbandcrust",
+        "Navigate",
+        "Home",
+        "About"
+      ]
+    },
+    "build": true,
+    "dom": [
+      {
+        "page": "/",
+        "selector": "body",
+        "contains": "Follow Us"
+      }
+    ],
+    "judge": "Sam added a new 'Follow Us' footer column with the Instagram and Twitter links, while leaving the existing 'Navigate' column (Home, About links) completely unchanged. Fail if the Navigate column's title or links were altered, dropped, reordered, or duplicated."
+  },
+  "negative": false,
+  "dry_run": {
+    "text": "Sam confirms it added a 'Follow Us' column with the two social links to the homepage footer, leaving the Navigate column untouched.",
+    "tool_calls": [
+      {
+        "name": "branch_and_edit_content",
+        "args": {}
+      }
+    ],
+    "edits": {
+      "content/pages/index.mdx": "---\ntitle: \"Home\"\ndescription: \"Welcome to our site\"\npageLayout: \"full\"\n---\n<Hero\n  heading=\"Fresh Bread, Baked Daily\"\n  subheading=\"Stop by for a taste of home.\"\n  actions={[\n    { label: \"Get Started\", href: \"/contact\", variant: \"primary\" }\n  ]}\n/>\n\n<Features\n  heading=\"Why Choose Us\"\n  features={[\n    { title: \"Fresh Ingredients\", description: \"Locally sourced every morning.\" },\n    { title: \"Friendly Service\", description: \"We know our regulars by name.\" }\n  ]}\n/>\n\n<Footer\n  columns={[\n    { title: \"Navigate\", links: [{ label: \"Home\", href: \"/\" }, { label: \"About\", href: \"/about\" }] },\n    { title: \"Follow Us\", links: [{ label: \"Instagram\", href: \"https://instagram.com/crumbandcrust\" }, { label: \"Twitter\", href: \"https://twitter.com/crumbandcrust\" }] }\n  ]}\n/>\n"
+    }
+  }
+}
