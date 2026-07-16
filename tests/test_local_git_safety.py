@@ -150,3 +150,22 @@ async def test_delete_project_cannot_escape_workspace(tmp_path):
 async def test_delete_project_absent_dir_counts_as_deleted(tmp_path):
     provider = LocalGitProvider(workspace_root=str(tmp_path))
     assert await provider.delete_project("never_created") is True
+
+
+@pytest.mark.asyncio
+async def test_provider_fs_work_runs_off_the_event_loop(tmp_path, monkeypatch):
+    """F13: filesystem bodies execute in a worker thread (asyncio.to_thread),
+    so a slow disk cannot stall every coroutine in the hosting process."""
+    import threading
+    provider = LocalGitProvider(workspace_root=str(tmp_path))
+    loop_thread = threading.get_ident()
+    seen = {}
+
+    original = provider._commit_file_sync
+
+    def spying(*a, **k):
+        seen["thread"] = threading.get_ident()
+        return original(*a, **k)
+    monkeypatch.setattr(provider, "_commit_file_sync", spying)
+    await provider.commit_file("p1", "main", "content/pages/x.mdx", "hello", "msg")
+    assert seen["thread"] != loop_thread

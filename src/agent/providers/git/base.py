@@ -1,3 +1,4 @@
+import asyncio
 import os
 import re
 import shutil
@@ -108,13 +109,16 @@ class LocalGitProvider(GitProvider):
             raise ValueError("Resolved project path escapes the workspace root.")
         return full
 
-    async def delete_project(self, project_id: str) -> bool:
+    def _delete_project_sync(self, project_id: str) -> bool:
         project_dir = self._contained_dir(self._safe_folder_name(project_id))
         if os.path.exists(project_dir):
             shutil.rmtree(project_dir)
         # Absent counts as deleted — callers fail closed on False (F03), and a
         # never-materialized or already-removed workspace must not brick them.
         return True
+
+    async def delete_project(self, project_id: str) -> bool:
+        return await asyncio.to_thread(self._delete_project_sync, project_id)
 
     def _get_path(self, project_id: str, path: str) -> str:
         if not project_id or project_id == "local_project":
@@ -137,7 +141,7 @@ class LocalGitProvider(GitProvider):
         create/read/write/delete paths agree on one safe location."""
         return self._contained_dir(self._safe_folder_name(project_id))
 
-    async def create_project(self, name: str, template: str) -> Dict[str, Any]:
+    def _create_project_sync(self, name: str, template: str) -> Dict[str, Any]:
         folder_name = self._safe_folder_name(name)
         project_id = f"local_{folder_name}"
         project_dir = self._contained_dir(folder_name)
@@ -185,10 +189,13 @@ class LocalGitProvider(GitProvider):
             "pages_url": preview_url
         }
 
+    async def create_project(self, name: str, template: str) -> Dict[str, Any]:
+        return await asyncio.to_thread(self._create_project_sync, name, template)
+
     async def create_branch(self, project_id: str, branch_name: str) -> Dict[str, Any]:
         return {"status": "branch_created_locally", "branch": branch_name}
 
-    async def commit_file(self, project_id: str, branch_name: str, file_path: str, content: str, message: str) -> Dict[str, Any]:
+    def _commit_file_sync(self, project_id: str, branch_name: str, file_path: str, content: str, message: str) -> Dict[str, Any]:
         if not is_safe_content_path(file_path):
             raise ValueError("MYSITEBOT agents can only modify files in the content/ directory.")
 
@@ -205,7 +212,10 @@ class LocalGitProvider(GitProvider):
         logger.info(f"[Local Git Provider] Committed to {file_path} in {project_id} (Branch: {branch_name})")
         return {"status": "committed_locally", "file": file_path}
 
-    async def delete_file(self, project_id: str, branch_name: str, file_path: str, message: str) -> Dict[str, Any]:
+    async def commit_file(self, project_id: str, branch_name: str, file_path: str, content: str, message: str) -> Dict[str, Any]:
+        return await asyncio.to_thread(self._commit_file_sync, project_id, branch_name, file_path, content, message)
+
+    def _delete_file_sync(self, project_id: str, branch_name: str, file_path: str, message: str) -> Dict[str, Any]:
         if not is_safe_content_path(file_path):
             raise ValueError("MYSITEBOT agents can only delete files in the content/ directory.")
 
@@ -217,18 +227,24 @@ class LocalGitProvider(GitProvider):
         logger.info(f"[Local Git Provider] Deleted {file_path} in {project_id} (Branch: {branch_name})")
         return {"status": "deleted_locally", "file": file_path}
 
+    async def delete_file(self, project_id: str, branch_name: str, file_path: str, message: str) -> Dict[str, Any]:
+        return await asyncio.to_thread(self._delete_file_sync, project_id, branch_name, file_path, message)
+
     async def create_merge_request(self, project_id: str, source_branch: str, target_branch: str, title: str) -> Dict[str, Any]:
         return {"status": "mr_created_locally", "id": 123, "iid": 123}
 
     async def merge_merge_request(self, project_id: str, mr_iid: int) -> Dict[str, Any]:
         return {"status": "merged_locally", "iid": mr_iid}
 
-    async def read_file(self, project_id: str, file_path: str, ref: str = "main") -> str:
+    def _read_file_sync(self, project_id: str, file_path: str, ref: str = "main") -> str:
         full_path = self._get_path(project_id, file_path)
         with open(full_path, "r") as f:
             return f.read()
 
-    async def list_files(self, project_id: str, path: str = "content", ref: str = "main") -> List[str]:
+    async def read_file(self, project_id: str, file_path: str, ref: str = "main") -> str:
+        return await asyncio.to_thread(self._read_file_sync, project_id, file_path, ref)
+
+    def _list_files_sync(self, project_id: str, path: str = "content", ref: str = "main") -> List[str]:
         base_dir = self._get_path(project_id, path)
         results: List[str] = []
         if not os.path.isdir(base_dir):
@@ -239,3 +255,6 @@ class LocalGitProvider(GitProvider):
                 rel = os.path.relpath(full, self._get_path(project_id, ""))
                 results.append(rel.replace(os.path.sep, "/"))
         return sorted(results)
+
+    async def list_files(self, project_id: str, path: str = "content", ref: str = "main") -> List[str]:
+        return await asyncio.to_thread(self._list_files_sync, project_id, path, ref)
