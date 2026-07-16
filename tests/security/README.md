@@ -6,7 +6,7 @@ Astro build time, and that none of the three write-gate checks the agent
 runs before committing content (`is_safe_content_path` →
 `validate_content` → `check_content_for_cookies`, in the order used by
 `SiteEditorAgent.branch_and_edit_content` in
-`projects/agent/src/agent/site_editor.py`) inspect the *inside* of a brace
+`src/agent/site_editor.py`) inspect the *inside* of a brace
 expression. A malicious or compromised model turn can read `process.env`
 secrets into the public `dist/` output, read/write arbitrary files, or
 shell out — all while passing today's gate.
@@ -26,14 +26,14 @@ turns its xfail into a hard error — remove that payload's xfail marker
 (the trailing `True` in its `PAYLOADS` tuple) to confirm the fix and keep
 the suite green.
 
-Run just this harness:
+Run just this harness (from the sam repo root):
 
 ```
-uv run pytest projects/agent/tests/security -q
+uv run pytest tests/security -q
 ```
 
 Run the full agent suite (must include this harness, always green):
 
 ```
-uv run pytest projects/agent/tests -q
+uv run pytest tests -q
 ```

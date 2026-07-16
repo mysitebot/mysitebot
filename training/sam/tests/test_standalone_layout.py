@@ -3,6 +3,7 @@ the old guard/allowlists pointed at the retired monorepo layout, so the loop
 exited immediately and the fixer would have reverted every intended edit."""
 import _paths
 import fixer
+import generate_scenarios
 
 
 def test_repo_root_is_the_sam_checkout():
@@ -37,3 +38,14 @@ def test_fixer_directive_names_no_monorepo_paths():
     text = fixer.DIRECTIVE_PATH.read_text()
     assert "projects/agent" not in text
     assert "src/agent/prompts.py" in text
+
+
+def test_generator_resolves_sections_doc_via_paths():
+    # F04: the old code built `_REPO / "projects" / "agent" / "templates" /
+    # "SECTIONS.md"` from hardcoded segments — never valid on the standalone
+    # layout — so it silently degraded to "(none)" instead of the real
+    # catalog. The resolved path must match _paths.SECTIONS_DOC and actually
+    # exist on this checkout.
+    resolved = generate_scenarios.sections_doc_path()
+    assert resolved == _paths.REPO_ROOT / _paths.SECTIONS_DOC
+    assert resolved.is_file()

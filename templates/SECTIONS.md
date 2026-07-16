@@ -1,7 +1,7 @@
 # Section Reference Guide
 
 This guide is the dynamic source of truth for all available UI sections.
-Generated from `astro-basic/src/components/sections/` by `projects/agent/templates/generate_sections_doc.py` — do not edit by hand.
+Generated from `astro-basic/src/components/sections/` by `templates/generate_sections_doc.py` — do not edit by hand.
 
 
 ## `<Article />`
