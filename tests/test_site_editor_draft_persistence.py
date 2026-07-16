@@ -182,3 +182,34 @@ async def test_create_publish_request_reports_already_open_after_auto_draft(
     assert out["res"]["status"] == "already_open"
     mr_calls = [c for c in provider.calls if c[0] == "create_merge_request"]
     assert len(mr_calls) == 1
+
+
+@pytest.mark.asyncio
+async def test_edit_disarms_pipeline_when_project_record_cannot_be_found_to_persist(
+        monkeypatch, seed_workspace, fake_store):
+    """F05 hardening: if the project record can't be found when
+    _ensure_draft_recorded tries to persist pending_mr_iid (the record was
+    deleted concurrently, or was never there — same code path either way,
+    since the helper's second get_project call is what matters), the tool
+    must still refuse to arm the pipeline. The MR itself may be orphaned
+    (documented trade-off, same class as an MR-creation failure) but the
+    disarm invariant must hold: no persisted record means no build of a
+    commit the app can't find."""
+    ws = seed_workspace(DRAFT_FILES)
+    # Deliberately do NOT seed fake_store.projects["local_project"] — the
+    # record is absent for the whole call, which exercises the same
+    # `get_project(...) is None` branch a concurrent delete would.
+    provider = RecordingGitProvider(str(ws))
+    out = {}
+
+    async def drive(tools):
+        out["res"] = await tools["branch_and_edit_content"](
+            branch_name="new-edit", file_path="content/pages/index.mdx",
+            content="---\ntitle: Home\n---\n# Updated")
+
+    editor = _make_editor(monkeypatch, ws, _driving(drive), store=fake_store, git_provider=provider)
+    result = await editor.run("Update the homepage", "local_project")
+
+    assert "error" in out["res"]
+    assert result["pipeline_triggered"] is False
+    assert fake_store.projects.get("local_project") is None

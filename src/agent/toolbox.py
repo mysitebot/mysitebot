@@ -81,10 +81,15 @@ def build_tools(editor: "AgentSiteEditor", ctx: "TurnContext") -> List[Callable]
                 "fix_hint": "Try the edit again — a fresh draft will be created.",
             }
         proj = await editor.store.get_project(ctx.active_project_id)
-        if proj is not None:
-            proj["pending_mr_iid"] = mr_data.get("iid")
-            proj["pending_mr_branch"] = target_branch
-            await editor.store.save_project(ctx.active_project_id, proj)
+        if proj is None:
+            return {
+                "error": "The edit was saved to a draft branch but the website's "
+                         "record could not be found to attach the draft to.",
+                "fix_hint": "Confirm the website still exists (list_user_websites), then try again.",
+            }
+        proj["pending_mr_iid"] = mr_data.get("iid")
+        proj["pending_mr_branch"] = target_branch
+        await editor.store.save_project(ctx.active_project_id, proj)
         return None
 
     async def create_project(name: str, template: str = "astro-basic") -> Dict[str, Any]:
