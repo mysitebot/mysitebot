@@ -169,3 +169,24 @@ async def test_provider_fs_work_runs_off_the_event_loop(tmp_path, monkeypatch):
     monkeypatch.setattr(provider, "_commit_file_sync", spying)
     await provider.commit_file("p1", "main", "content/pages/x.mdx", "hello", "msg")
     assert seen["thread"] != loop_thread
+
+
+@pytest.mark.asyncio
+async def test_create_project_guard_is_atomic_under_a_racing_check(tmp_path, monkeypatch):
+    """F13 follow-up: the existence check was check-then-act (os.path.exists
+    -> copytree), which was implicitly atomic only because the old body ran
+    inline with no yield points. Now that FS bodies run on worker threads
+    (asyncio.to_thread), two same-name creates could both pass a stale
+    check. Simulate the race directly: force the check to lie (False) while
+    the destination is already on disk, and assert create_project still
+    raises the SAME documented duplicate error instead of copytree blowing
+    up with a raw FileExistsError."""
+    workspace = tmp_path / "workspace"
+    git = LocalGitProvider(workspace_root=str(workspace))
+    existing_dir = workspace / "dupe_project"
+    existing_dir.mkdir(parents=True)
+
+    monkeypatch.setattr(os.path, "exists", lambda *_a, **_k: False)
+
+    with pytest.raises(ValueError, match="already exists"):
+        await git.create_project("dupe_project", "astro-basic")

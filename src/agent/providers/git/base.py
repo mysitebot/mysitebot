@@ -145,7 +145,17 @@ class LocalGitProvider(GitProvider):
         folder_name = self._safe_folder_name(name)
         project_id = f"local_{folder_name}"
         project_dir = self._contained_dir(folder_name)
-        if os.path.exists(project_dir):
+        try:
+            # Atomic check-and-create (not check-then-act): os.path.exists()
+            # followed by copytree() was implicitly atomic only while this
+            # body ran inline on the event loop with no yield points. Now it
+            # runs on a worker thread (F13, asyncio.to_thread), so two
+            # concurrent creates of the same name could both pass a stale
+            # exists() check and race into copytree. exist_ok=False makes the
+            # OS itself the single arbiter of "did this directory already
+            # exist," closing the race.
+            os.makedirs(project_dir, exist_ok=False)
+        except FileExistsError:
             # Never silently wipe an existing site. The caller must delete it
             # explicitly (delete_project) or pick a different name.
             raise ValueError(
@@ -156,7 +166,10 @@ class LocalGitProvider(GitProvider):
         # Determine the base Astro template path
         base_template = template_path("astro-basic")
 
-        shutil.copytree(base_template, project_dir, ignore=shutil.ignore_patterns("node_modules", ".astro", "dist"))
+        # dirs_exist_ok=True: the makedirs() guard above already created
+        # project_dir (empty) to win the race, so copytree is populating an
+        # existing-but-empty directory rather than creating a fresh one.
+        shutil.copytree(base_template, project_dir, ignore=shutil.ignore_patterns("node_modules", ".astro", "dist"), dirs_exist_ok=True)
 
         # Link node_modules from the template so local preview builds work without npm install
         template_modules = os.path.join(base_template, "node_modules")

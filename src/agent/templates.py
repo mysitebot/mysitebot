@@ -30,6 +30,11 @@ _TEMPLATES_ROOT: Path | None = None
 
 def _resolve_templates_root() -> Path:
     global _TEMPLATES_ROOT
+    # Lazy-init global, now reachable from multiple worker threads at once
+    # (F13: LocalGitProvider's FS methods run via asyncio.to_thread). Racing
+    # here is benign: _candidate_roots() is a pure/deterministic computation
+    # and every racing thread would resolve and assign the same Path value,
+    # so no lock is needed — worst case is a few redundant candidate scans.
     if _TEMPLATES_ROOT is None:
         for candidate in _candidate_roots():
             if candidate.is_dir():
