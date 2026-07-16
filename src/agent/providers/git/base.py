@@ -112,8 +112,9 @@ class LocalGitProvider(GitProvider):
         project_dir = self._contained_dir(self._safe_folder_name(project_id))
         if os.path.exists(project_dir):
             shutil.rmtree(project_dir)
-            return True
-        return False
+        # Absent counts as deleted — callers fail closed on False (F03), and a
+        # never-materialized or already-removed workspace must not brick them.
+        return True
 
     def _get_path(self, project_id: str, path: str) -> str:
         if not project_id or project_id == "local_project":

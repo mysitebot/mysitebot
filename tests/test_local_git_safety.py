@@ -138,6 +138,15 @@ async def test_delete_project_cannot_escape_workspace(tmp_path):
 
     git = LocalGitProvider(workspace_root=str(workspace))
     # Sanitized to a basename inside the workspace (which doesn't exist) -> no-op.
+    # Absent counts as deleted (F04, matching F03's fail-closed callers) — the
+    # traversal is still blocked (the sentinel survives outside the workspace);
+    # only the return value's semantic changed, not the safety guarantee.
     result = await git.delete_project("local_../../keep_me")
-    assert result is False
+    assert result is True
     assert (sentinel / "important.txt").exists()
+
+
+@pytest.mark.asyncio
+async def test_delete_project_absent_dir_counts_as_deleted(tmp_path):
+    provider = LocalGitProvider(workspace_root=str(tmp_path))
+    assert await provider.delete_project("never_created") is True

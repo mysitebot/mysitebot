@@ -20,24 +20,24 @@ Nothing is ever committed by the loop; review `git diff` after a run.
   generates scenarios, and (with `--fix`) edits Sam's prompt/template/validator.
   Defaults to `claude-sonnet-5` (calibrated 2026-07-03, see calibration/); override via the `model=` arg in `claude_cli`.
 - node/npm (the astro template's node_modules must exist:
-  `cd projects/agent/templates/astro-basic && npm install` once)
+  `cd templates/astro-basic && npm install` once)
 - playwright chromium (`python -m playwright install chromium` once)
 
-## Usage (always from the wypiwyg repo root)
+## Usage (always from the sam repo root)
 
     # pure eval, no self-modification (the default)
-    python projects/agent/training/sam/run_loop.py
+    python training/sam/run_loop.py
 
     # opt in to the self-modifying fixer (proposes edits for review, never commits)
-    python projects/agent/training/sam/run_loop.py --scenarios contact_email_001 --fix
+    python training/sam/run_loop.py --scenarios contact_email_001 --fix
 
     # bound a big fixing run
-    python projects/agent/training/sam/run_loop.py --fix --limit 10 --fix-budget 3
+    python training/sam/run_loop.py --fix --limit 10 --fix-budget 3
 
     # grow the corpus
-    python projects/agent/training/sam/generate_scenarios.py --count 5
+    python training/sam/generate_scenarios.py --count 5
 
-    # offline tests for the harness itself (from projects/agent)
+    # offline tests for the harness itself (from the sam repo root)
     pytest training/sam/tests -v
 
 ## How a run is judged
@@ -54,9 +54,9 @@ Only `fail` triggers the fixer.
 
 ## What the fixer may touch
 
-projects/agent/src/agent/prompts.py, tool docstrings in projects/agent/src/agent/site_editor.py,
-projects/agent/src/agent/content_validator.py, templates/astro-basic/**, SECTIONS.md,
-training/registry.json. Anything else is auto-reverted and flagged in the
+src/agent/prompts.py, tool docstrings in src/agent/site_editor.py,
+src/agent/content_validator.py, templates/astro-basic/**, templates/SECTIONS.md,
+training/sam/registry.json. Anything else is auto-reverted and flagged in the
 run report. A failed fix is fully reverted and the scenario is flagged
 `needs_human` in registry.json.
 

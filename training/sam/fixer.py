@@ -1,11 +1,12 @@
 """Diagnose-and-fix stage: run the claude CLI in yolo mode against the
-wypiwyg repo, constrained to an allowlist that the orchestrator enforces."""
+sam repo, constrained to an allowlist that the orchestrator enforces."""
 import json
 import shutil
 import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional, Set
 
+import _paths
 import claude_cli
 from sam_runner import parse_porcelain_z
 
@@ -14,12 +15,12 @@ DIRECTIVE_PATH = Path(__file__).resolve().parent / "directives" / "fixer.md"
 # Paths (relative to the repo root) the fixer may modify. Entries ending in
 # "/" are directory prefixes.
 ALLOWLIST = (
-    "projects/agent/src/agent/prompts.py",
-    "projects/agent/src/agent/site_editor.py",
-    "projects/agent/src/agent/content_validator.py",
-    "projects/agent/templates/astro-basic/",
-    "projects/agent/templates/SECTIONS.md",
-    "projects/agent/training/registry.json",
+    _paths.AGENT_PROMPTS,
+    _paths.AGENT_SITE_EDITOR,
+    _paths.AGENT_CONTENT_VALIDATOR,
+    _paths.TEMPLATE_DIR + "/",
+    _paths.SECTIONS_DOC,
+    _paths.TRAINING_REGISTRY,
 )
 
 
@@ -32,9 +33,9 @@ def is_allowlisted(path: str) -> bool:
 # the check itself was loosened) — flagged + judge-reconfirmed, vs behavioral
 # edits to the prompt / tool docstrings.
 GOALPOST_PREFIXES = (
-    "projects/agent/src/agent/content_validator.py",
-    "projects/agent/templates/",
-    "projects/agent/training/registry.json",
+    _paths.AGENT_CONTENT_VALIDATOR,
+    "templates/",
+    _paths.TRAINING_REGISTRY,
 )
 
 

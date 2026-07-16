@@ -7,12 +7,12 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from _paths import bootstrap
 
-# Must be set before any agent import (same pattern as projects/agent/cli.py)
+# Must be set before any agent import (same pattern as cli.py)
 os.environ.setdefault("ADMIN_USERNAME", "training_admin")
 os.environ.setdefault("ADMIN_PASSWORD", "training_admin_password")
 os.environ.setdefault("JWT_SECRET", "training_jwt_secret_placeholder_min_32_chars")
 
-REPO_ROOT = bootstrap()   # wypiwyg/
+REPO_ROOT = bootstrap()   # sam repo root
 
 GITIGNORE = "node_modules/\ndist/\n.astro/\n"
 

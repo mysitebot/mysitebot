@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Sam self-improvement training loop.
 
-Run from the wypiwyg repository root, e.g.:
+Run from the sam repository root, e.g.:
 
-    python projects/agent/training/sam/run_loop.py --limit 2            # eval-only (default)
-    python projects/agent/training/sam/run_loop.py --scenarios hero_title_001 --fix  # opt-in fixer
+    python training/sam/run_loop.py --limit 2            # eval-only (default)
+    python training/sam/run_loop.py --scenarios hero_title_001 --fix  # opt-in fixer
 """
 import argparse
 import asyncio
@@ -53,6 +53,7 @@ import judge
 import sam_registry
 import sam_runner
 import verifier
+from _paths import TEMPLATE_DIR
 from scenario_schema import load_scenarios, is_holdout
 
 
@@ -378,9 +379,8 @@ def write_report(run_dir: Path, run_id: str, outcomes, repo_root: Path,
 
 async def main(argv=None):
     args = parse_args(argv)
-    if not (args.repo_root / "projects" / "agent" / "templates" / "astro-basic").exists():
-        sys.exit("repo root looks wrong: projects/agent/templates/astro-basic not found "
-                 f"under {args.repo_root}")
+    if not (args.repo_root / TEMPLATE_DIR).exists():
+        sys.exit(f"repo root looks wrong: {TEMPLATE_DIR} not found under {args.repo_root}")
     all_scenarios = load_scenarios(args.scenarios_dir)
     by_id = {s.id: s for s in all_scenarios}
     selected = all_scenarios

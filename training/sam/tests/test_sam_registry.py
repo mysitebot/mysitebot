@@ -56,11 +56,11 @@ def test_record_run_and_save_roundtrip(tmp_path):
     sam_registry.record_run(reg, "s1", "2026-06-11T10-00", "fail")
     sam_registry.record_run(reg, "s1", "2026-06-11T11-00", "pass",
                             fix={"run": "2026-06-11T11-00",
-                                 "files": ["projects/agent/src/agent/prompts.py"]})
+                                 "files": ["src/agent/prompts.py"]})
     sam_registry.save(path, reg)
     reg2 = sam_registry.load(path)
     assert [r["result"] for r in reg2["s1"]["runs"]] == ["fail", "pass"]
-    assert reg2["s1"]["fixes"][0]["files"] == ["projects/agent/src/agent/prompts.py"]
+    assert reg2["s1"]["fixes"][0]["files"] == ["src/agent/prompts.py"]
 
 
 def test_flaky_detection():
