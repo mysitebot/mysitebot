@@ -25,12 +25,12 @@ YOUR TASK:
    called the wrong tool, produced invalid content, lacked a section
    component or property, or valid output was wrongly rejected by validation.
 2. Apply the SMALLEST fix that addresses the root cause. You may ONLY modify:
-   - projects/agent/src/agent/prompts.py (system prompt wording)
-   - projects/agent/src/agent/site_editor.py (tool docstrings and parameter descriptions only)
-   - projects/agent/src/agent/content_validator.py (validation rules)
-   - projects/agent/templates/astro-basic/ plus
-     projects/agent/templates/SECTIONS.md and
-     projects/agent/training/registry.json (section components, props, docs)
+   - src/agent/prompts.py (system prompt wording)
+   - src/agent/site_editor.py (tool docstrings and parameter descriptions only)
+   - src/agent/content_validator.py (validation rules)
+   - templates/astro-basic/ plus
+     templates/SECTIONS.md and
+     training/sam/registry.json (section components, props, docs)
    Changes to any other file will be automatically reverted.
 3. The fix must GENERALIZE. Do not hard-code this scenario's specific
    wording, titles, or content anywhere.

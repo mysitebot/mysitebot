@@ -7,6 +7,7 @@ import re
 import tempfile
 from pathlib import Path
 
+import _paths
 from _paths import SAM_DIR, bootstrap
 
 _REPO = bootstrap()
@@ -24,6 +25,15 @@ DIRECTIVE_PATH = SAM_DIR / "directives" / "generator.md"
 # snapshot in the system prompt already shows the file), so mandating them
 # false-fails good runs (settings_name_rebrand_001 lesson, session 7).
 DISCOVERY_TOOLS = {"read_content_file", "list_content_files"}
+
+
+def sections_doc_path() -> Path:
+    """Resolve the section catalog via the shared _paths constant, not a
+    hand-built monorepo segment path — `_REPO / "projects" / "agent" /
+    "templates" / "SECTIONS.md"` never existed on the standalone layout, so
+    `.exists()` was always False and generation silently fed "(none)" as the
+    section catalog instead of erroring."""
+    return _REPO / _paths.SECTIONS_DOC
 
 
 def _tokens(text: str):
@@ -147,7 +157,7 @@ def main(argv=None):
     existing_ids = {s.id for s in existing}
     existing_prompts = [s.prompt for s in existing]
 
-    sections_path = _REPO / "projects" / "agent" / "templates" / "SECTIONS.md"
+    sections_path = sections_doc_path()
     sections = sections_path.read_text()[:8000] if sections_path.exists() else "(none)"
     inspiration = "(none)"
     if args.from_websight:

@@ -2,29 +2,32 @@
 importable. Previously duplicated across run_loop.py, sam_runner.py,
 generate_scenarios.py and tests/conftest.py.
 
-Works in two layouts: the mysite.bot monorepo (root carries a projects/ dir) and
-the standalone `sam` repo (root is just the nearest pyproject.toml above sam/)."""
+Standalone `sam` repo layout only — the monorepo layout was retired when sam
+moved to its own repository. The repo root is the nearest ancestor of
+training/sam that carries a pyproject.toml."""
 import sys
 from pathlib import Path
 
 SAM_DIR = Path(__file__).resolve().parent          # …/training/sam
 
+# Repo-relative paths of the training loop's targets. run_loop's startup guard
+# and the fixer allowlists consume these — never hardcode layout paths there.
+AGENT_PROMPTS = "src/agent/prompts.py"
+AGENT_SITE_EDITOR = "src/agent/site_editor.py"
+AGENT_CONTENT_VALIDATOR = "src/agent/content_validator.py"
+TEMPLATE_DIR = "templates/astro-basic"
+SECTIONS_DOC = "templates/SECTIONS.md"
+TRAINING_REGISTRY = "training/sam/registry.json"
+
 
 def find_repo_root(start: Path = SAM_DIR) -> Path:
-    ancestors = [start, *start.parents]
-    # Monorepo layout: the root carries pyproject.toml AND a projects/ dir
-    # (skips the intermediate projects/agent/pyproject.toml).
-    for p in ancestors:
-        if (p / "pyproject.toml").exists() and (p / "projects").is_dir():
-            return p
-    # Standalone `sam` repo: the nearest ancestor with a pyproject.toml.
-    for p in ancestors:
+    for p in [start, *start.parents]:
         if (p / "pyproject.toml").exists():
             return p
     raise RuntimeError("repo root not found")
 
 
-REPO_ROOT = find_repo_root()                       # monorepo root or sam/ root
+REPO_ROOT = find_repo_root()                       # sam/ repo root
 
 
 def bootstrap() -> Path:

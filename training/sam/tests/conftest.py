@@ -13,9 +13,9 @@ if str(SAM_DIR) not in sys.path:
 
 from _paths import bootstrap
 
-REPO_ROOT = bootstrap()   # wypiwyg
+REPO_ROOT = bootstrap()   # sam repo root
 
-# Must be set before any agent import (same pattern as projects/agent/cli.py)
+# Must be set before any agent import (same pattern as cli.py)
 os.environ.setdefault("ADMIN_USERNAME", "training_admin")
 os.environ.setdefault("ADMIN_PASSWORD", "training_admin_password")
 os.environ.setdefault("JWT_SECRET", "training_jwt_secret_placeholder_min_32_chars")
@@ -66,18 +66,19 @@ def make_claude_stub(tmp_path: Path, body: str) -> Path:
 
 
 def make_tmp_repo(tmp_path: Path) -> Path:
-    """A small git repo standing in for wypiwyg/ in fixer/run_loop tests."""
+    """A small git repo standing in for the standalone sam checkout in
+    fixer/run_loop tests."""
     repo = tmp_path / "repo"
-    (repo / "projects" / "agent" / "src" / "agent").mkdir(parents=True)
-    (repo / "projects" / "agent" / "src" / "agent" / "prompts.py").write_text(
+    (repo / "src" / "agent").mkdir(parents=True)
+    (repo / "src" / "agent" / "prompts.py").write_text(
         "BASE_SYSTEM_INSTRUCTION = 'original'\n")
-    (repo / "projects" / "agent" / "src" / "agent" / "content_validator.py").write_text(
+    (repo / "src" / "agent" / "content_validator.py").write_text(
         "# content_validator\n")
-    (repo / "projects" / "agent" / "src" / "agent" / "site_editor.py").write_text(
+    (repo / "src" / "agent" / "site_editor.py").write_text(
         "# tools\n")
     (repo / "README.md").write_text("readme\n")
-    (repo / "projects" / "agent" / "templates" / "astro-basic").mkdir(parents=True)
-    (repo / "projects" / "agent" / "templates" / "astro-basic" / "placeholder.txt").write_text("x\n")
+    (repo / "templates" / "astro-basic").mkdir(parents=True)
+    (repo / "templates" / "astro-basic" / "placeholder.txt").write_text("x\n")
 
     def git(*args):
         subprocess.run(

@@ -88,7 +88,7 @@ def test_dry_run_fail_with_fix_reverts_and_flags_needs_human(tmp_path, monkeypat
     # stub "fixes" an allowlisted file; the dry-run replay still fails,
     # so the loop must revert the fix and flag the scenario
     body = ('import pathlib\n'
-            'pathlib.Path("projects/agent/src/agent/prompts.py").write_text("CHANGED\\n")\n'
+            'pathlib.Path("src/agent/prompts.py").write_text("CHANGED\\n")\n'
             'print("done")')
     monkeypatch.setenv("SAM_TRAINING_CLAUDE_BIN",
                        str(make_claude_stub(tmp_path, body)))
@@ -96,9 +96,9 @@ def test_dry_run_fail_with_fix_reverts_and_flags_needs_human(tmp_path, monkeypat
     _, results = _results(env)
     outcome = results["outcomes"][0]
     assert outcome["result"] == "fail"
-    assert outcome["fixes"][0]["applied"] == ["projects/agent/src/agent/prompts.py"]
+    assert outcome["fixes"][0]["applied"] == ["src/agent/prompts.py"]
     # fix was reverted
-    assert (env["repo"] / "projects" / "agent" / "src" / "agent" / "prompts.py").read_text() == \
+    assert (env["repo"] / "src" / "agent" / "prompts.py").read_text() == \
         "BASE_SYSTEM_INSTRUCTION = 'original'\n"
     registry = json.loads(env["registry"].read_text())
     assert registry["dry_fail_001"]["needs_human"] is True
@@ -366,7 +366,7 @@ def test_fix_that_regresses_the_suite_is_reverted(tmp_path, monkeypatch):
         "dry_pass_001": {"runs": [{"run": "r0", "result": "pass"}],
                          "fixes": [], "flaky": False, "needs_human": False}})
     body = ('import pathlib\n'
-            'pathlib.Path("projects/agent/src/agent/prompts.py").write_text("CHANGED\\n")\n'
+            'pathlib.Path("src/agent/prompts.py").write_text("CHANGED\\n")\n'
             'print("done")')
     monkeypatch.setenv("SAM_TRAINING_CLAUDE_BIN",
                        str(make_claude_stub(tmp_path, body)))
@@ -392,7 +392,7 @@ def test_fix_that_regresses_the_suite_is_reverted(tmp_path, monkeypatch):
     outcome = results["outcomes"][0]
     assert outcome["result"] == "fail"
     assert any("regressed" in s for s in outcome["summary"])
-    assert (env["repo"] / "projects/agent/src/agent/prompts.py").read_text() == \
+    assert (env["repo"] / "src/agent/prompts.py").read_text() == \
         "BASE_SYSTEM_INSTRUCTION = 'original'\n"
     registry = json.loads(env["registry"].read_text())
     assert registry["dry_fail_001"]["needs_human"] is True
@@ -406,7 +406,7 @@ def test_goalpost_fix_rejected_by_judge_is_reverted(tmp_path, monkeypatch):
     env = _setup(tmp_path, FAIL_SCENARIO)
     # fixer stub edits an allowlisted GOALPOST file
     body = ('import pathlib\n'
-            'pathlib.Path("projects/agent/src/agent/content_validator.py")'
+            'pathlib.Path("src/agent/content_validator.py")'
             '.write_text("# changed by fixer\\n")\n'
             'print("done")')
     monkeypatch.setenv("SAM_TRAINING_CLAUDE_BIN",
@@ -433,7 +433,7 @@ def test_goalpost_fix_rejected_by_judge_is_reverted(tmp_path, monkeypatch):
     assert outcome["result"] == "fail"
     assert any("goalpost fix rejected" in s for s in outcome["summary"])
     # the goalpost edit must be reverted to its original content
-    assert (env["repo"] / "projects/agent/src/agent/content_validator.py").read_text() == \
+    assert (env["repo"] / "src/agent/content_validator.py").read_text() == \
         "# content_validator\n"
     registry = json.loads(env["registry"].read_text())
     assert registry["dry_fail_001"]["needs_human"] is True
@@ -513,7 +513,7 @@ def test_goalpost_fix_with_inconclusive_judge_is_reverted(tmp_path, monkeypatch)
     # confirmation — the fix must be reverted, same as an explicit rejection.
     env = _setup(tmp_path, FAIL_SCENARIO)
     body = ('import pathlib\n'
-            'pathlib.Path("projects/agent/src/agent/content_validator.py")'
+            'pathlib.Path("src/agent/content_validator.py")'
             '.write_text("# changed by fixer\\n")\n'
             'print("done")')
     monkeypatch.setenv("SAM_TRAINING_CLAUDE_BIN",
@@ -538,7 +538,7 @@ def test_goalpost_fix_with_inconclusive_judge_is_reverted(tmp_path, monkeypatch)
     outcome = results["outcomes"][0]
     assert outcome["result"] == "fail"
     assert any("inconclusive" in s for s in outcome["summary"])
-    assert (env["repo"] / "projects/agent/src/agent/content_validator.py").read_text() == \
+    assert (env["repo"] / "src/agent/content_validator.py").read_text() == \
         "# content_validator\n"
 
 

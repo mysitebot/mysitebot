@@ -5,7 +5,7 @@ The agent's system prompt embeds SECTIONS.md as its component reference, so the
 documentation must always match the template. Run this whenever a component in
 astro-basic/src/components/sections/ is added or changed:
 
-    python projects/agent/templates/generate_sections_doc.py
+    python templates/generate_sections_doc.py
 """
 import json
 import re
@@ -19,7 +19,7 @@ SCHEMA_OUTPUT = ROOT / "sections-schema.json"
 HEADER = """# Section Reference Guide
 
 This guide is the dynamic source of truth for all available UI sections.
-Generated from `astro-basic/src/components/sections/` by `projects/agent/templates/generate_sections_doc.py` — do not edit by hand.
+Generated from `astro-basic/src/components/sections/` by `templates/generate_sections_doc.py` — do not edit by hand.
 """
 
 
