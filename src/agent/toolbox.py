@@ -59,6 +59,34 @@ def build_tools(editor: "AgentSiteEditor", ctx: "TurnContext") -> List[Callable]
     create_publish_request / publish_changes are omitted when the editor has
     no store (CLI / standalone mode)."""
 
+    async def _ensure_draft_recorded(target_branch: str) -> Optional[Dict[str, Any]]:
+        """Deterministic postcondition of every successful mutation (F05): the
+        draft's publish request exists and is persisted BEFORE the turn may
+        trigger a build. Without it a turn that ends early (model drop,
+        transient error) leaves the commit on an unrecorded branch while the
+        app builds stale main and tells the user their change is live."""
+        if not editor.store:
+            return None  # local/storeless mode has no draft bookkeeping
+        proj = (await editor.store.get_project(ctx.active_project_id)) or {}
+        if proj.get("pending_mr_iid"):
+            return None
+        try:
+            mr_data = await editor.git_provider.create_merge_request(
+                ctx.active_provider_id, target_branch, "main",
+                f"Sam edits ({target_branch})")
+        except Exception as e:
+            return {
+                "error": f"The edit was saved to a draft branch but the publish "
+                         f"request could not be opened: {e}",
+                "fix_hint": "Try the edit again — a fresh draft will be created.",
+            }
+        proj = await editor.store.get_project(ctx.active_project_id)
+        if proj is not None:
+            proj["pending_mr_iid"] = mr_data.get("iid")
+            proj["pending_mr_branch"] = target_branch
+            await editor.store.save_project(ctx.active_project_id, proj)
+        return None
+
     async def create_project(name: str, template: str = "astro-basic") -> Dict[str, Any]:
         """
         Creates a brand new customer website from the mysite.bot template.
@@ -205,6 +233,9 @@ def build_tools(editor: "AgentSiteEditor", ctx: "TurnContext") -> List[Callable]
             result = await editor.git_provider.commit_file(ctx.active_provider_id, target_branch, file_path, content, f"Updated {file_path} via Sam AI")
         except Exception as e:
             return {"error": f"Commit failed: {e}", "fix_hint": "Check the file path and content, then try again."}
+        draft_error = await _ensure_draft_recorded(target_branch)
+        if draft_error:
+            return draft_error
         ctx.pipeline_triggered = True
         ctx.turn_branch = target_branch
         if isinstance(result, dict):
@@ -250,6 +281,9 @@ def build_tools(editor: "AgentSiteEditor", ctx: "TurnContext") -> List[Callable]
             }
         except Exception as e:
             return {"error": f"Delete failed: {e}"}
+        draft_error = await _ensure_draft_recorded(target_branch)
+        if draft_error:
+            return draft_error
         ctx.pipeline_triggered = True
         ctx.turn_branch = target_branch
         if isinstance(result, dict):

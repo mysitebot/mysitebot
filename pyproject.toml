@@ -1,6 +1,6 @@
 [project]
 name = "sam"
-version = "0.1.0"
+version = "0.2.0"
 description = "Standalone Astro site-editing agent: editing engine, CLI, sealed template, SAM eval loop. Runs on an OpenAI-compatible LLM API key alone."
 requires-python = ">=3.12"
 dependencies = [
