@@ -8,13 +8,24 @@ no account, no limits.
 
 ```bash
 uv sync
-export LLM_API_KEY="your-openai-compatible-key"   # OpenAI-compatible endpoint
+export LLM_API_KEY="your-google-ai-studio-key"   # required; Gemini by default
 uv run python cli.py --dir ./my-site --prompt "Create a landing page for a bakery"
 ```
 
 `--dir` is your local Astro workspace; if it doesn't exist, sam scaffolds the
-sealed template into it. Point `LLM_API_KEY` at any OpenAI-compatible endpoint
-(set `LLM_MODEL` / the client `base_url` via env to choose a provider/model).
+sealed template into it.
+
+### Using another provider
+
+sam talks to any OpenAI-compatible endpoint. The defaults target Gemini, so out
+of the box `LLM_API_KEY` should be a [Google AI Studio](https://aistudio.google.com/)
+key. For any other provider, also override the endpoint and models:
+
+```bash
+export LLM_BASE_URL="https://api.openai.com/v1"   # default: https://generativelanguage.googleapis.com/v1beta/openai/
+export LLM_MODEL="gpt-4.1-mini"                   # default: gemini-2.5-flash-lite
+export LLM_MODEL_THINKING="o4-mini"               # default: gemini-2.5-flash (used on retry/escalation)
+```
 
 ## Image search (optional)
 
