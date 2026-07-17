@@ -61,3 +61,19 @@ def test_negated_changes_ready_does_not_match():
     negated = "No changes are ready to publish yet — make an edit first."
     assert not _EDIT_CLAIM_RE.search(negated)
     assert not _SCRIPTED_EDIT_CLAIM_RE.search(negated)
+
+
+def test_selfheal_script_verbs_are_edit_claims():
+    # Live 2026-07-18: with zero commits in the turn, flash parroted the
+    # self-heal script — "I've corrected it automatically" — and the verb
+    # regex missed it because corrected/fixed were not in the verb lists.
+    from agent.site_editor import _EDIT_VERB_CLAIM_RE
+
+    live = ("I noticed a small issue with the update, but I've corrected it "
+            "automatically. I'll let you know the moment it's live!")
+    assert _EDIT_VERB_CLAIM_RE.search(live)
+    assert _EDIT_VERB_CLAIM_RE.search("I've fixed the syntax on that page.")
+    assert _EDIT_VERB_CLAIM_RE.search("I'm fixing the image paths now.")
+    # honest negations/questions must stay unflagged
+    assert not _EDIT_VERB_CLAIM_RE.search("Should I correct the image syntax?")
+    assert not _EDIT_VERB_CLAIM_RE.search("The fix is still pending your approval.")

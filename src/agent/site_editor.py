@@ -65,9 +65,9 @@ class TurnContext:
 # "publish" is deliberately NOT in the verb lists — a publish confirmation
 # legitimately promises future action before any tool runs.
 _EDIT_VERB_CLAIMS = (
-    r"\bI'?ve\s+(?:just\s+)?(?:updated|changed|added|removed|replaced|set|adjusted)\b"
-    r"|\bI(?:'?m|\s+am)\s+(?:now\s+)?(?:updating|changing|adding|removing|replacing|setting|adjusting|creating|building)\b"
-    r"|\bI(?:'?ll|\s+will)\s+(?:now\s+)?(?:update|change|add|remove|replace|set|adjust|create|build)\b"
+    r"\bI'?ve\s+(?:just\s+)?(?:updated|changed|added|removed|replaced|set|adjusted|corrected|fixed)\b"
+    r"|\bI(?:'?m|\s+am)\s+(?:now\s+)?(?:updating|changing|adding|removing|replacing|setting|adjusting|creating|building|correcting|fixing)\b"
+    r"|\bI(?:'?ll|\s+will)\s+(?:now\s+)?(?:update|change|add|remove|replace|set|adjust|create|build|correct|fix)\b"
 )
 
 # The scripted post-edit forms, anchored to first person so honest replies are
