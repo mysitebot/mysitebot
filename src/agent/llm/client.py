@@ -133,7 +133,8 @@ class LLMClient:
             f"[LLM] run_turn hit MAX_TOOL_ITERATIONS ({MAX_TOOL_ITERATIONS}) without a final "
             f"reply after {len(executed)} tool calls — returning best-effort text.")
         text = (last_resp.choices[0].message.content if last_resp else "") or ""
-        return LLMResult(text=text, tool_calls=executed, usage=usage, raw=last_resp)
+        return LLMResult(text=text, tool_calls=executed, usage=usage, raw=last_resp,
+                         capped=True)
 
     async def complete(self, *, system_instruction: str, prompt: str,
                        max_output_tokens: int | None = None) -> LLMResult:

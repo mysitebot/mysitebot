@@ -335,6 +335,10 @@ class AgentSiteEditor:
                 raise
 
             text_candidate = (result.text or "").strip()
+            if getattr(result, "capped", False):
+                # A capped turn is replaced with an honest reply below —
+                # regenerating would burn another full 20-tool run.
+                break
             if ctx.pipeline_triggered:
                 break
             # A turn whose tool calls were all read-only did honest inspection
@@ -368,6 +372,22 @@ class AgentSiteEditor:
                 committed_fallback
                 if ctx.pipeline_triggered else
                 "Sorry, I had trouble forming a reply just now — could you send that again?"
+            )
+        if result is not None and getattr(result, "capped", False):
+            # A capped turn never wrote its considered final reply; its
+            # best-effort text routinely claims work that did not happen
+            # (live 2026-07-18: "I've corrected the image syntax on your
+            # Impact page" while that file was untouched). Relay the honest
+            # state of the turn instead.
+            logger.warning("[Agent] Turn hit the tool-iteration cap — replacing best-effort text with an honest reply.")
+            response_text = (
+                "I got through part of that, but I ran out of steps before finishing "
+                "everything. The changes I did make are saved — ask me to continue "
+                "with what's left."
+                if ctx.pipeline_triggered else
+                "That request needs more steps than I can take in one go, so I haven't "
+                "applied it yet. Could you break it into smaller pieces and send them "
+                "one at a time?"
             )
         return {
             "text": response_text,

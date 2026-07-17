@@ -37,3 +37,6 @@ class LLMResult:
     tool_calls: list[ToolCall] = field(default_factory=list)
     usage: Usage = field(default_factory=Usage)
     raw: Any = None
+    # True when the turn hit MAX_TOOL_ITERATIONS: the text is best-effort,
+    # never the model's considered final reply — treat its claims as unfinished.
+    capped: bool = False
