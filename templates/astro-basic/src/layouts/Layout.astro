@@ -183,15 +183,48 @@ const analyticsToken = perSiteAnalyticsToken || (import.meta.env.PUBLIC_MYSITEBO
                 </a>
               ))}
             </nav>
-            {headerCta && (
-              <div class="flex items-center gap-4">
-                <a href={resolvePath(headerCta.url)} class="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-gray-200">
+            <div class="flex items-center gap-2">
+              {headerCta && (
+                <a href={resolvePath(headerCta.url)} class="hidden md:inline-block bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-gray-200">
                   {headerCta.label}
                 </a>
-              </div>
-            )}
+              )}
+              <button id="mobile-nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav"
+                class="md:hidden p-2 -mr-2 text-gray-700 hover:text-gray-900">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            </div>
           </header>
         )}
+        {!hideHeader && (
+          <div id="mobile-nav" hidden class="md:hidden border-b border-gray-100/50 bg-white/95 backdrop-blur-md px-6 py-4 z-10">
+            <nav class="flex flex-col gap-4">
+              {settings.navigation.map((nav) => (
+                <a href={resolvePath(nav.url)} class="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors">
+                  {nav.label}
+                </a>
+              ))}
+              {headerCta && (
+                <a href={resolvePath(headerCta.url)} class="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold text-center hover:bg-gray-800 transition-all">
+                  {headerCta.label}
+                </a>
+              )}
+            </nav>
+          </div>
+        )}
+        <script>
+          const toggle = document.getElementById('mobile-nav-toggle');
+          const panel = document.getElementById('mobile-nav');
+          toggle?.addEventListener('click', () => {
+            const opening = panel?.hasAttribute('hidden') ?? false;
+            if (opening) panel?.removeAttribute('hidden');
+            else panel?.setAttribute('hidden', '');
+            toggle.setAttribute('aria-expanded', String(opening));
+            toggle.setAttribute('aria-label', opening ? 'Close menu' : 'Open menu');
+          });
+        </script>
 
         <main class="flex-grow">
           <slot />
