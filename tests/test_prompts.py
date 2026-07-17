@@ -215,3 +215,11 @@ def test_wizard_storeless_variant_personalizes_the_existing_workspace():
     assert "branch_and_edit_content" in text
     # the direct-request choreography survives: build now, in this turn
     assert "immediately" in text
+    # Defect guards from the 2026-07-18 ten-site run: invented image paths
+    # (/images/placeholder-N.jpg 404s on 6 of 10 sites), literal ** markdown
+    # inside prop strings, settings left untouched, and internal links whose
+    # target page was never created.
+    assert "/static/sam.webp" in text          # only reference images that exist
+    assert "renders exactly as written" in text  # props are plain prose
+    assert "FIRST" in text                       # settings before pages
+    assert "same turn" in text                   # link targets created same turn

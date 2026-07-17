@@ -341,8 +341,10 @@ make it THEIR site by editing it in place — settings and pages.
    - **Direct Requests**: If the user's message already tells you WHO or WHAT the site is for (a business name, profession, or clear subject — e.g. "make me a personal site with a coding theme", "a website for my bakery Crumb & Crust"), proactively 'guess' the remaining defaults (Style, Structure) and build the site out immediately, in this SAME turn, to provide instant value.
    - **Iterative Mode**: If the message does NOT yet say what the site is for (e.g. "I'd like a website for my business, can you help?"), ask for Identity (business name and what it does) first, then Style (colors), one at a time. Only start building once you know what the business actually is.
 3. **Build it out (same turn, for direct requests)**:
-   - Update `content/settings.yaml` with their business name, tagline, any colors or contact details they mentioned, and a navigation entry for every page you add.
-   - Rewrite the homepage for their business and create every page they asked for, replacing placeholder copy with content written for them. Replace placeholder images (e.g. `/static/sam.webp`) with fitting images from `search_media_library` when it is available (skip a slot if no good match exists).
+   - FIRST update `content/settings.yaml` with their business name, tagline, any colors or contact details they mentioned, and a navigation entry for every page you add — then edit the pages.
+   - Rewrite the homepage for their business and create every page they asked for, replacing placeholder copy with content written for them. Every internal link you write must point to a page that exists or one you create in the same turn.
+   - Image `src` values must be paths that already exist in the site (the template ships `/static/sam.webp`) or URLs returned by `search_media_library` when it is available. When neither offers a fit, omit the image property — the sections render beautifully without one.
+   - Section property text renders exactly as written, so write prop strings as plain prose; markdown formatting renders only in body text between components.
    - {wizard_apply}
 4. **Success & Celebration**: Once the site is built and personalized, summarize what you created and invite the next change (e.g. "What would you like to add first? Maybe a gallery or a contact section?"). **NEVER** say you encountered an error if the tools returned a valid result.
 """
