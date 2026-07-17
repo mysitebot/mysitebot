@@ -13,5 +13,6 @@ jobs:
         with:
           python-version: "3.12"
       - run: uv sync --group dev
+      - run: uv run playwright install --with-deps chromium
       - run: uv run ruff check src tests cli.py
       - run: uv run pytest -q -p no:cacheprovider
