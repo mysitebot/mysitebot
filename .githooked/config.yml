@@ -1,0 +1,11 @@
+version: 1
+agent:
+  provider: auto
+  timeout_ms: 120000
+blocking:
+  severities:
+    - critical
+    - high
+behaviour:
+  agent_error: warn
+  cache: true

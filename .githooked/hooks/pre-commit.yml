@@ -1,0 +1,4 @@
+checks:
+  - builtin:secrets
+  - builtin:env-files
+  - builtin:conflict-markers
