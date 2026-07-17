@@ -260,6 +260,82 @@ def _first_unbraced_attr(tag_header: str) -> Optional[str]:
     return None
 
 
+def _first_unwrapped_object_attr(tag_header: str) -> Optional[str]:
+    """Name of the first attribute whose {...} expression value is an object
+    literal missing its second brace pair — `image={src: "x", alt: "y"}`.
+    Every token in it is literal-safe (so the literal check passes), yet acorn
+    cannot parse `src: "x"` as an expression and the build dies. Valid shapes
+    (`{{...}}`, `{[...]}`, `{"str"}`, `{3}`) never START with `identifier:`,
+    so the prefix test cannot misfire on them."""
+    depth = 0
+    quote = None
+    n = len(tag_header)
+    i = 0
+    while i < n:
+        ch = tag_header[i]
+        if quote:
+            if ch == quote:
+                quote = None
+        elif ch in "\"'":
+            quote = ch
+        elif ch == "{":
+            if depth == 0:
+                j = i - 1
+                while j >= 0 and tag_header[j].isspace():
+                    j -= 1
+                if j >= 0 and tag_header[j] == "=":
+                    j -= 1
+                    while j >= 0 and tag_header[j].isspace():
+                        j -= 1
+                    end_name = j + 1
+                    while j >= 0 and (tag_header[j].isalnum() or tag_header[j] == "_"):
+                        j -= 1
+                    name = tag_header[j + 1:end_name]
+                    close = _js_aware_brace_end(tag_header, i)
+                    inner = tag_header[i + 1:close] if close != -1 else tag_header[i + 1:]
+                    if name and re.match(r"\s*[A-Za-z_$][\w$]*\s*:", inner):
+                        return name
+                    if close != -1:
+                        i = close
+                        continue
+            depth += 1
+        elif ch == "}":
+            depth = max(0, depth - 1)
+        i += 1
+    return None
+
+
+def _first_colon_attr(tag_header: str) -> Optional[str]:
+    """Name of the first attribute written YAML-style with a colon instead of
+    `=` — `imageAlign: "right"`. No `=` means every other attr scan skips it,
+    yet it is invalid JSX and breaks the build. A valid tag header has no
+    top-level colon at all (colons live inside quoted strings or {...}
+    expressions, both excluded here)."""
+    depth = 0
+    quote = None
+    for i, ch in enumerate(tag_header):
+        if quote:
+            if ch == quote:
+                quote = None
+        elif ch in "\"'":
+            quote = ch
+        elif ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth = max(0, depth - 1)
+        elif depth == 0 and ch == ":":
+            j = i - 1
+            while j >= 0 and tag_header[j].isspace():
+                j -= 1
+            end_name = j + 1
+            while j >= 0 and (tag_header[j].isalnum() or tag_header[j] == "_"):
+                j -= 1
+            name = tag_header[j + 1:end_name]
+            if name and name[0].isalpha():
+                return name
+    return None
+
+
 # Fenced code blocks (``` or ~~~) and `inline code` spans render as literal
 # text, not live JSX — never scan them for components or `{...}` expressions.
 #
@@ -951,6 +1027,18 @@ def validate_content(file_path: str, content: str) -> Optional[Dict[str, Any]]:
                 return {
                     "error": f"Section <{comp}> in '{file_path}' has attribute '{unbraced}' with an unbraced value; array/object/expression values must be wrapped in {{ }}.",
                     "fix_hint": f"Write {unbraced}={{ ... }} (e.g. {unbraced}={{[ ... ]}} for a list of items). Only quoted string values may omit the braces.",
+                }
+            colon_attr = _first_colon_attr(header)
+            if colon_attr:
+                return {
+                    "error": f"Section <{comp}> in '{file_path}' writes attribute '{colon_attr}' with ':' — JSX attributes are assigned with '='.",
+                    "fix_hint": f'Write {colon_attr}="..." (or {colon_attr}={{ ... }} for an expression value).',
+                }
+            obj_attr = _first_unwrapped_object_attr(header)
+            if obj_attr:
+                return {
+                    "error": f"Section <{comp}> in '{file_path}' has attribute '{obj_attr}' whose object value is missing its second brace pair.",
+                    "fix_hint": f'Object values need double braces: {obj_attr}={{{{ key: "..." }}}}.',
                 }
             documented = section_props.get(comp)
             if not documented:

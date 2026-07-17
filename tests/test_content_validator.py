@@ -624,3 +624,57 @@ def test_is_literal_expression_rejects_binary_plus_minus():
     assert _is_literal_expression("-3.5") is True
     assert _is_literal_expression("+2") is True
     assert _is_literal_expression("{ a: -1, b: [2, -3] }") is True
+
+
+def test_unwrapped_object_literal_attr_rejected():
+    # `image={src: "...", alt: "..."}` is an object literal missing its second
+    # brace pair — every token is literal-safe, so it passed the literal check,
+    # yet acorn cannot parse `src: "..."` as an expression and the build dies.
+    # Live-caught 2026-07-18 (generated nonprofit site, impact.mdx).
+    content = (
+        '---\ntitle: "x"\n---\n'
+        '<Article heading="By the Numbers"\n'
+        '  image={src: "/images/impact.jpg", alt: "Impact stats"}\n'
+        '/>'
+    )
+    error = validate_content("content/pages/impact.mdx", content)
+    assert error is not None
+    assert "image" in error["error"]
+    assert "{{" in error["fix_hint"]
+
+
+def test_double_braced_object_attr_still_valid():
+    content = (
+        '---\ntitle: "x"\n---\n'
+        '<Article heading="By the Numbers"\n'
+        '  image={{src: "/images/impact.jpg", alt: "Impact stats"}}\n'
+        '/>'
+    )
+    assert validate_content("content/pages/impact.mdx", content) is None
+
+
+def test_colon_attribute_syntax_rejected():
+    # `imageAlign: "right"` (YAML-style colon instead of `=`) is invalid JSX
+    # attribute syntax; no `=` means every existing attr scan skips over it.
+    # Live-caught in the same generated page as the unwrapped object.
+    content = (
+        '---\ntitle: "x"\n---\n'
+        '<Article heading="By the Numbers"\n'
+        '  imageAlign: "right"\n'
+        '  backgroundColor="#ffffff"\n'
+        '/>'
+    )
+    error = validate_content("content/pages/impact.mdx", content)
+    assert error is not None
+    assert "imageAlign" in error["error"]
+    assert "=" in error["fix_hint"]
+
+
+def test_ternary_expression_attr_not_flagged_as_object():
+    # A depth-0 colon inside a {...} expression (ternary) or inside quoted
+    # strings must not trip either new check.
+    content = (
+        '---\ntitle: "x"\n---\n'
+        '<Hero heading="Time: 17:00" subheading="ok" />'
+    )
+    assert validate_content("content/pages/index.mdx", content) is None
