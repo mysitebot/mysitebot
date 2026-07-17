@@ -99,6 +99,17 @@ class LocalGitProvider(GitProvider):
         answer all agree on one safe location."""
         return sanitize_project_name(name)
 
+    async def check_project_availability(self, name: str) -> Dict[str, Any]:
+        """Availability that agrees with create_project's refusal to overwrite
+        an existing directory: when the sanitized folder is taken, append a
+        numeric suffix — the duplicate handling the tool contract advertises."""
+        base = self._safe_folder_name(name)
+        candidate, n = base, 1
+        while os.path.isdir(os.path.join(self.workspace_root, candidate)):
+            n += 1
+            candidate = f"{base}-{n}"
+        return {"available": True, "name": candidate}
+
     def _contained_dir(self, folder_name: str) -> str:
         """Join a sanitized folder name onto the workspace root and assert the
         result stays within it (defense in depth against symlink/edge escapes)."""

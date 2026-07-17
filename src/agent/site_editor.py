@@ -219,7 +219,12 @@ class AgentSiteEditor:
         publish_enabled = self.store is not None
         base_instruction = base_system_instruction(include_publish=publish_enabled)
         if is_initial_wizard:
-            base_instruction += onboarding_wizard_instruction(include_publish=publish_enabled)
+            # Storeless (local CLI) init also has no project-lifecycle tools
+            # (build_tools gates them on the store), so the wizard variant
+            # must direct building out the existing workspace instead of
+            # provisioning a new project.
+            base_instruction += onboarding_wizard_instruction(
+                include_publish=publish_enabled, include_create=publish_enabled)
 
         # Volatile, per-turn context (the rolling summary + a live site snapshot)
         # is appended AFTER the stable base instruction + section reference,

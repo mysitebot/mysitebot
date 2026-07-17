@@ -447,9 +447,15 @@ def build_tools(editor: "AgentSiteEditor", ctx: "TurnContext") -> List[Callable]
             }
         return {"section": section_name, "reference": reference}
 
-    tools: List[Callable] = [
-        create_project,
-        check_project_availability,
+    tools: List[Callable] = []
+    # The multi-project lifecycle only exists where a store holds the project
+    # records (SaaS onboarding wizard). The storeless CLI edits exactly ONE
+    # local workspace — offering create_project there makes "create a
+    # website..." prompts build a SIBLING directory of --dir while the user's
+    # actual workspace keeps the pristine template (seen live 2026-07-18).
+    if editor.store is not None:
+        tools += [create_project, check_project_availability]
+    tools += [
         list_content_files,
         read_content_file,
         branch_and_edit_content,

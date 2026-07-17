@@ -189,3 +189,29 @@ async def _get_tool_map(tmp_path, monkeypatch, store=None):
     editor = AgentSiteEditor(git_provider=provider, api_key="test-key", store=store)
     await editor.run("hello", "local_project")
     return captured["tools"]
+
+
+def test_wizard_default_text_unchanged_by_include_create_param():
+    """include_create=True (the SaaS default) must be byte-identical to the
+    long-standing wizard text — the storeless variant is new text only, so
+    the calibrated SaaS behavior cannot drift."""
+    from agent.prompts import onboarding_wizard_instruction
+
+    assert onboarding_wizard_instruction(include_create=True) == ONBOARDING_WIZARD_INSTRUCTION
+
+
+def test_wizard_storeless_variant_personalizes_the_existing_workspace():
+    """include_create=False is for the local CLI, where --dir was already
+    provisioned with the template: the wizard must direct in-place building
+    (settings + pages, same turn) and never mention the project-lifecycle
+    tools it was not given."""
+    from agent.prompts import onboarding_wizard_instruction
+
+    text = onboarding_wizard_instruction(include_publish=False, include_create=False)
+    assert "create_project" not in text
+    assert "check_project_availability" not in text
+    assert "Template Selection" not in text
+    assert "settings.yaml" in text
+    assert "branch_and_edit_content" in text
+    # the direct-request choreography survives: build now, in this turn
+    assert "immediately" in text

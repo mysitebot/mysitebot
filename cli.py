@@ -31,7 +31,8 @@ async def main():
     print(f"Targeting local workspace: {workspace_dir}")
     
     # If the folder doesn't exist, we'll let LocalGitProvider create the project template.
-    if not os.path.exists(workspace_dir):
+    is_init = not os.path.exists(workspace_dir)
+    if is_init:
         print(f"Workspace directory {workspace_dir} does not exist. Creating and provisioning template...")
         parent_dir = os.path.dirname(workspace_dir)
         proj_name = os.path.basename(workspace_dir)
@@ -65,7 +66,9 @@ async def main():
 
     print("Invoking the agent...")
     try:
-        result = await editor.run(args.prompt, project_id)
+        # A freshly provisioned workspace is First Contact: the onboarding
+        # choreography (build the site out in this same turn) applies.
+        result = await editor.run(args.prompt, project_id, is_init=is_init)
         print("\n--- mysite.bot Response ---")
         print(result["text"])
         print("--------------------------")
