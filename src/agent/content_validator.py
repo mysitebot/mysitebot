@@ -305,6 +305,53 @@ def _first_unwrapped_object_attr(tag_header: str) -> Optional[str]:
     return None
 
 
+def _first_array_prop_mismatch(tag_header: str, prop_types: Dict[str, str]) -> Optional[str]:
+    """Name of the first attribute whose declared type is Array<...> but whose
+    {...} expression value is not an array literal — e.g. fields={{...}} (an
+    object). Syntactically valid and prop-name-clean, it crashes at RENDER
+    time ("fields.map is not a function"), which the build only surfaces after
+    the edit was accepted. Live-caught 2026-07-18."""
+    depth = 0
+    quote = None
+    n = len(tag_header)
+    i = 0
+    while i < n:
+        ch = tag_header[i]
+        if quote:
+            if ch == quote:
+                quote = None
+        elif ch in "\"'":
+            quote = ch
+        elif ch == "{":
+            if depth == 0:
+                j = i - 1
+                while j >= 0 and tag_header[j].isspace():
+                    j -= 1
+                if j >= 0 and tag_header[j] == "=":
+                    j -= 1
+                    while j >= 0 and tag_header[j].isspace():
+                        j -= 1
+                    end_name = j + 1
+                    while j >= 0 and (tag_header[j].isalnum() or tag_header[j] == "_"):
+                        j -= 1
+                    name = tag_header[j + 1:end_name]
+                    close = _js_aware_brace_end(tag_header, i)
+                    inner = (tag_header[i + 1:close] if close != -1
+                             else tag_header[i + 1:]).lstrip()
+                    declared = prop_types.get(name, "")
+                    if (name and inner and not inner.startswith("[")
+                            and (declared.startswith("Array<") or declared.endswith("[]"))):
+                        return name
+                    if close != -1:
+                        i = close
+                        continue
+            depth += 1
+        elif ch == "}":
+            depth = max(0, depth - 1)
+        i += 1
+    return None
+
+
 def _first_colon_attr(tag_header: str) -> Optional[str]:
     """Name of the first attribute written YAML-style with a colon instead of
     `=` — `imageAlign: "right"`. No `=` means every other attr scan skips it,
@@ -1039,6 +1086,12 @@ def validate_content(file_path: str, content: str) -> Optional[Dict[str, Any]]:
                 return {
                     "error": f"Section <{comp}> in '{file_path}' has attribute '{obj_attr}' whose object value is missing its second brace pair.",
                     "fix_hint": f'Object values need double braces: {obj_attr}={{{{ key: "..." }}}}.',
+                }
+            array_attr = _first_array_prop_mismatch(header, get_section_prop_types(comp))
+            if array_attr:
+                return {
+                    "error": f"Section <{comp}> in '{file_path}' gives attribute '{array_attr}' a non-list value, but this property takes a LIST of items.",
+                    "fix_hint": f"Write {array_attr}={{[ {{ ... }}, {{ ... }} ]}} — square brackets around the items.",
                 }
             documented = section_props.get(comp)
             if not documented:

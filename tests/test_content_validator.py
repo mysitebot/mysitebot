@@ -678,3 +678,29 @@ def test_ternary_expression_attr_not_flagged_as_object():
         '<Hero heading="Time: 17:00" subheading="ok" />'
     )
     assert validate_content("content/pages/index.mdx", content) is None
+
+
+def test_array_prop_given_object_literal_rejected():
+    # fields={{ ... }} (an object) for an Array<...> prop passes the syntax and
+    # prop-name checks but crashes at render ("fields.map is not a function") —
+    # live-caught 2026-07-18 on a generated restaurant homepage.
+    content = (
+        '---\ntitle: "x"\n---\n'
+        '<ContactForm heading="Reserve"\n'
+        '  fields={{ name: { label: "Name", type: "text" } }}\n'
+        '/>'
+    )
+    error = validate_content("content/pages/index.mdx", content)
+    assert error is not None
+    assert "fields" in error["error"]
+    assert "[" in error["fix_hint"]
+
+
+def test_array_prop_given_array_still_valid():
+    content = (
+        '---\ntitle: "x"\n---\n'
+        '<ContactForm heading="Reserve"\n'
+        '  fields={[{ label: "Name", type: "text", required: true }]}\n'
+        '/>'
+    )
+    assert validate_content("content/pages/index.mdx", content) is None
