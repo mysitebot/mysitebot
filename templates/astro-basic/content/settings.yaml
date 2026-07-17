@@ -4,6 +4,13 @@ site:
   primaryColor: "#4f46e5"
   bgEffect: ["grid", "aura", "hover"]
   logo: ""
+  # Optional header call-to-action button. When set, it replaces the default;
+  # without it the default ("Get Started" -> /contact) only appears when a
+  # contact page exists. Point it at a real page and match the site's voice,
+  # e.g. label: "Reserve a Table", url: "/reservations".
+  # cta:
+  #   label: "Get Started"
+  #   url: "/contact"
 
 contact:
   email: "hello@example.com"

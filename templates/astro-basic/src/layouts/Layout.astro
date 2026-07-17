@@ -22,6 +22,10 @@ const settingsSchema = z.object({
     tagline: z.string().default("The best in the business").catch("The best in the business"),
     primaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/).default("#4f46e5").catch("#4f46e5"),
     bgEffect: z.union([z.string(), z.array(z.string())]).optional().default([]).catch([]),
+    cta: z.object({
+      label: z.string(),
+      url: z.string(),
+    }).optional().catch(undefined),
   }).default({}),
   contact: z.object({
     email: z.string().email().default("hello@example.com").catch("hello@example.com"),
@@ -58,6 +62,13 @@ if (existsSync(settingsPath)) {
 const { title, description, hideHeader = false, hideFooter = false, pageLayout = 'default' } = Astro.props;
 const siteTitle = title ? `${title} | ${settings.site.name}` : settings.site.name;
 
+// Header CTA. settings.site.cta overrides label + target; without one, the
+// historical default ("Get Started" -> /contact) renders only when a contact
+// page actually exists — a header button that 404s on every page is worse
+// than no button.
+const hasContactPage = existsSync('content/pages/contact.mdx') || existsSync('content/pages/contact.md');
+const headerCta = settings.site.cta ?? (hasContactPage ? { label: 'Get Started', url: '/contact' } : null);
+
 // Contact-form wiring. The build pipeline injects PUBLIC_MYSITEBOT_API (the
 // backend base URL) and PUBLIC_MYSITEBOT_PROJECT_ID; when both are present the
 // contact form POSTs real submissions to the backend, which emails the owner.
@@ -79,6 +90,7 @@ const analyticsToken = perSiteAnalyticsToken || (import.meta.env.PUBLIC_MYSITEBO
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href={resolvePath('/favicon.svg')} />
     <title>{siteTitle}</title>
     <meta name="description" content={description || settings.site.tagline} />
     
@@ -122,11 +134,13 @@ const analyticsToken = perSiteAnalyticsToken || (import.meta.env.PUBLIC_MYSITEBO
                 </a>
               ))}
             </nav>
-            <div class="mt-auto pt-8">
-              <a href={resolvePath('/contact')} class="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-gray-200 block text-center">
-                Get Started
-              </a>
-            </div>
+            {headerCta && (
+              <div class="mt-auto pt-8">
+                <a href={resolvePath(headerCta.url)} class="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-gray-200 block text-center">
+                  {headerCta.label}
+                </a>
+              </div>
+            )}
           </aside>
         )}
         <main class="flex-grow">
@@ -169,11 +183,13 @@ const analyticsToken = perSiteAnalyticsToken || (import.meta.env.PUBLIC_MYSITEBO
                 </a>
               ))}
             </nav>
-            <div class="flex items-center gap-4">
-              <a href={resolvePath('/contact')} class="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-gray-200">
-                Get Started
-              </a>
-            </div>
+            {headerCta && (
+              <div class="flex items-center gap-4">
+                <a href={resolvePath(headerCta.url)} class="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-gray-200">
+                  {headerCta.label}
+                </a>
+              </div>
+            )}
           </header>
         )}
 
