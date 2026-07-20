@@ -1,7 +1,11 @@
 version: 1
 agent:
   provider: auto
-  timeout_ms: 120000
+  # 5 min: the semantic review inherits ~/.codex xhigh reasoning, which exceeds
+  # 120s on a normal push diff — codex then exits 0 with empty stdout and
+  # githooked mislabels the timeout as "Codex returned malformed JSON" (review
+  # silently skipped; agent_error=warn keeps it non-blocking).
+  timeout_ms: 300000
 blocking:
   severities:
     - critical
