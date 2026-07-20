@@ -114,9 +114,10 @@ def build_tools(editor: "AgentSiteEditor", ctx: "TurnContext") -> List[Callable]
             pages_url = (res.get("pages_url") or "").rstrip(".,!?")
             gitlab_url = (res.get("web_url") or "").rstrip(".,!?")
 
-            # The initial template commit kicks off a build (GitLab CI on main,
-            # or the in-process pipeline in local mode)
-            ctx.pipeline_triggered = True
+            # Draft-first: the bare template alone never builds or goes
+            # public. The personalization edits later this same turn commit
+            # to a draft branch and set pipeline_triggered themselves, so the
+            # first thing a user ever sees is their own draft preview.
 
             logger.info(f"[Agent Tool] Successfully provisioned {name} for {editor.session_id}")
             return {

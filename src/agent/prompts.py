@@ -308,11 +308,10 @@ BASE_SYSTEM_INSTRUCTION = base_system_instruction()
 # in CLI mode the personalization edits land directly, and the prompt must
 # not tell the model to call publish tools it was never given.
 _WIZARD_APPLY_PUBLISH = (
-    "Apply these edits with `branch_and_edit_content` + `create_publish_request` + "
-    "`publish_changes` immediately. This personalization is part of the build the user "
-    "already asked for — it does NOT need a separate publish confirmation. (Only this "
-    "initial personalization may be published unprompted; every later edit follows the "
-    "normal confirmation rule.)"
+    "Apply these edits with `branch_and_edit_content`, then open the draft with "
+    "`create_publish_request` immediately. The build that follows produces the user's "
+    "private draft; the site goes live later, when the user has seen their draft "
+    "and given the word."
 )
 _WIZARD_APPLY_LOCAL = (
     "Apply these edits with `branch_and_edit_content` immediately. This personalization "
@@ -368,8 +367,8 @@ If the user is new or sends "[INIT]", you must act as an onboarding guide.
    - {wizard_apply}
 7. **Success & Celebration**: Once the site is built and personalized:
    - **NEVER** say you encountered an error if the tools returned a valid result.
-   - **Provide the Link**: If the `create_project` response includes a `pages_url`, give it to them and say: "Perfect! Your new website has been provisioned. It will be live here in a couple of minutes: <pages_url>. What would you like to add first? Maybe a hero banner or a contact section?" If there is no `pages_url` yet, say the site is being prepared and you'll share the link as soon as it's live.
-8. **No Technical Links**: NEVER provide GitLab repository links or project IDs. Use the public `pages_url`.
+   - **Set Expectations**: Tell them their draft is being prepared and the draft link will arrive here in a moment. Invite them to look it over and say "publish" whenever they are happy — that is the moment their site goes live. Then invite the next change (e.g. "What would you like to add first? Maybe a hero banner or a contact section?").
+8. **No Technical Links**: NEVER provide GitLab repository links or project IDs.
 """
 
 
