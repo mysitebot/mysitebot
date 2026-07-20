@@ -23,25 +23,32 @@ class MediaSearch(Protocol):
 WEAK_MATCH_DISTANCE = 0.6
 
 
-def render_results(results: list[MediaResult]) -> str:
+def render_results(results: list[MediaResult], srcs: list[str] | None = None) -> str:
     """Format ranked results into the agent-facing tool result (all LLM prompt-shaping
-    lives here, in the agent — not in the media backend)."""
+    lives here, in the agent — not in the media backend).
+
+    When `srcs` is given (one opaque `media://N` handle per result), the handle
+    is shown as the image src and the real URL/thumbnail are withheld entirely:
+    the model references the handle and the edit tool resolves it server-side,
+    so a long UUID URL is never in the model's context to mis-transcribe. With
+    srcs=None the raw URL is shown (legacy / non-handle callers)."""
     if not results:
         return "The media library is currently empty. Please notify the administrator to ingest images."
 
     formatted = []
-    for res in results:
+    for i, res in enumerate(results):
         attribution = res.attribution or {}
         quality = "weak" if res.distance > WEAK_MATCH_DISTANCE else "good"
+        use_handle = srcs is not None
         lines = [
-            f"URL: {res.url}",
+            f"Image: {srcs[i]}" if use_handle else f"URL: {res.url}",
             f"Tags: {', '.join(res.tags)}",
             f"Match quality: {quality}",
             f"Attribution: {attribution.get('creator', 'CC0')} ({attribution.get('license', 'CC0')})",
         ]
         if attribution.get("title"):
             lines.insert(1, f"Title: {attribution['title']}")
-        if res.thumbnail:
+        if res.thumbnail and not use_handle:
             lines.append(f"Thumbnail: {res.thumbnail}")
         formatted.append("\n".join(lines))
 
@@ -49,7 +56,14 @@ def render_results(results: list[MediaResult]) -> str:
         "TOP SEMANTIC MATCHES (judge by the tags — pick one ONLY if it genuinely fits "
         "the page and the site's style/audience):\n"
     )
+    handle_note = (
+        "\nUse the `Image:` value (e.g. media://0) VERBATIM as the image src — "
+        "it is resolved to the real URL when you save. Do not invent, shorten, "
+        "or alter it."
+        if srcs is not None else ""
+    )
     footer = (
+        handle_note +
         "\nIf none of these fit, search again with a different descriptive query "
         "(e.g. add the business type or mood), or leave the existing image in place "
         "rather than using a mismatched one."

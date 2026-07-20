@@ -2,6 +2,12 @@
   "id": "newsletter_about_001",
   "name": "Newsletter Signup on About Page",
   "prompt": "Can you add a newsletter sign-up section to the bottom of my About page? Just ask for their email address.",
+  "setup": [
+    {
+      "path": "content/pages/about.mdx",
+      "content": "---\ntitle: About Us\ndescription: Learn more about our company\n---\n\n<Hero\n  heading=\"About Us\"\n  subheading=\"We're passionate about what we do\"\n/>\n<Article\n  paragraphs={[\"We are a dedicated team committed to delivering the best products and services to our customers. Our story began over a decade ago with a simple mission: make quality accessible to everyone.\"]}\n/>\n"
+    }
+  ],
   "checks": {
     "expected_tools": [
       "branch_and_edit_content"
@@ -10,7 +16,12 @@
       "content/pages/about.mdx"
     ],
     "build": true,
-    "judge": "A form or section for collecting email addresses for a newsletter or mailing list appears at or near the bottom of the About page"
+    "judge": "A form or section for collecting email addresses for a newsletter or mailing list appears at or near the bottom of the About page",
+    "file_contains": {
+      "content/pages/about.mdx": [
+        "We are a dedicated team committed to delivering"
+      ]
+    }
   },
   "negative": false,
   "dry_run": {

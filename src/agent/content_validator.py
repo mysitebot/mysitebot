@@ -352,6 +352,70 @@ def _first_array_prop_mismatch(tag_header: str, prop_types: Dict[str, str]) -> O
     return None
 
 
+# A `field: <type>` declaration (top-level prop or nested object field) whose
+# type is an array — `Array<...>` or `X[]`. Used to collect, from a
+# component's SECTIONS.md prop-type strings, every field NAME the template will
+# iterate with `.map()`, at any nesting depth. The sibling scalar regex finds
+# the same shape for genuine scalar types (string/number/boolean, but NOT
+# `string[]` — the negative lookahead keeps array element types out).
+_ARRAY_TYPE_FIELD_RE = re.compile(r"(\w+)\s*\??\s*:\s*(?:Array<|[\w.$]+\s*\[\])")
+_SCALAR_TYPE_FIELD_RE = re.compile(
+    r"(\w+)\s*\??\s*:\s*(?:string|number|boolean)\b(?!\s*\[\])")
+
+
+def _array_field_names(prop_types: Dict[str, str]) -> set:
+    """The set of field names a component types as arrays — both top-level
+    props (`columns: Array<...>`) and nested object fields
+    (`columns[].text: string[]`, `columns[].links: Array<...>`) — derived from
+    its SECTIONS.md prop-type strings. Backs `_nested_array_scalar_field`,
+    which flags a nested field given a scalar/object where the type wants a
+    list (a render-time `.map is not a function` crash the depth-0
+    `_first_array_prop_mismatch` cannot see).
+
+    A name that is BOTH array- and scalar-typed within the same component is
+    ambiguous — this check keys on names, not structural paths, so it cannot
+    tell which occurrence a literal's key refers to — and is dropped rather
+    than risk rejecting a legitimately-scalar use. The current template has no
+    such name; this only guards a future one from becoming a false positive."""
+    array_names: set = set()
+    scalar_names: set = set()
+    for name, type_str in prop_types.items():
+        if type_str.startswith("Array<") or type_str.rstrip().endswith("[]"):
+            array_names.add(name)
+        array_names.update(m.group(1) for m in _ARRAY_TYPE_FIELD_RE.finditer(type_str))
+        scalar_names.update(m.group(1) for m in _SCALAR_TYPE_FIELD_RE.finditer(type_str))
+    return array_names - scalar_names
+
+
+def _nested_array_scalar_field(tag_header: str, array_field_names: set) -> Optional[str]:
+    """Name of the first object-literal field, at ANY depth inside this tag's
+    `{...}` attribute values, that the component types as an array yet is given
+    a non-array (scalar or object) value — e.g.
+    `<Footer columns={[{ title: "Contact", text: "x@y.z" }]} />` where `text`
+    must be `string[]`. It builds (syntactically valid, prop-name clean) then
+    crashes at RENDER with `text.map is not a function`, which
+    `_first_array_prop_mismatch` (depth-0 attrs only) never sees. Live-caught
+    2026-07-20.
+
+    Values here are already known to be pure data literals — the RCE
+    literal-expression scan runs and returns first — so the only place a
+    `name:` token could be a false key is inside a quoted string, which is
+    neutralized to placeholders before scanning (a colon or `[` inside
+    `text: "hours: 9-5 [daily]"` can never be misread as key syntax)."""
+    if not array_field_names:
+        return None
+    for value in _expression_values(tag_header):
+        destrung = _STRING_LITERAL_RE.sub(_STRING_PLACEHOLDER, value)
+        for name in array_field_names:
+            for m in re.finditer(r"\b" + re.escape(name) + r"\s*:", destrung):
+                k = m.end()
+                while k < len(destrung) and destrung[k].isspace():
+                    k += 1
+                if k >= len(destrung) or destrung[k] != "[":
+                    return name
+    return None
+
+
 def _first_colon_attr(tag_header: str) -> Optional[str]:
     """Name of the first attribute written YAML-style with a colon instead of
     `=` — `imageAlign: "right"`. No `=` means every other attr scan skips it,
@@ -1087,11 +1151,18 @@ def validate_content(file_path: str, content: str) -> Optional[Dict[str, Any]]:
                     "error": f"Section <{comp}> in '{file_path}' has attribute '{obj_attr}' whose object value is missing its second brace pair.",
                     "fix_hint": f'Object values need double braces: {obj_attr}={{{{ key: "..." }}}}.',
                 }
-            array_attr = _first_array_prop_mismatch(header, get_section_prop_types(comp))
+            prop_types = get_section_prop_types(comp)
+            array_attr = _first_array_prop_mismatch(header, prop_types)
             if array_attr:
                 return {
                     "error": f"Section <{comp}> in '{file_path}' gives attribute '{array_attr}' a non-list value, but this property takes a LIST of items.",
                     "fix_hint": f"Write {array_attr}={{[ {{ ... }}, {{ ... }} ]}} — square brackets around the items.",
+                }
+            nested_array_field = _nested_array_scalar_field(header, _array_field_names(prop_types))
+            if nested_array_field:
+                return {
+                    "error": f"Section <{comp}> in '{file_path}' gives nested field '{nested_array_field}' a non-list value, but it must be a LIST of items (it renders with .map()).",
+                    "fix_hint": f'Wrap it in square brackets, e.g. {nested_array_field}: [ ... ] — for text lines, {nested_array_field}: ["line one", "line two"].',
                 }
             documented = section_props.get(comp)
             if not documented:

@@ -704,3 +704,67 @@ def test_array_prop_given_array_still_valid():
         '/>'
     )
     assert validate_content("content/pages/index.mdx", content) is None
+
+
+def test_footer_nested_text_scalar_rejected():
+    # Footer columns[].text is typed string[]; a scalar string passes the
+    # top-level array check (the depth-0 `columns` attr IS an array) but
+    # crashes at RENDER ("column.text.map is not a function") — live-caught
+    # 2026-07-20 by the v0.2.2 gate on the freshbread footer scenario.
+    content = (
+        '---\ntitle: "About"\n---\n'
+        '<Footer\n'
+        '  columns={[\n'
+        '    { title: "Contact", text: "hello@freshbread.com" }\n'
+        '  ]}\n'
+        '/>'
+    )
+    error = validate_content("content/pages/about.mdx", content)
+    assert error is not None
+    assert "text" in error["error"]
+
+
+def test_footer_nested_text_and_links_lists_valid():
+    # The same nested fields given proper lists must still pass — the guard
+    # keys on array-typed field names, so a legitimate string[] / Array<...>
+    # value must not be a false positive.
+    content = (
+        '---\ntitle: "About"\n---\n'
+        '<Footer\n'
+        '  columns={[\n'
+        '    { title: "Contact", text: ["hello@freshbread.com", "+1 555 0100"] },\n'
+        '    { title: "Navigate", links: [{ label: "Home", href: "/" }] }\n'
+        '  ]}\n'
+        '/>'
+    )
+    assert validate_content("content/pages/about.mdx", content) is None
+
+
+def test_footer_nested_links_given_object_rejected():
+    # Generality: links is Array<...> too, so an object literal there is the
+    # same render-crash shape as a scalar text — caught by the same guard.
+    content = (
+        '---\ntitle: "About"\n---\n'
+        '<Footer\n'
+        '  columns={[\n'
+        '    { title: "Navigate", links: { label: "Home", href: "/" } }\n'
+        '  ]}\n'
+        '/>'
+    )
+    error = validate_content("content/pages/about.mdx", content)
+    assert error is not None
+    assert "links" in error["error"]
+
+
+def test_footer_text_colon_inside_string_not_misread():
+    # A colon or bracket INSIDE a quoted string value must not be mistaken for
+    # key syntax: `text` here is a proper list whose element contains "9-5".
+    content = (
+        '---\ntitle: "About"\n---\n'
+        '<Footer\n'
+        '  columns={[\n'
+        '    { title: "Hours", text: ["Mon-Fri: 9-5", "Sat: 10-2"] }\n'
+        '  ]}\n'
+        '/>'
+    )
+    assert validate_content("content/pages/about.mdx", content) is None

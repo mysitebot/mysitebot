@@ -22,6 +22,13 @@ from agent.content_validator import (
     validate_content,
 )
 from agent.media_search import render_results
+from agent.media_integrity import (
+    substitute_media_handles,
+    find_unvetted_media_urls,
+    hosts_of,
+    new_external_image_urls,
+    dead_image_urls,
+)
 from agent.prompts import PAGE_REMOVAL_POLICY, PUBLISH_POLICY
 
 if TYPE_CHECKING:  # only for type hints — site_editor imports this module
@@ -202,6 +209,18 @@ def build_tools(editor: "AgentSiteEditor", ctx: "TurnContext") -> List[Callable]
                 "fix_hint": "Tell the user this page has grown too large to edit automatically and "
                             "suggest splitting it into multiple smaller pages."
             }
+        # Resolve media://N handles to the real URLs recorded when
+        # search_media_library issued them this turn, BEFORE anything else sees
+        # the content — the model authors handles, we commit URLs. An
+        # unrecognized handle (invented or corrupted) fails the edit by name.
+        content, unknown_handles = substitute_media_handles(content, ctx.media_handles)
+        if unknown_handles:
+            return {
+                "error": f"Unknown media handle(s): {', '.join(unknown_handles)} — "
+                         "these were not returned by search_media_library this turn.",
+                "fix_hint": "Use a media://N value exactly as search_media_library returned it, "
+                            "or call search_media_library again to get a fresh one.",
+            }
         validation_error = validate_content(file_path, content)
         if validation_error:
             return validation_error
@@ -210,19 +229,51 @@ def build_tools(editor: "AgentSiteEditor", ctx: "TurnContext") -> List[Callable]
             return {
                 "error": f"Privacy Constraint Violated: The platform is strict 'Privacy First' and cookie-free. Generated file content contains forbidden cookie-accessing code/references. Details: {cookie_error}"
             }
-        # Re-committing a file with its existing content produces no visible
-        # change yet still reports success and rebuilds the site — the user
-        # is then told their site changed when nothing did.
+        # Read the file as it currently stands on the branch this edit targets,
+        # reused by the integrity backstop and the no-change guard below. Read
+        # the SAME ref this edit will commit to (the open draft / this turn's
+        # branch), not main: reading main would make a revert of drafted content
+        # back to main's text look like "no change" and silently drop the user's
+        # undo while the draft keeps the unwanted edit.
         try:
-            # Compare against the SAME ref this edit will commit to (the open
-            # draft / this turn's branch), not main. Reading main would make a
-            # revert of drafted content back to main's text look like "no
-            # change" and silently drop the user's undo while the draft keeps
-            # the unwanted edit.
             existing = await editor.git_provider.read_file(
                 ctx.active_provider_id, file_path, ref=await editor._read_ref(ctx))
         except Exception:
             existing = None
+
+        # Backstop for a model that ignored the handle scheme and pasted a raw
+        # media-host URL: reject any URL on a host we served this turn that is
+        # neither one of this turn's real URLs nor already in the file — a
+        # mistyped UUID matches nothing vetted and lands here.
+        guarded_hosts = hosts_of(ctx.media_handles.values())
+        offenders = find_unvetted_media_urls(
+            content, existing or "", set(ctx.media_handles.values()), guarded_hosts)
+        if offenders:
+            return {
+                "error": "These image URL(s) were not returned by this session's media search: "
+                         + ", ".join(offenders)
+                         + " — a media URL was likely mistyped.",
+                "fix_hint": "Never type a media URL by hand. Call search_media_library and use the "
+                            "media://N handle it returns as the image src.",
+            }
+
+        # Liveness guard for newly added EXTERNAL images (media hosts are vetted
+        # above). Off unless a checker is injected (never in offline eval), and
+        # rejects only on a definitive 404 — never on a network hiccup.
+        if editor.media_head_check is not None:
+            dead = await dead_image_urls(
+                new_external_image_urls(content, existing or "", guarded_hosts),
+                editor.media_head_check)
+            if dead:
+                return {
+                    "error": "These image URL(s) return 404 (not found): " + ", ".join(dead) + ".",
+                    "fix_hint": "Use search_media_library for images instead of external URLs, "
+                                "or correct the address.",
+                }
+
+        # Re-committing a file with its existing content produces no visible
+        # change yet still reports success and rebuilds the site — the user
+        # is then told their site changed when nothing did.
         if existing is not None and existing == content:
             return {
                 "warning": f"No change: the new content of '{file_path}' is identical to what is already there — nothing was committed. "
@@ -416,7 +467,10 @@ def build_tools(editor: "AgentSiteEditor", ctx: "TurnContext") -> List[Callable]
 
     async def search_media_library(query: str) -> str:
         """Searches the internal privacy-first media library for high-quality CC0 images.
-        ALWAYS use this tool to find image URLs instead of linking to external sites.
+        ALWAYS use this tool for images instead of linking to external sites. Each
+        result gives an `Image: media://N` handle — use that handle verbatim as the
+        image `src`; it is resolved to the real URL automatically when you save, so
+        you never type an image URL yourself.
 
         Args:
             query: Descriptive semantic search query.
@@ -427,7 +481,16 @@ def build_tools(editor: "AgentSiteEditor", ctx: "TurnContext") -> List[Callable]
             results = await editor.media_search.search(query)
         except Exception as e:
             return f"Error searching media library: {str(e)}"
-        return render_results(results)
+        # Hand the model an opaque media://N handle per result and record its
+        # real URL on the turn. branch_and_edit_content resolves the handle back
+        # to the URL at commit, so the model never sees (and cannot corrupt) a
+        # long UUID URL. N is stable within the turn — its index in media_handles.
+        srcs = []
+        for res in results:
+            handle = f"media://{len(ctx.media_handles)}"
+            ctx.media_handles[handle] = res.url
+            srcs.append(handle)
+        return render_results(results, srcs)
 
     async def get_section_reference(section_name: str) -> Dict[str, Any]:
         """

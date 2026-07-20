@@ -54,6 +54,11 @@ class TurnContext:
     # The files whose reads were truncated — a full-file rewrite of a partially
     # read file would silently delete the unseen tail.
     truncated_reads: set = field(default_factory=set)
+    # media://N handle -> real image URL, recorded as search_media_library hands
+    # each result to the model. branch_and_edit_content substitutes the handle
+    # back to the URL at commit so the model never transcribes a UUID (and can't
+    # corrupt one). Insertion order is the handle index.
+    media_handles: dict = field(default_factory=dict)
 
 
 # Phrases the model is scripted to say right after performing an edit (see the
@@ -120,12 +125,17 @@ class AgentSiteEditor:
         model: str | None = None,
         store: "EditorStore | None" = None,
         media_search: "MediaSearch | None" = None,
+        media_head_check: "Callable[[str], Awaitable[int | None]] | None" = None,
         llm: "LLMClient | None" = None,
     ):
         self.git_provider = git_provider
         self.session_id = session_id
         self.store = store
         self.media_search = media_search
+        # Optional async HEAD probe (url -> status int, or None when liveness is
+        # indeterminate) used to reject newly-added external image URLs that
+        # definitively 404. Left None in eval/offline so no network call runs.
+        self.media_head_check = media_head_check
         # Single source of truth for chat: an injected client (tests) wins;
         # otherwise build one from settings with this turn's model/key.
         self._llm = llm or from_settings(model=model, api_key=api_key)
