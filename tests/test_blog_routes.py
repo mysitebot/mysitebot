@@ -101,3 +101,36 @@ def test_tenth_post_creates_a_second_page(tmp_path):
     assert "Post 01" in second and "Post 01" not in first
     # Proves the extracted Pagination component rendered end-to-end.
     assert "Newer posts" in second
+
+
+@pytest.mark.slow
+def test_tag_page_lists_only_its_posts(tmp_path):
+    site = tmp_path / "site"
+    result = build_site(site, posts={
+        "a.mdx": post_file("Pasta Night", "2026-07-01", tags=["Recipes"]),
+        "b.mdx": post_file("Opening Hours", "2026-07-02", tags=["News"]),
+    })
+    assert result.returncode == 0, result.stderr
+    html = (site / "dist" / "blog" / "tag" / "recipes" / "index.html").read_text()
+    assert "Pasta Night" in html
+    assert "Opening Hours" not in html
+
+
+@pytest.mark.slow
+def test_tags_colliding_after_slugification_share_one_page(tmp_path):
+    site = tmp_path / "site"
+    build_site(site, posts={
+        "a.mdx": post_file("Older", "2026-07-01", tags=["web design"]),
+        "b.mdx": post_file("Newer", "2026-07-02", tags=["Web Design"]),
+    })
+    html = (site / "dist" / "blog" / "tag" / "web-design" / "index.html").read_text()
+    assert "Older" in html and "Newer" in html
+    # Label comes from the newest post's spelling.
+    assert "Web Design" in html
+
+
+@pytest.mark.slow
+def test_no_tag_routes_without_tags(tmp_path):
+    site = tmp_path / "site"
+    build_site(site, posts={"a.mdx": post_file("Untagged", "2026-07-01")})
+    assert not (site / "dist" / "blog" / "tag").exists()
