@@ -12,6 +12,14 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           python-version: "3.12"
+      # The blog tests drive a real `npm run build` of the Astro template
+      # (templates/astro-basic ships no JS test runner on purpose), so the
+      # template's own node_modules must be installed for `astro` to resolve.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+        working-directory: templates/astro-basic
       - run: uv sync --group dev
       - run: uv run playwright install --with-deps chromium
       - run: uv run ruff check src tests cli.py

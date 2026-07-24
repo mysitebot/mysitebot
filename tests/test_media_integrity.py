@@ -134,3 +134,16 @@ async def test_dead_image_urls_fails_open_on_exception():
 
     dead = await dead_image_urls(["https://x/a.jpg"], head)
     assert dead == []  # never reject when liveness can't be determined
+
+
+def test_media_handle_in_post_frontmatter_is_substituted():
+    content = (
+        '---\ntitle: "Summer Menu"\ndate: 2026-07-01\n'
+        'image:\n  src: "media://0"\n  alt: "A plate of pasta"\n'
+        "---\n\nBody.\n"
+    )
+    resolved, unknown = substitute_media_handles(
+        content, {"media://0": "https://images.example.com/pasta.jpg"})
+    assert "https://images.example.com/pasta.jpg" in resolved
+    assert "media://0" not in resolved
+    assert unknown == []

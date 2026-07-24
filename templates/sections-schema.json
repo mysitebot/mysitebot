@@ -438,6 +438,60 @@
         }
       ]
     },
+    "BlogList": {
+      "description": "BlogList Component - Shows the most recent blog posts as cards. Reads the site's posts automatically, newest first — it takes no post data. Use it on the homepage or any page that should surface recent articles.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#news\")",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "Section heading shown above the cards",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Supporting text below the heading",
+          "kind": "string"
+        },
+        {
+          "name": "limit",
+          "required": false,
+          "type": "number",
+          "description": "How many posts to show (default 3)",
+          "kind": "number"
+        },
+        {
+          "name": "columns",
+          "required": false,
+          "type": "2 | 3",
+          "description": "Number of columns in the card grid",
+          "kind": "unknown"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color (Tailwind class, e.g. 'bg-gray-50')",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Text color for heading and subheading (Tailwind class, e.g. 'text-white')",
+          "kind": "string"
+        }
+      ]
+    },
     "Calendar": {
       "description": "Calendar Component - A responsive grid of upcoming events, sessions, or schedule entries. Each event is rendered as a card with an accent rail and an icon-led meta row (date, optional time and location). When an event provides an `href`, the whole card becomes an accessible link via a stretched overlay, with external URLs opening safely in a new tab. Ideal for conference agendas, class schedules, webinars, or community calendars.",
       "props": [
@@ -2698,7 +2752,7 @@
       ]
     },
     "Newsletter": {
-      "description": "Newsletter Component - A simple lead capture form for mailing lists. Typically used in the footer area or as a call-to-action section. NOTE: this component collects an email address ONLY. If the request asks for any additional named field (e.g. first name, last name, phone), use the ContactForm component with a `fields` array instead — Newsletter cannot render extra fields.",
+      "description": "Newsletter Component - A mailing-list signup form. NOT YET FUNCTIONAL: it has no backend and tells visitors that signup is unavailable. Do not add it to a site; if a user asks for a newsletter, tell them it is not available yet. NOTE: this component collects an email address ONLY. If the request asks for any additional named field (e.g. first name, last name, phone), use the ContactForm component with a `fields` array instead — Newsletter cannot render extra fields.",
       "props": [
         {
           "name": "id",

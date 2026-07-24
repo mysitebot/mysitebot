@@ -50,6 +50,9 @@ dev = [
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests", "training/sam/tests"]
+markers = [
+    "slow: runs a real `npm run build` (tens of seconds)",
+]
 # Match root: strict mode, async tests carry explicit @pytest.mark.asyncio markers.
 
 [tool.ruff]

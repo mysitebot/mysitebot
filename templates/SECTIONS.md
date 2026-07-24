@@ -61,6 +61,21 @@ Banner Component - A slim horizontal bar for announcements, promotions, or a sec
 
 ---
 
+## `<BlogList />`
+BlogList Component - Shows the most recent blog posts as cards. Reads the site's posts automatically, newest first — it takes no post data. Use it on the homepage or any page that should surface recent articles.
+
+| Property | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | no | `string` | Optional anchor id for in-page links (e.g. href="#news") |
+| `heading` | no | `string` | Section heading shown above the cards |
+| `subheading` | no | `string` | Supporting text below the heading |
+| `limit` | no | `number` | How many posts to show (default 3) |
+| `columns` | no | `2 \| 3` | Number of columns in the card grid |
+| `backgroundColor` | no | `string` | Background color (Tailwind class, e.g. 'bg-gray-50') |
+| `textColor` | no | `string` | Text color for heading and subheading (Tailwind class, e.g. 'text-white') |
+
+---
+
 ## `<Calendar />`
 Calendar Component - A responsive grid of upcoming events, sessions, or schedule entries. Each event is rendered as a card with an accent rail and an icon-led meta row (date, optional time and location). When an event provides an `href`, the whole card becomes an accessible link via a stretched overlay, with external URLs opening safely in a new tab. Ideal for conference agendas, class schedules, webinars, or community calendars.
 
@@ -386,7 +401,7 @@ NewsGrid Component - Displays multiple columns of news or content articles. Each
 ---
 
 ## `<Newsletter />`
-Newsletter Component - A simple lead capture form for mailing lists. Typically used in the footer area or as a call-to-action section. NOTE: this component collects an email address ONLY. If the request asks for any additional named field (e.g. first name, last name, phone), use the ContactForm component with a `fields` array instead — Newsletter cannot render extra fields.
+Newsletter Component - A mailing-list signup form. NOT YET FUNCTIONAL: it has no backend and tells visitors that signup is unavailable. Do not add it to a site; if a user asks for a newsletter, tell them it is not available yet. NOTE: this component collects an email address ONLY. If the request asks for any additional named field (e.g. first name, last name, phone), use the ContactForm component with a `fields` array instead — Newsletter cannot render extra fields.
 
 | Property | Required | Type | Description |
 | :--- | :--- | :--- | :--- |

@@ -1,0 +1,34 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import PostCard from '../../../../components/ui/PostCard.astro';
+import Pagination from '../../../../components/ui/Pagination.astro';
+import { resolvePath } from '../../../../utils/paths';
+import { getPublishedPosts, groupByTag, POSTS_PER_PAGE } from '../../../../utils/posts';
+
+export async function getStaticPaths({ paginate }) {
+  const groups = groupByTag(await getPublishedPosts());
+  return [...groups.entries()].flatMap(([slug, group]) =>
+    paginate(group.posts, {
+      params: { tag: slug },
+      props: { label: group.label },
+      pageSize: POSTS_PER_PAGE,
+    })
+  );
+}
+
+const { page, label } = Astro.props;
+---
+
+<Layout title={`Posts tagged “${label}”`} description={`All posts tagged ${label}.`}>
+  <div class="max-w-6xl mx-auto px-6 py-16">
+    <p class="text-sm text-gray-500 mb-2">Tagged</p>
+    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-12">{label}</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {page.data.map((post) => <PostCard post={post} />)}
+    </div>
+    <Pagination page={page} />
+    <p class="mt-12">
+      <a href={resolvePath('/blog')} class="text-indigo-600 hover:underline">&larr; All posts</a>
+    </p>
+  </div>
+</Layout>

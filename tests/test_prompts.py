@@ -16,6 +16,7 @@ from agent.prompts import (
     ONBOARDING_WIZARD_INSTRUCTION,
     PUBLISH_POLICY,
     PAGE_REMOVAL_POLICY,
+    base_system_instruction,
 )
 
 ASSEMBLED = BASE_SYSTEM_INSTRUCTION + ONBOARDING_WIZARD_INSTRUCTION
@@ -223,3 +224,16 @@ def test_wizard_storeless_variant_personalizes_the_existing_workspace():
     assert "renders exactly as written" in text  # props are plain prose
     assert "FIRST" in text                       # settings before pages
     assert "same turn" in text                   # link targets created same turn
+
+
+def test_system_prompt_documents_blog_posts():
+    text = base_system_instruction()
+    assert "content/posts/" in text
+    assert "date:" in text
+
+
+def test_system_prompt_refuses_to_plant_the_newsletter():
+    text = base_system_instruction()
+    lowered = text.lower()
+    assert "newsletter" in lowered
+    assert "not available" in lowered or "isn't available" in lowered

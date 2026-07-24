@@ -1,0 +1,24 @@
+{
+  "id": "blog_second_post_001",
+  "name": "Second blog post does not duplicate the nav entry",
+  "turns": [
+    { "prompt": "Add another post about our new opening hours." }
+  ],
+  "setup": [
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"Bella's Kitchen\"\n  tagline: \"Fresh Italian, every day\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n  - label: \"Blog\"\n    url: \"/blog\"\n"
+    },
+    {
+      "path": "content/posts/summer-menu.mdx",
+      "content": "---\ntitle: \"Our New Summer Menu\"\ndate: 2026-07-01\nexcerpt: \"Lighter dishes for warmer days.\"\n---\n\nWe have refreshed the menu for summer.\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": ["branch_and_edit_content"],
+    "build": true,
+    "judge": "Sam created a second post under content/posts/ with a title and a date. Sam did NOT add a duplicate Blog entry to the navigation list (one already exists) and did NOT modify or delete the existing summer-menu post. Fail if the navigation now contains two Blog entries, if the existing post was overwritten, or if the new post was created under content/pages/."
+  },
+  "negative": false,
+  "split": "holdout"
+}
