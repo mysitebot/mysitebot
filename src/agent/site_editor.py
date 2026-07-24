@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Protocol
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Protocol
 from agent.llm import LLMClient, LLMTransientError, Usage, from_settings
 from agent.prompts import base_system_instruction, onboarding_wizard_instruction
 from agent.providers.git.base import GitProvider
