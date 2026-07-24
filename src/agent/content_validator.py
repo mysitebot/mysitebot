@@ -912,11 +912,22 @@ def check_navigation_consistency(settings_content: str, page_files: List[str]) -
         return None
 
     pages = set()
+    posts = set()
     for f in page_files:
         f = f.replace("\\", "/")
-        if f.startswith("content/pages/") and os.path.splitext(f)[1] in (".md", ".mdx"):
+        if os.path.splitext(f)[1] not in (".md", ".mdx"):
+            continue
+        if f.startswith("content/pages/"):
             slug = os.path.splitext(f[len("content/pages/"):])[0]
             pages.add("" if slug == "index" else slug)
+        elif f.startswith("content/posts/"):
+            posts.add(os.path.splitext(f[len("content/posts/"):])[0])
+
+    # The blog index and every post permalink are template-owned routes that
+    # exist only once at least one post does.
+    if posts:
+        pages.add("blog")
+        pages.update(f"blog/{slug}" for slug in posts)
 
     missing = []
     for entry in (parsed.get("navigation") or []):
@@ -995,7 +1006,9 @@ def validate_content(file_path: str, content: str) -> Optional[Dict[str, Any]]:
 
     # Markdown / MDX pages
     frontmatter_str, body = _split_frontmatter(content)
-    is_page = file_path.replace("\\", "/").startswith("content/pages/")
+    normalized_path = file_path.replace("\\", "/")
+    is_page = normalized_path.startswith("content/pages/")
+    is_post = normalized_path.startswith("content/posts/")
 
     frontmatter = None
     if frontmatter_str is not None:
@@ -1024,6 +1037,23 @@ def validate_content(file_path: str, content: str) -> Optional[Dict[str, Any]]:
                 "fix_hint": "Rename 'layout' to 'pageLayout' (values: default, full, sidebar).",
             }
 
+    if is_post:
+        if not isinstance(frontmatter, dict):
+            return {
+                "error": f"'{file_path}' is missing YAML frontmatter.",
+                "fix_hint": 'Posts must start with frontmatter, e.g.\n---\ntitle: "Post Title"\ndate: 2026-07-01\nexcerpt: "One-line summary"\n---',
+            }
+        if not frontmatter.get("title"):
+            return {
+                "error": f"'{file_path}' frontmatter is missing the required 'title' field.",
+                "fix_hint": 'Add title: "..." to the frontmatter.',
+            }
+        if not frontmatter.get("date"):
+            return {
+                "error": f"'{file_path}' frontmatter is missing the required 'date' field.",
+                "fix_hint": "Add a publication date, e.g. date: 2026-07-01. Posts are ordered by it.",
+            }
+
     # Block XSS-capable raw HTML in any rendered markdown/MDX body. Runs for all
     # .md/.mdx content, not just pages, since non-page markdown is rendered too.
     unsafe = _find_unsafe_html(body)
@@ -1037,7 +1067,7 @@ def validate_content(file_path: str, content: str) -> Optional[Dict[str, Any]]:
             ),
         }
 
-    if ext == ".mdx" or is_page:
+    if ext == ".mdx" or is_page or is_post:
         # RCE-critical: normalize line endings before any scanning at all. A
         # lone trailing "\r" (from a CRLF or CR-only file) surviving into a
         # "\n"-split line defeats fence/closer-line matching — see
