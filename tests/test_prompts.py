@@ -226,10 +226,14 @@ def test_wizard_storeless_variant_personalizes_the_existing_workspace():
     assert "same turn" in text                   # link targets created same turn
 
 
-def test_system_prompt_documents_blog_posts():
+def test_system_prompt_documents_blog_as_external_link():
     text = base_system_instruction()
-    assert "content/posts/" in text
-    assert "date:" in text
+    lowered = text.lower()
+    assert "blog" in lowered
+    # A blog is a nav link to the owner's external platform, not hosted posts.
+    assert "medium" in lowered or "external" in lowered
+    assert "navigation" in lowered
+    assert "content/posts/" not in text
 
 
 def test_system_prompt_documents_working_newsletter():

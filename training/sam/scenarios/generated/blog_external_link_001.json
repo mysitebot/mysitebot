@@ -1,0 +1,24 @@
+{
+  "id": "blog_external_link_001",
+  "name": "Blog request adds an external nav link, not a hosted blog",
+  "turns": [
+    { "prompt": "Can you add a blog to my site? It's on Medium at https://medium.com/@bellaskitchen" }
+  ],
+  "setup": [
+    {
+      "path": "content/settings.yaml",
+      "content": "site:\n  name: \"Bella's Kitchen\"\n  tagline: \"Fresh Italian, every day\"\n  primaryColor: \"#4f46e5\"\n  bgEffect: [\"grid\", \"aura\", \"hover\"]\n  logo: \"\"\n\ncontact:\n  email: \"hello@example.com\"\n  phone: \"\"\n\nnavigation:\n  - label: \"Home\"\n    url: \"/\"\n"
+    }
+  ],
+  "checks": {
+    "expected_tools": ["branch_and_edit_content"],
+    "files_changed": ["content/settings.yaml"],
+    "file_contains": {
+      "content/settings.yaml": ["https://medium.com/@bellaskitchen", "Blog"]
+    },
+    "build": true,
+    "judge": "Sam added a 'Blog' entry to the navigation list in content/settings.yaml whose url is the external Medium URL (https://medium.com/@bellaskitchen). Fail if Sam created any file under content/posts/, created a hosted blog page under content/pages/, or added a nav entry pointing at an internal /blog path instead of the external Medium URL."
+  },
+  "negative": false,
+  "split": "train"
+}

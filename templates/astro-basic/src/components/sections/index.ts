@@ -11,7 +11,6 @@ import Newsletter from './Newsletter.astro';
 import Team from './Team.astro';
 import ListingGrid from './ListingGrid.astro';
 import Banner from './Banner.astro';
-import BlogList from './BlogList.astro';
 import Calendar from './Calendar.astro';
 import Navbar from './Navbar.astro';
 import HeroCarousel from './HeroCarousel.astro';
@@ -29,7 +28,7 @@ import LogoCloud from './LogoCloud.astro';
 
 export const sectionComponents = {
   Hero, ContactForm, Pricing, Gallery, Testimonials, Features, Newsletter,
-  Team, ListingGrid, Banner, BlogList, Calendar, Navbar, HeroCarousel, Footer,
+  Team, ListingGrid, Banner, Calendar, Navbar, HeroCarousel, Footer,
   Article, Header, Sidebar, TwoColumn, NewsGrid, Parallax, Table, FAQ, Stats,
   LogoCloud,
 };

@@ -44,30 +44,6 @@ const pagesCollection = defineCollection({
   }),
 });
 
-const postsCollection = defineCollection({
-  type: 'content',
-  schema: z.object({
-    title: z.string().refine(cookieGuard, {
-      message: "Privacy Constraint Violated: 'title' cannot contain cookie-collecting code or tracking references."
-    }),
-    // Required: this is what orders the blog. z.coerce.date() accepts the
-    // plain `2026-07-01` YAML scalar the agent writes.
-    date: z.coerce.date(),
-    // Card summary. Falls back to `description` at render time.
-    excerpt: z.string().optional().refine(cookieGuard, {
-      message: "Privacy Constraint Violated: 'excerpt' cannot contain cookie-collecting code or tracking references."
-    }),
-    description: z.string().optional().refine(cookieGuard, {
-      message: "Privacy Constraint Violated: 'description' cannot contain cookie-collecting code or tracking references."
-    }),
-    image: z.object({ src: z.string(), alt: z.string() }).optional(),
-    tags: z.array(z.string()).default([]),
-    // Excluded from production builds; visible on the --draft preview.
-    draft: z.boolean().default(false),
-  }),
-});
-
 export const collections = {
   pages: pagesCollection,
-  posts: postsCollection,
 };

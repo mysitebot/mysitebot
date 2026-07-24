@@ -2,7 +2,7 @@
 import { readFileSync, existsSync } from 'fs';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'astro:content';
-import { resolvePath } from '../utils/paths';
+import { resolvePath, isExternal } from '../utils/paths';
 
 interface Props {
   title?: string;
@@ -111,7 +111,6 @@ const analyticsToken = perSiteAnalyticsToken || (import.meta.env.PUBLIC_MYSITEBO
     )}
     {contactEndpoint && <meta name="mysitebot:form-endpoint" content={contactEndpoint} />}
     {formProjectId && <meta name="mysitebot:project-id" content={formProjectId} />}
-    <link rel="alternate" type="application/rss+xml" title="Blog" href={resolvePath('/rss.xml')} />
   </head>
   <body class="bg-slate-50/50 text-gray-900 font-sans min-h-screen flex flex-col relative overflow-x-hidden">
     {/* Background Effects Support */}
@@ -130,7 +129,7 @@ const analyticsToken = perSiteAnalyticsToken || (import.meta.env.PUBLIC_MYSITEBO
             </a>
             <nav class="flex flex-col gap-4">
               {settings.navigation.map((nav) => (
-                <a href={resolvePath(nav.url)} class="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors">
+                <a href={resolvePath(nav.url)} target={isExternal(nav.url) ? '_blank' : undefined} rel={isExternal(nav.url) ? 'noopener noreferrer' : undefined} class="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors">
                   {nav.label}
                 </a>
               ))}
@@ -179,7 +178,7 @@ const analyticsToken = perSiteAnalyticsToken || (import.meta.env.PUBLIC_MYSITEBO
             </a>
             <nav class="hidden md:flex items-center gap-8">
               {settings.navigation.map((nav) => (
-                <a href={resolvePath(nav.url)} class="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors">
+                <a href={resolvePath(nav.url)} target={isExternal(nav.url) ? '_blank' : undefined} rel={isExternal(nav.url) ? 'noopener noreferrer' : undefined} class="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors">
                   {nav.label}
                 </a>
               ))}
@@ -203,7 +202,7 @@ const analyticsToken = perSiteAnalyticsToken || (import.meta.env.PUBLIC_MYSITEBO
           <div id="mobile-nav" hidden class="md:hidden border-b border-gray-100/50 bg-white/95 backdrop-blur-md px-6 py-4 z-10">
             <nav class="flex flex-col gap-4">
               {settings.navigation.map((nav) => (
-                <a href={resolvePath(nav.url)} class="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors">
+                <a href={resolvePath(nav.url)} target={isExternal(nav.url) ? '_blank' : undefined} rel={isExternal(nav.url) ? 'noopener noreferrer' : undefined} class="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors">
                   {nav.label}
                 </a>
               ))}
@@ -246,7 +245,7 @@ const analyticsToken = perSiteAnalyticsToken || (import.meta.env.PUBLIC_MYSITEBO
                 <h4 class="font-bold text-gray-900 mb-6 uppercase text-xs tracking-widest">Navigation</h4>
                 <div class="flex flex-col gap-4">
                   {settings.navigation.map((nav) => (
-                    <a href={resolvePath(nav.url)} class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">
+                    <a href={resolvePath(nav.url)} target={isExternal(nav.url) ? '_blank' : undefined} rel={isExternal(nav.url) ? 'noopener noreferrer' : undefined} class="text-sm text-gray-600 hover:text-indigo-600 transition-colors">
                       {nav.label}
                     </a>
                   ))}

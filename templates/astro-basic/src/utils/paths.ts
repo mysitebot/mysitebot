@@ -1,3 +1,7 @@
+// True for an absolute external URL (http/https) — such nav links open in a
+// new tab so a visitor following one (e.g. an external blog) doesn't lose the site.
+export const isExternal = (url: string) => /^https?:\/\//i.test(url);
+
 export const resolvePath = (path: string) => {
   if (!path) return '';
   // Pass through absolute URLs, protocol-relative URLs, in-page anchors, and
