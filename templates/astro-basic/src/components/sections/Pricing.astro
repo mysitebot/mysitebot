@@ -1,6 +1,11 @@
 ---
 /**
  * Pricing Component - Property-Driven Architecture
+ * Renders a responsive grid of pricing plans with an optional highlighted
+ * ("most popular") tier. Ideal for SaaS, service, or membership offerings.
+ * Set `billingToggle` to reveal an accessible Monthly/Annual switch that swaps
+ * each plan's `price`/`period` for its `priceAnnual`/`periodAnnual` — no page
+ * reload, and it degrades gracefully to monthly pricing without JavaScript.
  */
 interface Props {
   /** Optional anchor id for in-page links (e.g. href="#pricing") */
@@ -13,15 +18,31 @@ interface Props {
   textColor?: string;
   /** Text alignment for heading and subheading: 'center' (default), 'left', or 'right' */
   align?: 'left' | 'center' | 'right';
+  /** Number of columns in the grid layout (2, 3, or 4; default: 3) */
+  columns?: 2 | 3 | 4;
+  /** If true, show a Monthly/Annual toggle that swaps each plan's price for its priceAnnual (falls back to the monthly price when a plan omits priceAnnual) */
+  billingToggle?: boolean;
+  /** Label for the monthly option of the billing toggle (default: 'Monthly') */
+  monthlyLabel?: string;
+  /** Label for the annual option of the billing toggle (default: 'Annual') */
+  annualLabel?: string;
+  /** Optional small badge shown beside the annual option (e.g. 'Save 20%') */
+  annualBadge?: string;
   plans: Array<{
     name: string;
     price: string;
     period?: string;
+    /** Price shown when the billing toggle is set to annual (requires billingToggle) */
+    priceAnnual?: string;
+    /** Period shown when the billing toggle is set to annual (defaults to `period`) */
+    periodAnnual?: string;
     description?: string;
     features: string[];
     ctaLabel: string;
     ctaHref: string;
     highlighted?: boolean;
+    /** Ribbon label for a featured plan. Falls back to "Most Popular" when `highlighted` is true. */
+    badge?: string;
   }>;
 }
 
@@ -34,6 +55,11 @@ const {
   backgroundColor = "bg-white",
   textColor,
   align = 'center',
+  columns = 3,
+  billingToggle = false,
+  monthlyLabel = 'Monthly',
+  annualLabel = 'Annual',
+  annualBadge,
   plans = []
 } = Astro.props;
 
@@ -42,50 +68,136 @@ const alignClass = {
   center: 'text-center',
   right: 'text-right'
 }[align];
+
+const gridColsClass = {
+  2: 'md:grid-cols-2',
+  3: 'md:grid-cols-2 lg:grid-cols-3',
+  4: 'sm:grid-cols-2 lg:grid-cols-4'
+}[columns] ?? 'md:grid-cols-2 lg:grid-cols-3';
 ---
 
-<section id={id} class={`py-24 px-6 ${backgroundColor} ${textColor || 'text-gray-900'}`}>
+<section
+  id={id}
+  data-billing="monthly"
+  data-pricing-toggle={billingToggle ? '' : undefined}
+  class={`py-24 px-6 ${backgroundColor} ${textColor || 'text-gray-900'}`}
+>
   <div class="max-w-7xl mx-auto">
-    <div class={`${alignClass} mb-16`}>
-      <h2 class={`text-4xl font-bold ${textColor ? textColor : 'text-gray-900'} mb-4`}>{heading}</h2>
-      <p class={`text-lg ${textColor ? textColor : 'text-gray-500'} ${align === 'center' ? 'max-w-2xl mx-auto' : ''}`}>{subheading}</p>
+    <div class={`${alignClass} ${billingToggle ? 'mb-10' : 'mb-16'}`}>
+      <h2 class={`text-4xl font-bold ${textColor || 'text-gray-900'} mb-4`}>{heading}</h2>
+      <p class={`text-lg ${textColor || 'text-gray-500'} ${align === 'center' ? 'max-w-2xl mx-auto' : ''}`}>{subheading}</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {plans.map(plan => (
-        <div class={`flex flex-col p-8 rounded-3xl border ${plan.highlighted ? 'border-indigo-600 ring-4 ring-indigo-50 shadow-2xl relative' : 'border-gray-100 shadow-sm'}`}>
-          {plan.highlighted && (
-            <span class="absolute top-0 right-8 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-              Most Popular
-            </span>
-          )}
-          <h3 class="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-          {plan.description && <p class="text-sm text-gray-500 mb-6">{plan.description}</p>}
-          <div class="flex items-baseline mb-8">
-            <span class="text-4xl font-extrabold text-gray-900">{plan.price}</span>
-            {plan.period && <span class="text-gray-500 ml-1">/{plan.period}</span>}
-          </div>
-          <ul class="space-y-4 mb-10 flex-grow">
-            {plan.features.map(feature => (
-              <li class="flex items-start text-sm text-gray-600">
-                <svg class="h-5 w-5 text-indigo-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                {feature}
-              </li>
-            ))}
-          </ul>
-          {/* Button resolves the base path itself — resolving here too would
-              double-prefix under a non-root ASTRO_BASE. */}
-          <Button
-            href={plan.ctaHref}
-            variant={plan.highlighted ? 'primary' : 'secondary'}
-            class="w-full"
+    {billingToggle && (
+      <div class="flex justify-center mb-14">
+        <div role="group" aria-label="Billing period" class="inline-flex items-center gap-1 rounded-full bg-gray-100 p-1">
+          <button
+            type="button"
+            data-billing-option="monthly"
+            aria-pressed="true"
+            class="billing-btn inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold text-gray-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40"
           >
-            {plan.ctaLabel}
-          </Button>
+            {monthlyLabel}
+          </button>
+          <button
+            type="button"
+            data-billing-option="annual"
+            aria-pressed="false"
+            class="billing-btn inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold text-gray-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40"
+          >
+            {annualLabel}
+            {annualBadge && (
+              <span class="ml-2 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-bold text-indigo-700">{annualBadge}</span>
+            )}
+          </button>
         </div>
-      ))}
-    </div>
+      </div>
+    )}
+
+    <ul role="list" class={`grid grid-cols-1 ${gridColsClass} gap-8 items-stretch`}>
+      {plans.map(plan => {
+        const badge = plan.badge || (plan.highlighted ? 'Most Popular' : null);
+        return (
+          <li class={`relative flex flex-col p-8 rounded-3xl border transition duration-300 hover:-translate-y-1 focus-within:ring-2 focus-within:ring-indigo-500/40 ${plan.highlighted ? 'border-indigo-600 ring-4 ring-indigo-50 shadow-2xl hover:shadow-2xl md:-mt-4 md:mb-4' : 'border-gray-100 shadow-sm hover:shadow-lg'}`}>
+            {badge && (
+              <span class="absolute top-0 right-8 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                {badge}
+              </span>
+            )}
+            <h3 class="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+            {plan.description && <p class="text-sm text-gray-500 mb-6">{plan.description}</p>}
+            <p class="flex items-baseline mb-8">
+              {billingToggle ? (
+                <>
+                  <span class="billing-monthly inline-flex items-baseline">
+                    <span class="text-4xl font-extrabold text-gray-900">{plan.price}</span>
+                    {plan.period && <span class="text-gray-500 ml-1">/{plan.period}</span>}
+                  </span>
+                  <span class="billing-annual inline-flex items-baseline">
+                    <span class="text-4xl font-extrabold text-gray-900">{plan.priceAnnual ?? plan.price}</span>
+                    {(plan.periodAnnual ?? plan.period) && (
+                      <span class="text-gray-500 ml-1">/{plan.periodAnnual ?? plan.period}</span>
+                    )}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span class="text-4xl font-extrabold text-gray-900">{plan.price}</span>
+                  {plan.period && <span class="text-gray-500 ml-1">/{plan.period}</span>}
+                </>
+              )}
+            </p>
+            <ul role="list" class="space-y-4 mb-10 flex-grow">
+              {plan.features.map(feature => (
+                <li class="flex items-start text-sm text-gray-600">
+                  <svg class="h-5 w-5 text-indigo-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" focusable="false">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+            {/* Button resolves the base path itself — resolving here too would
+                double-prefix under a non-root ASTRO_BASE. */}
+            <Button
+              href={plan.ctaHref}
+              variant={plan.highlighted ? 'primary' : 'secondary'}
+              class="w-full"
+            >
+              {plan.ctaLabel}
+            </Button>
+          </li>
+        );
+      })}
+    </ul>
   </div>
 </section>
+
+<style>
+  /* The active billing period is driven by data-billing on the section root, so
+     the correct price shows even before the toggle script runs (default:
+     monthly). Only one of the two price spans is visible at a time. */
+  [data-billing='monthly'] .billing-annual { display: none; }
+  [data-billing='annual'] .billing-monthly { display: none; }
+
+  /* Selected segment lifts onto a white pill; the script keeps aria-pressed in
+     sync so this styling and the accessible state never diverge. */
+  .billing-btn[aria-pressed='true'] {
+    background-color: #ffffff;
+    color: #111827;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05), 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('[data-pricing-toggle]').forEach(section => {
+    const buttons = section.querySelectorAll<HTMLButtonElement>('[data-billing-option]');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.getAttribute('data-billing-option');
+        if (mode) section.setAttribute('data-billing', mode);
+        buttons.forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+      });
+    });
+  });
+</script>

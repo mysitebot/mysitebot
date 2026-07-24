@@ -31,7 +31,7 @@ Article Component - A content card with a heading and one or more body paragraph
 | `action` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }` | Optional CTA button rendered below the text |
 | `actions` | no | `Array<{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }>` | Multiple CTA buttons rendered below the text |
 | `actionAlign` | no | `'left' \| 'center' \| 'right'` | Alignment for action buttons: 'left' (default), 'center', or 'right' |
-| `sidebar` | no | `{ title?: string; links?: Array<{ label: string; href: string; }>; sections?: Array<{ title: string; content?: string; links?: Array<{ label: string; href: string; }> }>; image?: { src: string; alt: string; }; content...` | Optional sidebar with a title and list of links; renders a two-column layout (position controlled by sidebarPosition) |
+| `sidebar` | no | `{ title?: string; links?: Array<{ label: string; href: string; }>; sections?: Array<{ title: string; content?: string; lines?: string[]; bulletPoints?: string[]; links?: Array<{ label: string; href: string; }> }>; ima...` | Optional sidebar with a title and list of links; renders a two-column layout (position controlled by sidebarPosition) |
 | `sidebarPosition` | no | `'left' \| 'right'` | Which side to render the sidebar: 'left' (default) or 'right' |
 | `sidebarBackgroundColor` | no | `string` | Background color for the sidebar (Tailwind class, e.g., 'bg-yellow-800'). Overrides sidebar.backgroundColor when present. |
 | `backgroundImage` | no | `string` | Background image URL — creates a full-cover background with a subtle overlay |
@@ -39,27 +39,30 @@ Article Component - A content card with a heading and one or more body paragraph
 | `videoEmbed` | no | `string` | YouTube or other iframe embed URL; rendered as a responsive 16:9 iframe below the paragraphs |
 | `bulletPoints` | no | `string[]` | Optional bulleted list of items rendered after paragraphs |
 | `align` | no | `'left' \| 'center' \| 'right'` | Text alignment: 'left' (default), 'center', or 'right' — mirrors Hero.align |
+| `headingAlign` | no | `'left' \| 'center' \| 'right'` | Alignment for the heading only: 'left', 'center', or 'right'. Overrides the section align for the heading element — use for a centered title above left-aligned body prose. |
 
 ---
 
 ## `<Banner />`
-Banner Component - A horizontal bar for notifications, secondary CTAs, or brand highlighting.
+Banner Component - A slim horizontal bar for announcements, promotions, or a secondary call-to-action. Renders as a semantic landmark (region) with an optional pill-styled CTA and an optional dismiss button. When `dismissible` is set the banner can be closed; if the banner also has an `id`, the closed state is remembered for the rest of the browsing session so it does not reappear on every page. Can sit inline or pin to the top/bottom of the viewport via `sticky`.
 
 | Property | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | no | `string` | Optional anchor id for in-page links (e.g. href="#promo") |
+| `id` | no | `string` | Optional anchor id for in-page links (e.g. href="#promo"). Also used to remember the dismissed state per session. |
 | `text` | yes | `string` | The text content of the banner |
-| `backgroundColor` | no | `string` | Optional background color (Tailwind class) |
-| `textColor` | no | `string` | Optional text color (Tailwind class) |
-| `action` | no | `{ label: string; href: string; }` | Optional link/CTA |
-| `sticky` | no | `boolean` | If true, the banner is fixed to the top of the viewport |
-| `fixedPosition` | no | `'top' \| 'bottom'` | Position for fixed banners: 'top' (default) or 'bottom' |
+| `backgroundColor` | no | `string` | Optional background color (Tailwind class, e.g. 'bg-indigo-600') |
+| `textColor` | no | `string` | Optional text color (Tailwind class, e.g. 'text-white') |
+| `action` | no | `{ label: string; href: string; }` | Optional link/CTA rendered as a pill button after the text |
+| `sticky` | no | `boolean` | If true, the banner is pinned to the viewport (top by default, or bottom via fixedPosition) |
+| `fixedPosition` | no | `'top' \| 'bottom'` | Position for pinned banners: 'top' (default) or 'bottom' |
 | `align` | no | `'left' \| 'center' \| 'right'` | Text alignment: 'left', 'center' (default), or 'right' |
+| `dismissible` | no | `boolean` | If true, show a close button that dismisses the banner (default: false) |
+| `dismissLabel` | no | `string` | Accessible label for the dismiss button (default: 'Dismiss') |
 
 ---
 
 ## `<Calendar />`
-Calendar Component - Displays a grid of events or a schedule.
+Calendar Component - A responsive grid of upcoming events, sessions, or schedule entries. Each event is rendered as a card with an accent rail and an icon-led meta row (date, optional time and location). When an event provides an `href`, the whole card becomes an accessible link via a stretched overlay, with external URLs opening safely in a new tab. Ideal for conference agendas, class schedules, webinars, or community calendars.
 
 | Property | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -69,7 +72,8 @@ Calendar Component - Displays a grid of events or a schedule.
 | `heading` | no | `string` | Section heading |
 | `subheading` | no | `string` | Supporting description |
 | `align` | no | `'left' \| 'center' \| 'right'` | Text alignment for heading and subheading: 'center' (default), 'left', or 'right' |
-| `events` | yes | `Array<{ date: string; title: string; description?: string; time?: string; }>` | Array of events |
+| `columns` | no | `2 \| 3` | Number of columns on large screens (2 or 3; default: 3). Fewer columns are used on smaller screens automatically. |
+| `events` | yes | `Array<{ date: string; title: string; description?: string; time?: string; location?: string; href?: string; }>` | Optional link to an event detail or registration page. External URLs open in a new tab. |
 
 ---
 
@@ -100,8 +104,24 @@ ContactForm Component - Property-Driven Architecture Inspired by Fulldev UI for 
 
 ---
 
+## `<FAQ />`
+FAQ Component - An accessible, JavaScript-free accordion for frequently asked questions. Built on native <details>/<summary> elements so it is keyboard operable and screen-reader friendly out of the box. Ideal for support, pricing, or onboarding pages.
+
+| Property | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | no | `string` | Optional anchor id for in-page links (e.g. href="#faq") |
+| `heading` | no | `string` | Section heading (e.g. "Frequently asked questions") |
+| `subheading` | no | `string` | Supporting description shown below the heading |
+| `backgroundColor` | no | `string` | Background color for the outer section (Tailwind class, e.g. 'bg-gray-50') |
+| `textColor` | no | `string` | Base text color applied to heading and body text (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark. |
+| `align` | no | `'left' \| 'center' \| 'right'` | Text alignment for the section header: 'center' (default), 'left', or 'right' |
+| `columns` | no | `1 \| 2` | Number of columns for the question list (1 default, or 2 for long lists) |
+| `items` | yes | `Array<{ question: string; answer: string; open?: boolean; }>` | If true, this item starts expanded |
+
+---
+
 ## `<Features />`
-Features Component - Property-Driven Architecture
+Features Component - A responsive grid (or full-width list) of feature cards, each with a title, description, and an icon, image, or built-in named icon. Ideal for highlighting product benefits, services, or capabilities. Supports per-feature CTAs and an optional section-level action button.
 
 | Property | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -116,7 +136,7 @@ Features Component - Property-Driven Architecture
 | `headingColor` | no | `string` | Override color for the section heading only (Tailwind class, e.g. 'text-yellow-600'). Takes precedence over textColor for the h2 element. |
 | `align` | no | `'left' \| 'center' \| 'right'` | Text alignment for the section header and feature card content: 'center' (default), 'left', or 'right' |
 | `action` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }` | Optional section-level CTA button rendered below the features grid |
-| `features` | yes | `Array<{ title: string; description: string; icon?: string; image?: string; backgroundColor?: string; headingColor?: string; action?: { label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }; }>` | Optional CTA button shown below the description |
+| `features` | yes | `Array<{ title: string; description: string; bulletPoints?: string[]; icon?: string; image?: string; backgroundColor?: string; headingColor?: string; action?: { label: string; href: string; variant?: 'primary' \| 'secon...` | Optional CTA button shown below the description |
 
 ---
 
@@ -175,6 +195,7 @@ Header Component - A horizontal header with logo on the left and contact info on
 | `paragraphs` | no | `string[]` | Body paragraphs displayed below the heading |
 | `contactInfo` | no | `Array<{ label: string; value: string; }>` | Contact information displayed on the right side |
 | `cta` | no | `{ label: string; href: string; }` | Optional call-to-action button shown on the right side |
+| `actions` | no | `Array<{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success' \| 'danger'; }>` | Optional set of call-to-action buttons shown on the right side (e.g. Login, Sign Up). Rendered after any single `cta`. |
 | `links` | no | `Array<{ label: string; href: string; }>` | Navigation links rendered as a horizontal nav bar |
 | `linkColor` | no | `string` | Text color for navigation links (Tailwind class, e.g., 'text-yellow-500') |
 | `backgroundColor` | no | `string` | Background color for the header (Tailwind class) |
@@ -193,6 +214,7 @@ Header Component - A horizontal header with logo on the left and contact info on
 | `imageCircular` | no | `boolean` | If true, renders the image as circular (rounded-full) |
 | `logoAlign` | no | `'left' \| 'center' \| 'right'` | Logo horizontal alignment: 'left' (default), 'center', or 'right' |
 | `imageAlign` | no | `'left' \| 'center' \| 'right'` | Horizontal alignment for images: 'left' (default), 'center', or 'right' |
+| `imageFullWidth` | no | `boolean` | If true, renders the image as a full-width banner across the top of the header, with the nav centered below it |
 | `selectOptions` | no | `string[]` | Optional select dropdown options displayed in header |
 | `selectLabel` | no | `string` | Label for the select dropdown |
 
@@ -211,9 +233,9 @@ Hero Component - The primary visual hook at the top of a page. Use this for high
 | `fontWeight` | no | `'bold' \| 'extrabold' \| 'black'` | Font weight for heading |
 | `badge` | no | `string` | A small label shown above the heading |
 | `logo` | no | `{ src: string; alt?: string; size?: string; circular?: boolean; }` | Optional logo shown above everything |
-| `actions` | no | `Array<{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }>` | Array of CTA buttons |
-| `cta` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }` | Optional single CTA button (alternative to actions) |
-| `action` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }` | Optional CTA button rendered below the text (alternative to cta) |
+| `actions` | no | `Array<{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success' \| 'danger'; }>` | Array of CTA buttons |
+| `cta` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success' \| 'danger'; }` | Optional single CTA button (alternative to actions) |
+| `action` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success' \| 'danger'; }` | Optional CTA button rendered below the text (alternative to cta) |
 | `align` | no | `'center' \| 'left' \| 'right'` | Text alignment: 'center' (default), 'left' or 'right' |
 | `layout` | no | `'split' \| 'stacked'` | Layout style: 'split' (side-by-side) or 'stacked' (vertical) |
 | `fullHeight` | no | `boolean` | If true, the section will take up at least the full height of the screen |
@@ -252,6 +274,7 @@ Hero Component - The primary visual hook at the top of a page. Use this for high
 | `cardBackgroundColor` | no | `string` | Tailwind background/style classes for the card panel (default: 'bg-white bg-opacity-75') |
 | `links` | no | `Array<{ label: string; href: string }>` | Inline navigation links rendered as an overlay nav bar across the top of the hero |
 | `siteName` | no | `string` | Brand/site name shown on the left side of the overlay nav bar (used alongside links) |
+| `navLogo` | no | `{ src: string; alt?: string; size?: string }` | Optional logo image shown on the left side of the overlay nav bar (alternative to siteName) |
 | `linkColor` | no | `string` | Text color for navigation links in the overlay nav bar (Tailwind class, e.g., 'text-pink-300') |
 | `fixedTop` | no | `boolean` | If true, header is fixed to the top of the viewport |
 | `showHamburger` | no | `boolean` | If true, shows a hamburger menu button on the right side |
@@ -262,11 +285,17 @@ Hero Component - The primary visual hook at the top of a page. Use this for high
 ---
 
 ## `<HeroCarousel />`
-HeroCarousel Component - Full-screen background slideshow with content.
+HeroCarousel Component - Full-screen background slideshow with content. Slides auto-advance with a pure-CSS animation (no JavaScript). The animation is disabled for visitors who prefer reduced motion, who instead see the first slide statically — keeping the section accessible and WCAG-friendly.
 
 | Property | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
-| `slides` | yes | `Array<{ heading: string; subheading?: string; image: string; action?: { label: string; href: string }; }>` | — |
+| `id` | no | `string` | Optional anchor id for in-page links (e.g. href="#featured") |
+| `slides` | yes | `Array<{ heading: string; subheading?: string; image: string; alt?: string; action?: { label: string; href: string }; }>` | Optional call-to-action button |
+| `heightClass` | no | `string` | Tailwind height class for the carousel (default: 'h-screen'; e.g. 'h-[32rem]', 'h-[70vh]') |
+| `backgroundColor` | no | `string` | Background color shown behind slide images (Tailwind class, default: 'bg-black') |
+| `overlayClass` | no | `string` | Tailwind classes for the readability overlay layered over each image (default: a bottom-weighted dark gradient) |
+| `align` | no | `'left' \| 'center' \| 'right'` | Horizontal alignment of slide content: 'center' (default), 'left', or 'right' |
+| `secondsPerSlide` | no | `number` | Seconds each slide stays on screen before advancing (default: 5) |
 
 ---
 
@@ -290,7 +319,26 @@ ListingGrid Component - Displays a grid of items with metadata (e.g., properties
 | `searchPlaceholder` | no | `string` | Placeholder text for the search bar |
 | `searchFields` | no | `Array<{ placeholder: string; type?: string; }>` | Input type (default: 'text') |
 | `searchButtonLabel` | no | `string` | Label for the search submit button shown alongside searchFields (default: 'Search') |
+| `filterButtons` | no | `Array<{ label: string; href?: string; }>` | Optional link target for the button (default: '#') |
+| `filterButtonColor` | no | `string` | Background/hover color classes for filter buttons (Tailwind, e.g. 'bg-yellow-500 hover:bg-yellow-600'). Defaults to indigo. |
 | `items` | yes | `Array<{ title: string; description?: string; price?: string; image: string; alt?: string; href?: string; tags?: string[]; }>` | Array of tags or badges (e.g., ["3 Bed", "2 Bath"]) |
+
+---
+
+## `<LogoCloud />`
+LogoCloud Component - A tidy band of partner, customer, or press logos used to build credibility ("Trusted by teams at ..."). Logos render as an accessible list of images on a responsive grid, with an optional muted/grayscale treatment that returns to full color on hover or focus. Each logo may link to its site; external links open in a new tab with safe rel attributes.
+
+| Property | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | no | `string` | Optional anchor id for in-page links (e.g. href="#logos") |
+| `heading` | no | `string` | Optional eyebrow heading shown above the logos (e.g. 'Trusted by teams worldwide') |
+| `subheading` | no | `string` | Supporting description shown below the heading |
+| `backgroundColor` | no | `string` | Background color for the outer section (Tailwind class, e.g. 'bg-gray-50') |
+| `textColor` | no | `string` | Base text color applied to heading and body text (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark. |
+| `align` | no | `'left' \| 'center' \| 'right'` | Text alignment for the section header: 'center' (default), 'left', or 'right' |
+| `columns` | no | `2 \| 3 \| 4 \| 5 \| 6` | Number of logos per row on large screens (2–6; default: 5). Fewer columns are used on smaller screens automatically. |
+| `grayscale` | no | `boolean` | Mute logos to grayscale and reveal full color on hover/focus (default: true). Set false to always show full-color logos. |
+| `logos` | yes | `Array<{ src: string; alt: string; href?: string; }>` | Optional link to the company's site. External URLs open in a new tab. |
 
 ---
 
@@ -315,11 +363,12 @@ Navbar Component - A horizontal navigation bar with links.
 | `searchButtonLabel` | no | `string` | Label for the search submit button (default: "Search") |
 | `backgroundImage` | no | `string` | Background image URL — renders as a full-cover background behind the navbar |
 | `showHamburger` | no | `boolean` | If true, shows a hamburger menu button on the right side |
+| `socialLinks` | no | `Array<{ href: string; icon: string; label?: string; }>` | Accessible label / alt text (e.g. "Facebook") |
 
 ---
 
 ## `<NewsGrid />`
-NewsGrid Component - Displays multiple columns of news or content articles. Each column has a heading and contains a list of article cards. Optionally renders a sidebar (e.g. category list) to the left of the grid.
+NewsGrid Component - Displays multiple columns of news or content articles. Each column has a heading and contains a list of article cards. Optionally renders a sidebar (e.g. category list, archives, recent comments) beside the grid, on the left (default) or right via sidebarPosition.
 
 | Property | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -330,7 +379,8 @@ NewsGrid Component - Displays multiple columns of news or content articles. Each
 | `subheading` | no | `string` | Supporting description shown below the section heading |
 | `columns` | no | `2 \| 3 \| 4` | Number of columns in the news grid area |
 | `align` | no | `'left' \| 'center' \| 'right'` | Text alignment for heading and subheading: 'center' (default), 'left', or 'right' |
-| `sidebar` | no | `{ heading?: string; items: string[]; }` | List of sidebar item labels |
+| `sidebar` | no | `{ heading?: string; items?: string[]; sections?: Array<{ heading?: string; items: string[]; }>; }` | Additional sidebar widgets, each rendered as its own card (e.g. "Archives", "Recent Comments") |
+| `sidebarPosition` | no | `'left' \| 'right'` | Which side to render the sidebar: 'left' (default) or 'right' |
 | `sections` | yes | `Array<{ heading: string; articles: Array<{ title: string; description?: string; image?: { src: string; alt: string }; action?: { label: string; href: string }; }>; }>` | Array of column sections, each with a heading and articles |
 
 ---
@@ -354,7 +404,7 @@ Newsletter Component - A simple lead capture form for mailing lists. Typically u
 ---
 
 ## `<Parallax />`
-Parallax Component - A multi-layer parallax scroll effect section. Ideal for creating depth and visual interest with layered content.
+Parallax Component - A multi-layer parallax scroll effect section. Layers are stacked and drift at different speeds as the page scrolls to create a sense of depth. Motion is JavaScript-driven but fully progressive: the layers render in place with no script, the scroll effect is throttled to the browser's paint cycle, and it is automatically disabled for visitors who request reduced motion. Ideal for expressive hero bands and section breaks.
 
 | Property | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -367,7 +417,7 @@ Parallax Component - A multi-layer parallax scroll effect section. Ideal for cre
 ---
 
 ## `<Pricing />`
-Pricing Component - Property-Driven Architecture
+Pricing Component - Property-Driven Architecture Renders a responsive grid of pricing plans with an optional highlighted ("most popular") tier. Ideal for SaaS, service, or membership offerings. Set `billingToggle` to reveal an accessible Monthly/Annual switch that swaps each plan's `price`/`period` for its `priceAnnual`/`periodAnnual` — no page reload, and it degrades gracefully to monthly pricing without JavaScript.
 
 | Property | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -377,7 +427,12 @@ Pricing Component - Property-Driven Architecture
 | `backgroundColor` | no | `string` | Background color for the outer section (Tailwind class, e.g., 'bg-gray-100') |
 | `textColor` | no | `string` | Text color for heading and subheading (Tailwind class, e.g., 'text-white'). Use when backgroundColor is dark. |
 | `align` | no | `'left' \| 'center' \| 'right'` | Text alignment for heading and subheading: 'center' (default), 'left', or 'right' |
-| `plans` | yes | `Array<{ name: string; price: string; period?: string; description?: string; features: string[]; ctaLabel: string; ctaHref: string; highlighted?: boolean; }>` | — |
+| `columns` | no | `2 \| 3 \| 4` | Number of columns in the grid layout (2, 3, or 4; default: 3) |
+| `billingToggle` | no | `boolean` | If true, show a Monthly/Annual toggle that swaps each plan's price for its priceAnnual (falls back to the monthly price when a plan omits priceAnnual) |
+| `monthlyLabel` | no | `string` | Label for the monthly option of the billing toggle (default: 'Monthly') |
+| `annualLabel` | no | `string` | Label for the annual option of the billing toggle (default: 'Annual') |
+| `annualBadge` | no | `string` | Optional small badge shown beside the annual option (e.g. 'Save 20%') |
+| `plans` | yes | `Array<{ name: string; price: string; period?: string; priceAnnual?: string; periodAnnual?: string; description?: string; features: string[]; ctaLabel: string; ctaHref: string; highlighted?: boolean; badge?: string; }>` | Ribbon label for a featured plan. Falls back to "Most Popular" when `highlighted` is true. |
 
 ---
 
@@ -393,7 +448,7 @@ Sidebar Component - A three-column layout with optional left and right sidebars.
 | `links` | no | `Array<{ label: string; href: string; }>` | Navigation links rendered as a horizontal nav bar (e.g., for service categories) |
 | `linkColor` | no | `string` | Text color for navigation links (Tailwind class, e.g., 'text-yellow-500') |
 | `paragraphs` | no | `string[]` | Optional paragraphs of body text rendered in the main content area |
-| `leftSidebar` | no | `{ title?: string; image?: { src: string; alt: string; }; content?: string; sections?: Array<{ title: string; content: string; }>; links?: Array<{ label: string; href: string; }>; showSearch?: boolean; searchPlaceholde...` | Optional CTA button rendered below the links |
+| `leftSidebar` | no | `{ title?: string; image?: { src: string; alt: string; }; content?: string; sections?: Array<{ title: string; content: string; }>; links?: Array<{ label: string; href: string; }>; linkColor?: string; showSearch?: boole...` | Optional CTA button rendered below the links |
 | `rightSidebar` | no | `{ title?: string; images?: Array<{ src: string; alt: string; caption?: string; }>; sections?: Array<{ title: string; content: string; }>; links?: Array<{ label: string; href: string; }>; showSearch?: boolean; searchPl...` | Optional CTA button rendered at the bottom of the right sidebar |
 | `articles` | no | `Array<{ title?: string; id?: string; description?: string; bulletPoints?: string[]; image?: { src: string; alt: string; }; backgroundColor?: string; textColor?: string; action?: { label: string; href: string; variant?...` | Multiple CTA buttons rendered below the description (use instead of action for 2+ buttons) |
 | `backgroundColor` | no | `string` | Background color for outer section |
@@ -403,18 +458,37 @@ Sidebar Component - A three-column layout with optional left and right sidebars.
 
 ---
 
+## `<Stats />`
+Stats Component - A compact band of headline metrics ("10k+ customers", "99.9% uptime", "24/7 support"). Ideal for building credibility on landing, about, or investor pages. Each figure is rendered as an accessible description list (value + label) so screen readers announce the pairing.
+
+| Property | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | no | `string` | Optional anchor id for in-page links (e.g. href="#stats") |
+| `heading` | no | `string` | Section heading |
+| `subheading` | no | `string` | Supporting description shown below the heading |
+| `backgroundColor` | no | `string` | Background color for the outer section (Tailwind class, e.g. 'bg-gray-50') |
+| `textColor` | no | `string` | Base text color applied to heading and body text (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark. |
+| `valueColor` | no | `string` | Override color for the metric values only (Tailwind class, e.g. 'text-indigo-600'). Takes precedence over textColor for the numbers. |
+| `align` | no | `'left' \| 'center' \| 'right'` | Text alignment for the section header: 'center' (default), 'left', or 'right' |
+| `columns` | no | `2 \| 3 \| 4` | Number of columns in the metrics grid (2, 3, or 4; default: 4) |
+| `variant` | no | `'plain' \| 'cards'` | Visual treatment: 'plain' for dividers between figures (default), 'cards' for individually boxed figures |
+| `stats` | yes | `Array<{ value: string; label: string; description?: string; }>` | Optional one-line detail shown beneath the label |
+
+---
+
 ## `<Table />`
-Table Component - Displays structured tabular data with optional search and filtering. Ideal for food menus, product catalogs, pricing tables, or any structured dataset.
+Table Component - Displays structured tabular data with optional search and filtering. Ideal for food menus, product catalogs, pricing tables, or any structured dataset. Columns can be individually aligned (e.g. right-aligned prices) and the header can stick to the top of the viewport while scrolling long tables.
 
 | Property | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
 | `id` | no | `string` | Optional ID for anchor linking |
 | `heading` | no | `string` | Section heading |
 | `subheading` | no | `string` | Section subheading |
-| `columns` | yes | `Array<{ label: string; key: string; }>` | Column headers |
+| `columns` | yes | `Array<{ label: string; key: string; align?: 'left' \| 'center' \| 'right'; }>` | Column headers. Set `align` to right-align numeric data such as prices ('left' by default). |
 | `rows` | yes | `Array<Record<string, string>>` | Table rows |
 | `showSearch` | no | `boolean` | Whether to show a search bar above the table |
 | `searchPlaceholder` | no | `string` | Placeholder text for the search bar |
+| `stickyHeader` | no | `boolean` | Keep the header row pinned to the top of the viewport while scrolling long tables (default: false) |
 | `backgroundColor` | no | `string` | Background color for the outer section (Tailwind class, e.g., 'bg-white') |
 | `backgroundImage` | no | `string` | Background image URL for the outer section |
 | `textColor` | no | `string` | Text color for headings and content (Tailwind class, e.g., 'text-white') |
@@ -428,7 +502,7 @@ Table Component - Displays structured tabular data with optional search and filt
 ---
 
 ## `<Team />`
-Team Component - Showcases key staff members or contributors. Use this to build trust and humanize the brand.
+Team Component - Showcases key staff members or contributors. Use this to build trust and humanize the brand. Each member card can optionally surface social profile links (LinkedIn, X/Twitter, GitHub, and a personal website), rendered as accessible icon buttons.
 
 | Property | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -439,12 +513,12 @@ Team Component - Showcases key staff members or contributors. Use this to build 
 | `columns` | no | `2 \| 3 \| 4` | Number of columns in the grid layout (2, 3, or 4; default: 4) |
 | `heading` | no | `string` | Section heading |
 | `subheading` | no | `string` | Supporting description |
-| `members` | yes | `Array<{ name: string; role: string; bio?: string; avatar?: string; }>` | URL to the member's profile picture |
+| `members` | yes | `Array<{ name: string; role: string; bio?: string; avatar?: string; linkedin?: string; twitter?: string; github?: string; website?: string; }>` | URL to the member's personal website |
 
 ---
 
 ## `<Testimonials />`
-Testimonials Component - Property-Driven Architecture
+Testimonials Component - Social proof from customers, rendered as an accessible card grid (default) or an alternating text/image split layout. Each quote is marked up as a <figure>/<blockquote> with its author in the <figcaption>, and avatars fall back to a lettered monogram when no image is supplied. Set `showRating` to display a star rating per testimonial; each item's `rating` (1–5, default 5) drives how many stars are filled.
 
 | Property | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -458,7 +532,8 @@ Testimonials Component - Property-Driven Architecture
 | `columns` | no | `2 \| 3 \| 4` | Number of columns in the card grid (default: 3). Only applies when layout='grid'. |
 | `maxWidth` | no | `string` | Tailwind max-width class constraining the inner content container (e.g. 'max-w-2xl', 'max-w-4xl'). Defaults to 'max-w-7xl'. |
 | `align` | no | `'left' \| 'center' \| 'right'` | Text alignment for heading and subheading: 'center' (default), 'left', or 'right' |
-| `testimonials` | yes | `Array<{ quote: string; author: string; role?: string; avatar?: string; image?: { src: string; alt: string; }; }>` | — |
+| `showRating` | no | `boolean` | Show a 5-star rating per testimonial (default: true). Set false to hide stars entirely. |
+| `testimonials` | yes | `Array<{ quote: string; author: string; role?: string; avatar?: string; rating?: number; image?: { src: string; alt: string; }; }>` | Star rating from 1 to 5 (default 5). Only shown when showRating is true. |
 
 ---
 
@@ -473,13 +548,16 @@ TwoColumn Component - A two-column layout with independent left and right conten
 | `leftParagraphs` | no | `string[]` | Left column paragraphs |
 | `leftImage` | no | `{ src: string; alt: string; }` | Left column image |
 | `leftLinks` | no | `Array<{ label: string; href: string; }>` | Left column navigation links |
-| `leftContent` | no | `Array<{ title?: string; description?: string; items?: Array<{ title: string; description?: string }>; form?: { fields: Array<{ label?: string; type: 'email' \| 'text' \| 'textarea'; placeholder: string }>, buttonLabel: ...` | Left column content sections (e.g., forms, cards with structured items) |
+| `leftAction` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }` | Optional CTA button rendered directly below the left column paragraphs |
+| `leftContent` | no | `Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; form?: { fields: Array<{ label?: string; type: 'email' \| 'text' \| 'textarea...` | Left column content sections (e.g., forms, cards with structured items) |
 | `rightHeading` | no | `string` | Right column heading |
 | `rightParagraphs` | no | `string[]` | Right column paragraphs |
 | `rightImage` | no | `{ src: string; alt: string; }` | Right column image |
 | `rightImages` | no | `Array<{ src: string; alt: string; }>` | Right column images for gallery grid |
-| `rightContent` | no | `Array<{ title?: string; description?: string; items?: Array<{ title: string; description?: string }>; action?: { label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }; }>` | Right column content sections (e.g., cards with structured items) |
+| `rightAction` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }` | Optional CTA button rendered directly below the right column paragraphs |
+| `rightContent` | no | `Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; action?: { label: string; href: string; variant?: 'primary' \| 'secondary' \|...` | Right column content sections (e.g., cards with structured items) |
 | `backgroundColor` | no | `string` | Background color for the outer section (Tailwind class) |
+| `backgroundImage` | no | `string` | Background image URL for the whole section — spans both columns with a subtle overlay; columns default to transparent so the image shows through |
 | `leftBackgroundColor` | no | `string` | Background color for the left column (Tailwind class); overrides backgroundColor for that column |
 | `rightBackgroundColor` | no | `string` | Background color for the right column (Tailwind class); overrides backgroundColor for that column |
 | `leftBackgroundImage` | no | `string` | Background image URL for the left column |

@@ -55,6 +55,15 @@ interface Props {
   }>;
   /** Label for the search submit button shown alongside searchFields (default: 'Search') */
   searchButtonLabel?: string;
+  /** Optional filter buttons rendered in the search row (e.g. "For Sale" / "For Rent" toggles) */
+  filterButtons?: Array<{
+    /** Button label */
+    label: string;
+    /** Optional link target for the button (default: '#') */
+    href?: string;
+  }>;
+  /** Background/hover color classes for filter buttons (Tailwind, e.g. 'bg-yellow-500 hover:bg-yellow-600'). Defaults to indigo. */
+  filterButtonColor?: string;
   /** Array of items to display */
   items: Array<{
     /** Title of the item */
@@ -90,10 +99,13 @@ const {
   searchPlaceholder = 'Search...',
   searchFields,
   searchButtonLabel = 'Search',
+  filterButtons,
+  filterButtonColor = 'bg-indigo-600 hover:bg-indigo-700',
   align = 'center'
 } = Astro.props;
 
 const alignClass = align === 'left' ? 'text-left' : align === 'right' ? 'text-right' : 'text-center';
+const hasFilterButtons = filterButtons && filterButtons.length > 0;
 
 const gridCols = {
   2: 'md:grid-cols-2',
@@ -112,7 +124,7 @@ const gridCols = {
     )}
 
     {searchFields && searchFields.length > 0 ? (
-      <div class="mb-10 flex flex-wrap gap-3">
+      <div class="mb-10 flex flex-wrap gap-3 items-center">
         {searchFields.map(field => (
           <input
             type={field.type || 'text'}
@@ -121,14 +133,26 @@ const gridCols = {
           />
         ))}
         <button type="button" class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors">{searchButtonLabel}</button>
+        {hasFilterButtons && filterButtons.map(btn => (
+          <a href={btn.href || '#'} class={`px-6 py-3 rounded-xl font-semibold text-white transition-colors ${filterButtonColor}`}>{btn.label}</a>
+        ))}
       </div>
-    ) : showSearch && (
-      <div class="mb-10">
-        <input
-          type="text"
-          placeholder={searchPlaceholder}
-          class="w-full px-5 py-3 border border-gray-300 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
+    ) : (showSearch || hasFilterButtons) && (
+      <div class="mb-10 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+        {showSearch && (
+          <input
+            type="text"
+            placeholder={searchPlaceholder}
+            class={`${hasFilterButtons ? 'w-full sm:w-1/2' : 'w-full'} px-5 py-3 border border-gray-300 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+          />
+        )}
+        {hasFilterButtons && (
+          <div class="flex gap-2">
+            {filterButtons.map(btn => (
+              <a href={btn.href || '#'} class={`px-6 py-3 rounded-xl font-semibold text-white transition-colors ${filterButtonColor}`}>{btn.label}</a>
+            ))}
+          </div>
+        )}
       </div>
     )}
 

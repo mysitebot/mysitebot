@@ -244,7 +244,7 @@
         {
           "name": "sidebar",
           "required": false,
-          "type": "{ title?: string; links?: Array<{ label: string; href: string; }>; sections?: Array<{ title: string; content?: string; links?: Array<{ label: string; href: string; }> }>; image?: { src: string; alt: string; }; content?: string; backgroundColor?: string; textColor?: string; }",
+          "type": "{ title?: string; links?: Array<{ label: string; href: string; }>; sections?: Array<{ title: string; content?: string; lines?: string[]; bulletPoints?: string[]; links?: Array<{ label: string; href: string; }> }>; image?: { src: string; alt: string; }; content?: string; backgroundColor?: string; textColor?: string; }",
           "description": "Optional sidebar with a title and list of links; renders a two-column layout (position controlled by sidebarPosition)",
           "kind": "unknown"
         },
@@ -327,17 +327,29 @@
             "center",
             "right"
           ]
+        },
+        {
+          "name": "headingAlign",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Alignment for the heading only: 'left', 'center', or 'right'. Overrides the section align for the heading element — use for a centered title above left-aligned body prose.",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
         }
       ]
     },
     "Banner": {
-      "description": "Banner Component - A horizontal bar for notifications, secondary CTAs, or brand highlighting.",
+      "description": "Banner Component - A slim horizontal bar for announcements, promotions, or a secondary call-to-action. Renders as a semantic landmark (region) with an optional pill-styled CTA and an optional dismiss button. When `dismissible` is set the banner can be closed; if the banner also has an `id`, the closed state is remembered for the rest of the browsing session so it does not reappear on every page. Can sit inline or pin to the top/bottom of the viewport via `sticky`.",
       "props": [
         {
           "name": "id",
           "required": false,
           "type": "string",
-          "description": "Optional anchor id for in-page links (e.g. href=\"#promo\")",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#promo\"). Also used to remember the dismissed state per session.",
           "kind": "string"
         },
         {
@@ -351,21 +363,21 @@
           "name": "backgroundColor",
           "required": false,
           "type": "string",
-          "description": "Optional background color (Tailwind class)",
+          "description": "Optional background color (Tailwind class, e.g. 'bg-indigo-600')",
           "kind": "string"
         },
         {
           "name": "textColor",
           "required": false,
           "type": "string",
-          "description": "Optional text color (Tailwind class)",
+          "description": "Optional text color (Tailwind class, e.g. 'text-white')",
           "kind": "string"
         },
         {
           "name": "action",
           "required": false,
           "type": "{ label: string; href: string; }",
-          "description": "Optional link/CTA",
+          "description": "Optional link/CTA rendered as a pill button after the text",
           "kind": "object",
           "fields": [
             {
@@ -384,14 +396,14 @@
           "name": "sticky",
           "required": false,
           "type": "boolean",
-          "description": "If true, the banner is fixed to the top of the viewport",
+          "description": "If true, the banner is pinned to the viewport (top by default, or bottom via fixedPosition)",
           "kind": "boolean"
         },
         {
           "name": "fixedPosition",
           "required": false,
           "type": "'top' | 'bottom'",
-          "description": "Position for fixed banners: 'top' (default) or 'bottom'",
+          "description": "Position for pinned banners: 'top' (default) or 'bottom'",
           "kind": "enum",
           "values": [
             "top",
@@ -409,11 +421,25 @@
             "center",
             "right"
           ]
+        },
+        {
+          "name": "dismissible",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, show a close button that dismisses the banner (default: false)",
+          "kind": "boolean"
+        },
+        {
+          "name": "dismissLabel",
+          "required": false,
+          "type": "string",
+          "description": "Accessible label for the dismiss button (default: 'Dismiss')",
+          "kind": "string"
         }
       ]
     },
     "Calendar": {
-      "description": "Calendar Component - Displays a grid of events or a schedule.",
+      "description": "Calendar Component - A responsive grid of upcoming events, sessions, or schedule entries. Each event is rendered as a card with an accent rail and an icon-led meta row (date, optional time and location). When an event provides an `href`, the whole card becomes an accessible link via a stretched overlay, with external URLs opening safely in a new tab. Ideal for conference agendas, class schedules, webinars, or community calendars.",
       "props": [
         {
           "name": "id",
@@ -463,10 +489,17 @@
           ]
         },
         {
+          "name": "columns",
+          "required": false,
+          "type": "2 | 3",
+          "description": "Number of columns on large screens (2 or 3; default: 3). Fewer columns are used on smaller screens automatically.",
+          "kind": "unknown"
+        },
+        {
           "name": "events",
           "required": true,
-          "type": "Array<{ date: string; title: string; description?: string; time?: string; }>",
-          "description": "Array of events",
+          "type": "Array<{ date: string; title: string; description?: string; time?: string; location?: string; href?: string; }>",
+          "description": "Optional link to an event detail or registration page. External URLs open in a new tab.",
           "kind": "object_list",
           "fields": [
             {
@@ -486,6 +519,16 @@
             },
             {
               "name": "time",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "location",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "href",
               "required": false,
               "kind": "string"
             }
@@ -646,8 +689,91 @@
         }
       ]
     },
+    "FAQ": {
+      "description": "FAQ Component - An accessible, JavaScript-free accordion for frequently asked questions. Built on native <details>/<summary> elements so it is keyboard operable and screen-reader friendly out of the box. Ideal for support, pricing, or onboarding pages.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#faq\")",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "Section heading (e.g. \"Frequently asked questions\")",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Supporting description shown below the heading",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the outer section (Tailwind class, e.g. 'bg-gray-50')",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Base text color applied to heading and body text (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark.",
+          "kind": "string"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment for the section header: 'center' (default), 'left', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "columns",
+          "required": false,
+          "type": "1 | 2",
+          "description": "Number of columns for the question list (1 default, or 2 for long lists)",
+          "kind": "unknown"
+        },
+        {
+          "name": "items",
+          "required": true,
+          "type": "Array<{ question: string; answer: string; open?: boolean; }>",
+          "description": "If true, this item starts expanded",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "question",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "answer",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "open",
+              "required": false,
+              "kind": "boolean"
+            }
+          ]
+        }
+      ]
+    },
     "Features": {
-      "description": "Features Component - Property-Driven Architecture",
+      "description": "Features Component - A responsive grid (or full-width list) of feature cards, each with a title, description, and an icon, image, or built-in named icon. Ideal for highlighting product benefits, services, or capabilities. Supports per-feature CTAs and an optional section-level action button.",
       "props": [
         {
           "name": "id",
@@ -760,7 +886,7 @@
         {
           "name": "features",
           "required": true,
-          "type": "Array<{ title: string; description: string; icon?: string; image?: string; backgroundColor?: string; headingColor?: string; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
+          "type": "Array<{ title: string; description: string; bulletPoints?: string[]; icon?: string; image?: string; backgroundColor?: string; headingColor?: string; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
           "description": "Optional CTA button shown below the description",
           "kind": "unknown"
         }
@@ -1134,6 +1260,36 @@
           ]
         },
         {
+          "name": "actions",
+          "required": false,
+          "type": "Array<{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success' | 'danger'; }>",
+          "description": "Optional set of call-to-action buttons shown on the right side (e.g. Login, Sign Up). Rendered after any single `cta`.",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "variant",
+              "required": false,
+              "kind": "enum",
+              "values": [
+                "primary",
+                "secondary",
+                "success",
+                "danger"
+              ]
+            }
+          ]
+        },
+        {
           "name": "links",
           "required": false,
           "type": "Array<{ label: string; href: string; }>",
@@ -1319,6 +1475,13 @@
           ]
         },
         {
+          "name": "imageFullWidth",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, renders the image as a full-width banner across the top of the header, with the nav centered below it",
+          "kind": "boolean"
+        },
+        {
           "name": "selectOptions",
           "required": false,
           "type": "string[]",
@@ -1428,7 +1591,7 @@
         {
           "name": "actions",
           "required": false,
-          "type": "Array<{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }>",
+          "type": "Array<{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success' | 'danger'; }>",
           "description": "Array of CTA buttons",
           "kind": "object_list",
           "fields": [
@@ -1449,7 +1612,8 @@
               "values": [
                 "primary",
                 "secondary",
-                "success"
+                "success",
+                "danger"
               ]
             }
           ]
@@ -1457,7 +1621,7 @@
         {
           "name": "cta",
           "required": false,
-          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }",
+          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success' | 'danger'; }",
           "description": "Optional single CTA button (alternative to actions)",
           "kind": "object",
           "fields": [
@@ -1478,7 +1642,8 @@
               "values": [
                 "primary",
                 "secondary",
-                "success"
+                "success",
+                "danger"
               ]
             }
           ]
@@ -1486,7 +1651,7 @@
         {
           "name": "action",
           "required": false,
-          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }",
+          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success' | 'danger'; }",
           "description": "Optional CTA button rendered below the text (alternative to cta)",
           "kind": "object",
           "fields": [
@@ -1507,7 +1672,8 @@
               "values": [
                 "primary",
                 "secondary",
-                "success"
+                "success",
+                "danger"
               ]
             }
           ]
@@ -1856,6 +2022,30 @@
           "kind": "string"
         },
         {
+          "name": "navLogo",
+          "required": false,
+          "type": "{ src: string; alt?: string; size?: string }",
+          "description": "Optional logo image shown on the left side of the overlay nav bar (alternative to siteName)",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "src",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "alt",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "size",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
           "name": "linkColor",
           "required": false,
           "type": "string",
@@ -1932,14 +2122,61 @@
       ]
     },
     "HeroCarousel": {
-      "description": "HeroCarousel Component - Full-screen background slideshow with content.",
+      "description": "HeroCarousel Component - Full-screen background slideshow with content. Slides auto-advance with a pure-CSS animation (no JavaScript). The animation is disabled for visitors who prefer reduced motion, who instead see the first slide statically — keeping the section accessible and WCAG-friendly.",
       "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#featured\")",
+          "kind": "string"
+        },
         {
           "name": "slides",
           "required": true,
-          "type": "Array<{ heading: string; subheading?: string; image: string; action?: { label: string; href: string }; }>",
-          "description": "",
+          "type": "Array<{ heading: string; subheading?: string; image: string; alt?: string; action?: { label: string; href: string }; }>",
+          "description": "Optional call-to-action button",
           "kind": "unknown"
+        },
+        {
+          "name": "heightClass",
+          "required": false,
+          "type": "string",
+          "description": "Tailwind height class for the carousel (default: 'h-screen'; e.g. 'h-[32rem]', 'h-[70vh]')",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color shown behind slide images (Tailwind class, default: 'bg-black')",
+          "kind": "string"
+        },
+        {
+          "name": "overlayClass",
+          "required": false,
+          "type": "string",
+          "description": "Tailwind classes for the readability overlay layered over each image (default: a bottom-weighted dark gradient)",
+          "kind": "string"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Horizontal alignment of slide content: 'center' (default), 'left', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "secondsPerSlide",
+          "required": false,
+          "type": "number",
+          "description": "Seconds each slide stays on screen before advancing (default: 5)",
+          "kind": "number"
         }
       ]
     },
@@ -2077,11 +2314,127 @@
           "kind": "string"
         },
         {
+          "name": "filterButtons",
+          "required": false,
+          "type": "Array<{ label: string; href?: string; }>",
+          "description": "Optional link target for the button (default: '#')",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
+          "name": "filterButtonColor",
+          "required": false,
+          "type": "string",
+          "description": "Background/hover color classes for filter buttons (Tailwind, e.g. 'bg-yellow-500 hover:bg-yellow-600'). Defaults to indigo.",
+          "kind": "string"
+        },
+        {
           "name": "items",
           "required": true,
           "type": "Array<{ title: string; description?: string; price?: string; image: string; alt?: string; href?: string; tags?: string[]; }>",
           "description": "Array of tags or badges (e.g., [\"3 Bed\", \"2 Bath\"])",
           "kind": "unknown"
+        }
+      ]
+    },
+    "LogoCloud": {
+      "description": "LogoCloud Component - A tidy band of partner, customer, or press logos used to build credibility (\"Trusted by teams at ...\"). Logos render as an accessible list of images on a responsive grid, with an optional muted/grayscale treatment that returns to full color on hover or focus. Each logo may link to its site; external links open in a new tab with safe rel attributes.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#logos\")",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "Optional eyebrow heading shown above the logos (e.g. 'Trusted by teams worldwide')",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Supporting description shown below the heading",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the outer section (Tailwind class, e.g. 'bg-gray-50')",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Base text color applied to heading and body text (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark.",
+          "kind": "string"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment for the section header: 'center' (default), 'left', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "columns",
+          "required": false,
+          "type": "2 | 3 | 4 | 5 | 6",
+          "description": "Number of logos per row on large screens (2–6; default: 5). Fewer columns are used on smaller screens automatically.",
+          "kind": "unknown"
+        },
+        {
+          "name": "grayscale",
+          "required": false,
+          "type": "boolean",
+          "description": "Mute logos to grayscale and reveal full color on hover/focus (default: true). Set false to always show full-color logos.",
+          "kind": "boolean"
+        },
+        {
+          "name": "logos",
+          "required": true,
+          "type": "Array<{ src: string; alt: string; href?: string; }>",
+          "description": "Optional link to the company's site. External URLs open in a new tab.",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "src",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "alt",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": false,
+              "kind": "string"
+            }
+          ]
         }
       ]
     },
@@ -2233,11 +2586,35 @@
           "type": "boolean",
           "description": "If true, shows a hamburger menu button on the right side",
           "kind": "boolean"
+        },
+        {
+          "name": "socialLinks",
+          "required": false,
+          "type": "Array<{ href: string; icon: string; label?: string; }>",
+          "description": "Accessible label / alt text (e.g. \"Facebook\")",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "icon",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "label",
+              "required": false,
+              "kind": "string"
+            }
+          ]
         }
       ]
     },
     "NewsGrid": {
-      "description": "NewsGrid Component - Displays multiple columns of news or content articles. Each column has a heading and contains a list of article cards. Optionally renders a sidebar (e.g. category list) to the left of the grid.",
+      "description": "NewsGrid Component - Displays multiple columns of news or content articles. Each column has a heading and contains a list of article cards. Optionally renders a sidebar (e.g. category list, archives, recent comments) beside the grid, on the left (default) or right via sidebarPosition.",
       "props": [
         {
           "name": "id",
@@ -2296,9 +2673,20 @@
         {
           "name": "sidebar",
           "required": false,
-          "type": "{ heading?: string; items: string[]; }",
-          "description": "List of sidebar item labels",
+          "type": "{ heading?: string; items?: string[]; sections?: Array<{ heading?: string; items: string[]; }>; }",
+          "description": "Additional sidebar widgets, each rendered as its own card (e.g. \"Archives\", \"Recent Comments\")",
           "kind": "unknown"
+        },
+        {
+          "name": "sidebarPosition",
+          "required": false,
+          "type": "'left' | 'right'",
+          "description": "Which side to render the sidebar: 'left' (default) or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "right"
+          ]
         },
         {
           "name": "sections",
@@ -2389,7 +2777,7 @@
       ]
     },
     "Parallax": {
-      "description": "Parallax Component - A multi-layer parallax scroll effect section. Ideal for creating depth and visual interest with layered content.",
+      "description": "Parallax Component - A multi-layer parallax scroll effect section. Layers are stacked and drift at different speeds as the page scrolls to create a sense of depth. Motion is JavaScript-driven but fully progressive: the layers render in place with no script, the scroll effect is throttled to the browser's paint cycle, and it is automatically disabled for visitors who request reduced motion. Ideal for expressive hero bands and section breaks.",
       "props": [
         {
           "name": "id",
@@ -2456,7 +2844,7 @@
       ]
     },
     "Pricing": {
-      "description": "Pricing Component - Property-Driven Architecture",
+      "description": "Pricing Component - Property-Driven Architecture Renders a responsive grid of pricing plans with an optional highlighted (\"most popular\") tier. Ideal for SaaS, service, or membership offerings. Set `billingToggle` to reveal an accessible Monthly/Annual switch that swaps each plan's `price`/`period` for its `priceAnnual`/`periodAnnual` — no page reload, and it degrades gracefully to monthly pricing without JavaScript.",
       "props": [
         {
           "name": "id",
@@ -2506,10 +2894,45 @@
           ]
         },
         {
+          "name": "columns",
+          "required": false,
+          "type": "2 | 3 | 4",
+          "description": "Number of columns in the grid layout (2, 3, or 4; default: 3)",
+          "kind": "unknown"
+        },
+        {
+          "name": "billingToggle",
+          "required": false,
+          "type": "boolean",
+          "description": "If true, show a Monthly/Annual toggle that swaps each plan's price for its priceAnnual (falls back to the monthly price when a plan omits priceAnnual)",
+          "kind": "boolean"
+        },
+        {
+          "name": "monthlyLabel",
+          "required": false,
+          "type": "string",
+          "description": "Label for the monthly option of the billing toggle (default: 'Monthly')",
+          "kind": "string"
+        },
+        {
+          "name": "annualLabel",
+          "required": false,
+          "type": "string",
+          "description": "Label for the annual option of the billing toggle (default: 'Annual')",
+          "kind": "string"
+        },
+        {
+          "name": "annualBadge",
+          "required": false,
+          "type": "string",
+          "description": "Optional small badge shown beside the annual option (e.g. 'Save 20%')",
+          "kind": "string"
+        },
+        {
           "name": "plans",
           "required": true,
-          "type": "Array<{ name: string; price: string; period?: string; description?: string; features: string[]; ctaLabel: string; ctaHref: string; highlighted?: boolean; }>",
-          "description": "",
+          "type": "Array<{ name: string; price: string; period?: string; priceAnnual?: string; periodAnnual?: string; description?: string; features: string[]; ctaLabel: string; ctaHref: string; highlighted?: boolean; badge?: string; }>",
+          "description": "Ribbon label for a featured plan. Falls back to \"Most Popular\" when `highlighted` is true.",
           "kind": "unknown"
         }
       ]
@@ -2581,7 +3004,7 @@
         {
           "name": "leftSidebar",
           "required": false,
-          "type": "{ title?: string; image?: { src: string; alt: string; }; content?: string; sections?: Array<{ title: string; content: string; }>; links?: Array<{ label: string; href: string; }>; showSearch?: boolean; searchPlaceholder?: string; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; backgroundColor?: string; textColor?: string; }",
+          "type": "{ title?: string; image?: { src: string; alt: string; }; content?: string; sections?: Array<{ title: string; content: string; }>; links?: Array<{ label: string; href: string; }>; linkColor?: string; showSearch?: boolean; searchPlaceholder?: string; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; backgroundColor?: string; textColor?: string; }",
           "description": "Optional CTA button rendered below the links",
           "kind": "unknown"
         },
@@ -2651,8 +3074,109 @@
         }
       ]
     },
+    "Stats": {
+      "description": "Stats Component - A compact band of headline metrics (\"10k+ customers\", \"99.9% uptime\", \"24/7 support\"). Ideal for building credibility on landing, about, or investor pages. Each figure is rendered as an accessible description list (value + label) so screen readers announce the pairing.",
+      "props": [
+        {
+          "name": "id",
+          "required": false,
+          "type": "string",
+          "description": "Optional anchor id for in-page links (e.g. href=\"#stats\")",
+          "kind": "string"
+        },
+        {
+          "name": "heading",
+          "required": false,
+          "type": "string",
+          "description": "Section heading",
+          "kind": "string"
+        },
+        {
+          "name": "subheading",
+          "required": false,
+          "type": "string",
+          "description": "Supporting description shown below the heading",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundColor",
+          "required": false,
+          "type": "string",
+          "description": "Background color for the outer section (Tailwind class, e.g. 'bg-gray-50')",
+          "kind": "string"
+        },
+        {
+          "name": "textColor",
+          "required": false,
+          "type": "string",
+          "description": "Base text color applied to heading and body text (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark.",
+          "kind": "string"
+        },
+        {
+          "name": "valueColor",
+          "required": false,
+          "type": "string",
+          "description": "Override color for the metric values only (Tailwind class, e.g. 'text-indigo-600'). Takes precedence over textColor for the numbers.",
+          "kind": "string"
+        },
+        {
+          "name": "align",
+          "required": false,
+          "type": "'left' | 'center' | 'right'",
+          "description": "Text alignment for the section header: 'center' (default), 'left', or 'right'",
+          "kind": "enum",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        {
+          "name": "columns",
+          "required": false,
+          "type": "2 | 3 | 4",
+          "description": "Number of columns in the metrics grid (2, 3, or 4; default: 4)",
+          "kind": "unknown"
+        },
+        {
+          "name": "variant",
+          "required": false,
+          "type": "'plain' | 'cards'",
+          "description": "Visual treatment: 'plain' for dividers between figures (default), 'cards' for individually boxed figures",
+          "kind": "enum",
+          "values": [
+            "plain",
+            "cards"
+          ]
+        },
+        {
+          "name": "stats",
+          "required": true,
+          "type": "Array<{ value: string; label: string; description?: string; }>",
+          "description": "Optional one-line detail shown beneath the label",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "value",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "description",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        }
+      ]
+    },
     "Table": {
-      "description": "Table Component - Displays structured tabular data with optional search and filtering. Ideal for food menus, product catalogs, pricing tables, or any structured dataset.",
+      "description": "Table Component - Displays structured tabular data with optional search and filtering. Ideal for food menus, product catalogs, pricing tables, or any structured dataset. Columns can be individually aligned (e.g. right-aligned prices) and the header can stick to the top of the viewport while scrolling long tables.",
       "props": [
         {
           "name": "id",
@@ -2678,8 +3202,8 @@
         {
           "name": "columns",
           "required": true,
-          "type": "Array<{ label: string; key: string; }>",
-          "description": "Column headers",
+          "type": "Array<{ label: string; key: string; align?: 'left' | 'center' | 'right'; }>",
+          "description": "Column headers. Set `align` to right-align numeric data such as prices ('left' by default).",
           "kind": "object_list",
           "fields": [
             {
@@ -2691,6 +3215,16 @@
               "name": "key",
               "required": true,
               "kind": "string"
+            },
+            {
+              "name": "align",
+              "required": false,
+              "kind": "enum",
+              "values": [
+                "left",
+                "center",
+                "right"
+              ]
             }
           ]
         },
@@ -2714,6 +3248,13 @@
           "type": "string",
           "description": "Placeholder text for the search bar",
           "kind": "string"
+        },
+        {
+          "name": "stickyHeader",
+          "required": false,
+          "type": "boolean",
+          "description": "Keep the header row pinned to the top of the viewport while scrolling long tables (default: false)",
+          "kind": "boolean"
         },
         {
           "name": "backgroundColor",
@@ -2786,7 +3327,7 @@
       ]
     },
     "Team": {
-      "description": "Team Component - Showcases key staff members or contributors. Use this to build trust and humanize the brand.",
+      "description": "Team Component - Showcases key staff members or contributors. Use this to build trust and humanize the brand. Each member card can optionally surface social profile links (LinkedIn, X/Twitter, GitHub, and a personal website), rendered as accessible icon buttons.",
       "props": [
         {
           "name": "id",
@@ -2845,8 +3386,8 @@
         {
           "name": "members",
           "required": true,
-          "type": "Array<{ name: string; role: string; bio?: string; avatar?: string; }>",
-          "description": "URL to the member's profile picture",
+          "type": "Array<{ name: string; role: string; bio?: string; avatar?: string; linkedin?: string; twitter?: string; github?: string; website?: string; }>",
+          "description": "URL to the member's personal website",
           "kind": "object_list",
           "fields": [
             {
@@ -2868,13 +3409,33 @@
               "name": "avatar",
               "required": false,
               "kind": "string"
+            },
+            {
+              "name": "linkedin",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "twitter",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "github",
+              "required": false,
+              "kind": "string"
+            },
+            {
+              "name": "website",
+              "required": false,
+              "kind": "string"
             }
           ]
         }
       ]
     },
     "Testimonials": {
-      "description": "Testimonials Component - Property-Driven Architecture",
+      "description": "Testimonials Component - Social proof from customers, rendered as an accessible card grid (default) or an alternating text/image split layout. Each quote is marked up as a <figure>/<blockquote> with its author in the <figcaption>, and avatars fall back to a lettered monogram when no image is supplied. Set `showRating` to display a star rating per testimonial; each item's `rating` (1–5, default 5) drives how many stars are filled.",
       "props": [
         {
           "name": "id",
@@ -2956,10 +3517,17 @@
           ]
         },
         {
+          "name": "showRating",
+          "required": false,
+          "type": "boolean",
+          "description": "Show a 5-star rating per testimonial (default: true). Set false to hide stars entirely.",
+          "kind": "boolean"
+        },
+        {
           "name": "testimonials",
           "required": true,
-          "type": "Array<{ quote: string; author: string; role?: string; avatar?: string; image?: { src: string; alt: string; }; }>",
-          "description": "",
+          "type": "Array<{ quote: string; author: string; role?: string; avatar?: string; rating?: number; image?: { src: string; alt: string; }; }>",
+          "description": "Star rating from 1 to 5 (default 5). Only shown when showRating is true.",
           "kind": "unknown"
         }
       ]
@@ -3039,9 +3607,38 @@
           ]
         },
         {
+          "name": "leftAction",
+          "required": false,
+          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }",
+          "description": "Optional CTA button rendered directly below the left column paragraphs",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "variant",
+              "required": false,
+              "kind": "enum",
+              "values": [
+                "primary",
+                "secondary",
+                "success"
+              ]
+            }
+          ]
+        },
+        {
           "name": "leftContent",
           "required": false,
-          "type": "Array<{ title?: string; description?: string; items?: Array<{ title: string; description?: string }>; form?: { fields: Array<{ label?: string; type: 'email' | 'text' | 'textarea'; placeholder: string }>, buttonLabel: string, buttonColor?: string }; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
+          "type": "Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; form?: { fields: Array<{ label?: string; type: 'email' | 'text' | 'textarea'; placeholder: string }>, buttonLabel: string, buttonColor?: string }; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
           "description": "Left column content sections (e.g., forms, cards with structured items)",
           "kind": "unknown"
         },
@@ -3086,9 +3683,38 @@
           ]
         },
         {
+          "name": "rightAction",
+          "required": false,
+          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }",
+          "description": "Optional CTA button rendered directly below the right column paragraphs",
+          "kind": "object",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "variant",
+              "required": false,
+              "kind": "enum",
+              "values": [
+                "primary",
+                "secondary",
+                "success"
+              ]
+            }
+          ]
+        },
+        {
           "name": "rightContent",
           "required": false,
-          "type": "Array<{ title?: string; description?: string; items?: Array<{ title: string; description?: string }>; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
+          "type": "Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
           "description": "Right column content sections (e.g., cards with structured items)",
           "kind": "unknown"
         },
@@ -3097,6 +3723,13 @@
           "required": false,
           "type": "string",
           "description": "Background color for the outer section (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "backgroundImage",
+          "required": false,
+          "type": "string",
+          "description": "Background image URL for the whole section — spans both columns with a subtle overlay; columns default to transparent so the image shows through",
           "kind": "string"
         },
         {

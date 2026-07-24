@@ -1,28 +1,38 @@
 ---
 import { resolvePath } from '../../utils/paths';
 /**
- * Banner Component - A horizontal bar for notifications, secondary CTAs, or brand highlighting.
+ * Banner Component - A slim horizontal bar for announcements, promotions, or a
+ * secondary call-to-action. Renders as a semantic landmark (region) with an
+ * optional pill-styled CTA and an optional dismiss button. When `dismissible`
+ * is set the banner can be closed; if the banner also has an `id`, the closed
+ * state is remembered for the rest of the browsing session so it does not
+ * reappear on every page. Can sit inline or pin to the top/bottom of the
+ * viewport via `sticky`.
  */
 interface Props {
-  /** Optional anchor id for in-page links (e.g. href="#promo") */
+  /** Optional anchor id for in-page links (e.g. href="#promo"). Also used to remember the dismissed state per session. */
   id?: string;
   /** The text content of the banner */
   text: string;
-  /** Optional background color (Tailwind class) */
+  /** Optional background color (Tailwind class, e.g. 'bg-indigo-600') */
   backgroundColor?: string;
-  /** Optional text color (Tailwind class) */
+  /** Optional text color (Tailwind class, e.g. 'text-white') */
   textColor?: string;
-  /** Optional link/CTA */
+  /** Optional link/CTA rendered as a pill button after the text */
   action?: {
     label: string;
     href: string;
   };
-  /** If true, the banner is fixed to the top of the viewport */
+  /** If true, the banner is pinned to the viewport (top by default, or bottom via fixedPosition) */
   sticky?: boolean;
-  /** Position for fixed banners: 'top' (default) or 'bottom' */
+  /** Position for pinned banners: 'top' (default) or 'bottom' */
   fixedPosition?: 'top' | 'bottom';
   /** Text alignment: 'left', 'center' (default), or 'right' */
   align?: 'left' | 'center' | 'right';
+  /** If true, show a close button that dismisses the banner (default: false) */
+  dismissible?: boolean;
+  /** Accessible label for the dismiss button (default: 'Dismiss') */
+  dismissLabel?: string;
 }
 
 const {
@@ -33,24 +43,71 @@ const {
   action,
   sticky = false,
   fixedPosition = 'top',
-  align = 'center'
+  align = 'center',
+  dismissible = false,
+  dismissLabel = 'Dismiss',
 } = Astro.props;
 
-const alignClass = align === 'left' ? 'justify-start' : align === 'right' ? 'justify-end' : 'justify-center';
+const justifyClass = align === 'left' ? 'md:justify-start' : align === 'right' ? 'md:justify-end' : 'md:justify-center';
+const textAlignClass = align === 'left' ? 'text-left' : align === 'right' ? 'text-right' : 'text-center';
+const positionClass = sticky ? (fixedPosition === 'bottom' ? 'fixed bottom-0 inset-x-0 z-50' : 'sticky top-0 z-50') : '';
+// Reserve room on the right for the absolutely-positioned close button so a
+// centered message never slides under it on narrow screens.
+const dismissPadding = dismissible ? 'pr-10 md:pr-12' : '';
 ---
 
-<div id={id} class={`${backgroundColor} ${textColor} py-3 px-6 ${align === 'center' ? 'text-center' : align === 'left' ? 'text-left' : 'text-right'} ${sticky ? (fixedPosition === 'bottom' ? 'fixed bottom-0 left-0 right-0 z-50' : 'sticky top-0 z-50') : ''}`}>
-  <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center ${alignClass} gap-4">
-    <p class="font-medium">
+<div
+  id={id}
+  role="region"
+  aria-label="Announcement"
+  data-banner={dismissible ? '' : undefined}
+  class={`relative ${backgroundColor} ${textColor} py-3 px-6 ${textAlignClass} ${positionClass}`}
+>
+  <div class={`max-w-7xl mx-auto flex flex-col md:flex-row flex-wrap items-center justify-center ${justifyClass} ${dismissPadding} gap-x-6 gap-y-2`}>
+    <p class="font-medium text-sm sm:text-base text-balance">
       {text}
     </p>
     {action && (
-      <a 
-        href={resolvePath(action.href)} 
-        class="bg-white text-indigo-600 px-4 py-1 rounded-full text-sm font-bold hover:bg-gray-100 transition-colors"
+      <a
+        href={resolvePath(action.href)}
+        class="group inline-flex items-center gap-1.5 shrink-0 rounded-full bg-white/95 px-4 py-1.5 text-sm font-bold text-indigo-600 shadow-sm transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
       >
         {action.label}
+        <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false">
+          <path fill-rule="evenodd" d="M7.293 4.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L11.586 10 7.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
       </a>
     )}
   </div>
+  {dismissible && (
+    <button
+      type="button"
+      data-banner-dismiss
+      aria-label={dismissLabel}
+      class="absolute right-3 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-full text-current opacity-80 transition hover:opacity-100 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+    >
+      <svg class="h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l8 8M14 6l-8 8" />
+      </svg>
+    </button>
+  )}
 </div>
+
+{dismissible && (
+  <script>
+    document.querySelectorAll('[data-banner]').forEach(banner => {
+      const el = banner as HTMLElement;
+      // Persist the dismissed state per session, but only when the banner has a
+      // stable id to key on — otherwise it simply hides for the current view.
+      const key = el.id ? `banner-dismissed:${el.id}` : null;
+      if (key && sessionStorage.getItem(key) === '1') {
+        el.remove();
+        return;
+      }
+      el.querySelector('[data-banner-dismiss]')?.addEventListener('click', () => {
+        if (key) sessionStorage.setItem(key, '1');
+        el.remove();
+      });
+    });
+  </script>
+)}

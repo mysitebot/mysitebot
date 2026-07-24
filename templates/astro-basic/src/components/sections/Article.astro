@@ -50,7 +50,7 @@ interface Props {
   /** Alignment for action buttons: 'left' (default), 'center', or 'right' */
   actionAlign?: 'left' | 'center' | 'right';
   /** Optional sidebar with a title and list of links; renders a two-column layout (position controlled by sidebarPosition) */
-  sidebar?: { title?: string; links?: Array<{ label: string; href: string; }>; sections?: Array<{ title: string; content?: string; links?: Array<{ label: string; href: string; }> }>; image?: { src: string; alt: string; }; content?: string; backgroundColor?: string; textColor?: string; };
+  sidebar?: { title?: string; links?: Array<{ label: string; href: string; }>; sections?: Array<{ title: string; content?: string; lines?: string[]; bulletPoints?: string[]; links?: Array<{ label: string; href: string; }> }>; image?: { src: string; alt: string; }; content?: string; backgroundColor?: string; textColor?: string; };
   /** Which side to render the sidebar: 'left' (default) or 'right' */
   sidebarPosition?: 'left' | 'right';
   /** Background color for the sidebar (Tailwind class, e.g., 'bg-yellow-800'). Overrides sidebar.backgroundColor when present. */
@@ -65,6 +65,8 @@ interface Props {
   bulletPoints?: string[];
   /** Text alignment: 'left' (default), 'center', or 'right' — mirrors Hero.align */
   align?: 'left' | 'center' | 'right';
+  /** Alignment for the heading only: 'left', 'center', or 'right'. Overrides the section align for the heading element — use for a centered title above left-aligned body prose. */
+  headingAlign?: 'left' | 'center' | 'right';
 }
 
 const {
@@ -98,9 +100,11 @@ const {
   bulletPoints,
   fontFamily = 'sans',
   align,
+  headingAlign,
 } = Astro.props;
 
 const alignClass = align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : '';
+const headingAlignClass = headingAlign === 'center' ? 'text-center' : headingAlign === 'right' ? 'text-right' : headingAlign === 'left' ? 'text-left' : '';
 
 const fontFamilyClasses = {
   sans: 'font-sans',
@@ -123,7 +127,7 @@ const fontFamilyClasses = {
             <div class={`uppercase tracking-wide text-sm font-semibold mb-2 ${badgeColor || 'text-indigo-500'}`}>{badge}</div>
           )}
           {heading && (
-            <h2 class={`text-2xl font-bold mb-4 ${headingColor || textColor || 'text-gray-800'}`}>{heading}</h2>
+            <h2 class={`text-2xl font-bold mb-4 ${headingAlignClass} ${headingColor || textColor || 'text-gray-800'}`}>{heading}</h2>
           )}
           {subheading && (
             <p class={`text-lg font-medium mt-1 mb-4 ${textColor || 'text-gray-500'}`}>{subheading}</p>
@@ -191,7 +195,7 @@ const fontFamilyClasses = {
                 <div class={`uppercase tracking-wide text-sm font-semibold mb-2 ${badgeColor || 'text-indigo-500'}`}>{badge}</div>
               )}
               {heading && (
-                <h1 class={`text-3xl font-bold leading-tight mb-4 ${headingColor || textColor || 'text-gray-800'}`}>{heading}</h1>
+                <h1 class={`text-3xl font-bold leading-tight mb-4 ${headingAlignClass} ${headingColor || textColor || 'text-gray-800'}`}>{heading}</h1>
               )}
               {subheading && (
                 <p class={`text-lg font-medium mt-1 mb-4 ${textColor || 'text-gray-500'}`}>{subheading}</p>
@@ -243,7 +247,7 @@ const fontFamilyClasses = {
               <div class={`uppercase tracking-wide text-sm text-indigo-500 font-semibold mb-2 ${layout === 'centered' ? 'flex justify-center' : ''}`}>{badge}</div>
             )}
             {heading && (
-              <h1 class={`text-3xl font-bold leading-tight mb-4 ${headingColor || textColor || 'text-gray-800'}`}>{heading}</h1>
+              <h1 class={`text-3xl font-bold leading-tight mb-4 ${headingAlignClass} ${headingColor || textColor || 'text-gray-800'}`}>{heading}</h1>
             )}
             {subheading && (
               <p class={`text-lg font-medium mt-1 mb-4 ${textColor || 'text-gray-500'}`}>{subheading}</p>
@@ -313,6 +317,20 @@ const fontFamilyClasses = {
               <h2 class={`text-2xl font-bold mb-4 ${sidebar.textColor || 'text-gray-800'}`}>{section.title}</h2>
               {section.content && (
                 <p class={`text-base leading-relaxed mb-3 ${sidebar.textColor || 'text-gray-600'}`}>{section.content}</p>
+              )}
+              {section.lines && (
+                <div class="mb-3">
+                  {section.lines.map((line) => (
+                    <p class={`text-base leading-relaxed ${sidebar.textColor || 'text-gray-600'}`}>{line}</p>
+                  ))}
+                </div>
+              )}
+              {section.bulletPoints && (
+                <ul class={`mb-3 pl-4 list-disc ${sidebar.textColor || 'text-gray-600'}`}>
+                  {section.bulletPoints.map((point) => (
+                    <li class="mb-1 leading-relaxed">{point}</li>
+                  ))}
+                </ul>
               )}
               {section.links && (
                 <ul>

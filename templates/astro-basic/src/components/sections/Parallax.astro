@@ -1,7 +1,11 @@
 ---
 /**
  * Parallax Component - A multi-layer parallax scroll effect section.
- * Ideal for creating depth and visual interest with layered content.
+ * Layers are stacked and drift at different speeds as the page scrolls to
+ * create a sense of depth. Motion is JavaScript-driven but fully progressive:
+ * the layers render in place with no script, the scroll effect is throttled to
+ * the browser's paint cycle, and it is automatically disabled for visitors who
+ * request reduced motion. Ideal for expressive hero bands and section breaks.
  */
 interface Props {
   /** Optional ID for anchor linking */
@@ -32,47 +36,31 @@ const {
   backgroundColor = 'bg-gray-100',
   textColor = 'text-gray-900',
   layers = [],
-  minHeight = 'min-h-96'
+  minHeight = 'min-h-96',
 } = Astro.props;
-
-// Calculate transform values for each layer based on depth
-const getParallaxStyle = (depth: number = 1) => {
-  return `transform: translateY(calc(var(--scroll-y) * ${1 - depth} * 0.5px));`;
-};
 ---
 
-<section {id} class={`${backgroundColor} ${textColor} ${minHeight} relative overflow-hidden`}>
-  <script>
-    // Parallax scroll effect
-    let scrollY = 0;
-    const updateParallax = () => {
-      scrollY = window.scrollY;
-      const parallaxLayers = document.querySelectorAll('.parallax-layer');
-      parallaxLayers.forEach((layer) => {
-        const depth = parseFloat(layer.getAttribute('data-depth') || '1');
-        const offset = scrollY * (1 - depth) * 0.5;
-        (layer as HTMLElement).style.transform = `translateY(${offset}px)`;
-      });
-    };
-    window.addEventListener('scroll', updateParallax);
-    updateParallax();
-  </script>
-
-  <div class="relative w-full h-full">
-    {layers.map((layer, idx) => (
+<section
+  {id}
+  class={`parallax-section relative isolate overflow-hidden ${backgroundColor} ${textColor} ${minHeight}`}
+  role="region"
+  aria-label="Featured"
+>
+  <div class="relative h-full w-full">
+    {layers.map((layer) => (
       <div
-        class={`parallax-layer absolute inset-0 flex items-center justify-center transition-none ${
+        class={`parallax-layer absolute inset-0 flex items-center justify-center px-6 will-change-transform ${
           layer.color || textColor
         }`}
-        data-depth={layer.depth || 1}
+        data-depth={layer.depth ?? 1}
       >
-        <div class="text-center">
+        <div class="max-w-3xl text-center text-balance">
           {layer.heading && (
-            <h2 class={`${layer.fontSize || 'text-2xl'} font-bold mb-4`}>
+            <h2 class={`${layer.fontSize || 'text-3xl sm:text-4xl'} font-bold tracking-tight mb-4`}>
               {layer.heading}
             </h2>
           )}
-          <p class={layer.fontSize || 'text-xl'}>
+          <p class={`leading-relaxed ${layer.fontSize || 'text-lg sm:text-xl'}`}>
             {layer.content}
           </p>
         </div>
@@ -80,3 +68,60 @@ const getParallaxStyle = (depth: number = 1) => {
     ))}
   </div>
 </section>
+
+<script>
+  // Progressive parallax: layers already render in place, so this only adds the
+  // scroll-linked drift. Work is batched into requestAnimationFrame and skipped
+  // entirely for reduced-motion users or off-screen sections.
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll<HTMLElement>('.parallax-section').forEach((section) => {
+    const layers = Array.from(
+      section.querySelectorAll<HTMLElement>('.parallax-layer'),
+    );
+    if (!layers.length) return;
+
+    let visible = false;
+    let ticking = false;
+
+    const render = () => {
+      ticking = false;
+      // Offset each layer relative to the section's own position in the
+      // viewport so the effect is anchored to the section, not the page top.
+      const progress = section.getBoundingClientRect().top;
+      for (const layer of layers) {
+        const depth = parseFloat(layer.dataset.depth || '1');
+        layer.style.transform = `translate3d(0, ${progress * (1 - depth) * 0.3}px, 0)`;
+      }
+    };
+
+    const reset = () => {
+      for (const layer of layers) layer.style.transform = '';
+    };
+
+    const onScroll = () => {
+      if (!visible || ticking) return;
+      ticking = true;
+      requestAnimationFrame(render);
+    };
+
+    const apply = () => {
+      if (reduceMotion.matches) {
+        window.removeEventListener('scroll', onScroll);
+        reset();
+        return;
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      render();
+    };
+
+    // Only listen while the section is on (or near) the screen.
+    new IntersectionObserver((entries) => {
+      visible = entries[0].isIntersecting;
+      if (visible) render();
+    }).observe(section);
+
+    reduceMotion.addEventListener('change', apply);
+    apply();
+  });
+</script>

@@ -1,0 +1,113 @@
+---
+import { resolvePath } from '../../utils/paths';
+
+/**
+ * LogoCloud Component - A tidy band of partner, customer, or press logos used to
+ * build credibility ("Trusted by teams at ..."). Logos render as an accessible
+ * list of images on a responsive grid, with an optional muted/grayscale
+ * treatment that returns to full color on hover or focus. Each logo may link to
+ * its site; external links open in a new tab with safe rel attributes.
+ */
+interface Props {
+  /** Optional anchor id for in-page links (e.g. href="#logos") */
+  id?: string;
+  /** Optional eyebrow heading shown above the logos (e.g. 'Trusted by teams worldwide') */
+  heading?: string;
+  /** Supporting description shown below the heading */
+  subheading?: string;
+  /** Background color for the outer section (Tailwind class, e.g. 'bg-gray-50') */
+  backgroundColor?: string;
+  /** Base text color applied to heading and body text (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark. */
+  textColor?: string;
+  /** Text alignment for the section header: 'center' (default), 'left', or 'right' */
+  align?: 'left' | 'center' | 'right';
+  /** Number of logos per row on large screens (2–6; default: 5). Fewer columns are used on smaller screens automatically. */
+  columns?: 2 | 3 | 4 | 5 | 6;
+  /** Mute logos to grayscale and reveal full color on hover/focus (default: true). Set false to always show full-color logos. */
+  grayscale?: boolean;
+  /** Array of logos to display */
+  logos: Array<{
+    /** Logo image URL */
+    src: string;
+    /** Accessible name for the logo, typically the company name (e.g. 'Acme Inc.') */
+    alt: string;
+    /** Optional link to the company's site. External URLs open in a new tab. */
+    href?: string;
+  }>;
+}
+
+const {
+  id,
+  heading,
+  subheading,
+  backgroundColor = 'bg-white',
+  textColor,
+  align = 'center',
+  columns = 5,
+  grayscale = true,
+  logos = [],
+} = Astro.props;
+
+const alignClass = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+}[align];
+
+// Cap the desktop column count at the number of logos so a short list stays
+// centered instead of stretching across an over-wide grid.
+const desktopCols = Math.min(columns, Math.max(logos.length, 1));
+const gridColsClass = {
+  2: 'grid-cols-2',
+  3: 'grid-cols-2 sm:grid-cols-3',
+  4: 'grid-cols-2 sm:grid-cols-4',
+  5: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5',
+  6: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6',
+}[desktopCols] ?? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5';
+
+const imgClass = `max-h-12 w-auto object-contain transition duration-300 ${
+  grayscale
+    ? 'grayscale opacity-70 hover:grayscale-0 hover:opacity-100 focus-visible:grayscale-0 focus-visible:opacity-100'
+    : 'opacity-90 hover:opacity-100'
+}`;
+
+const isExternal = (href: string) => /^(https?:|\/\/)/i.test(href);
+---
+
+<section id={id} class={`py-20 px-6 ${backgroundColor} ${textColor ?? ''}`}>
+  <div class="max-w-7xl mx-auto">
+    {(heading || subheading) && (
+      <div class={`${alignClass} mb-12`}>
+        {heading && (
+          <h2 class={`text-sm font-semibold uppercase tracking-widest ${textColor ?? 'text-gray-500'}`}>
+            {heading}
+          </h2>
+        )}
+        {subheading && (
+          <p class={`mt-3 text-lg ${textColor ?? 'text-gray-600'} ${align === 'center' ? 'max-w-2xl mx-auto' : ''}`}>
+            {subheading}
+          </p>
+        )}
+      </div>
+    )}
+
+    <ul role="list" class={`grid ${gridColsClass} items-center gap-x-8 gap-y-10`}>
+      {logos.map(logo => (
+        <li class="flex justify-center">
+          {logo.href ? (
+            <a
+              href={resolvePath(logo.href)}
+              class="inline-flex rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 focus-visible:ring-offset-2"
+              {...(isExternal(logo.href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              aria-label={logo.alt}
+            >
+              <img src={resolvePath(logo.src)} alt={logo.alt} loading="lazy" decoding="async" class={imgClass} />
+            </a>
+          ) : (
+            <img src={resolvePath(logo.src)} alt={logo.alt} loading="lazy" decoding="async" class={imgClass} />
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
