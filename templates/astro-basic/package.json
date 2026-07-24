@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "sync-content": "rm -rf src/content/pages && mkdir -p src/content/pages && cp -r content/pages/. src/content/pages/",
+    "sync-content": "rm -rf src/content/pages src/content/posts && mkdir -p src/content/pages src/content/posts && cp -r content/pages/. src/content/pages/ && if [ -d content/posts ]; then cp -r content/posts/. src/content/posts/; fi",
     "dev": "npm run sync-content && astro dev",
     "build": "npm run sync-content && astro build",
     "preview": "astro preview"
