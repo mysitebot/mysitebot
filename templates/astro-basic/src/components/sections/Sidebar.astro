@@ -26,6 +26,8 @@ interface Props {
     /** Optional list of titled text sections rendered after content */
     sections?: Array<{ title: string; content: string; }>;
     links?: Array<{ label: string; href: string; }>;
+    /** Text color for the sidebar navigation links (Tailwind class, e.g., 'text-pink-500'). Falls back to textColor. */
+    linkColor?: string;
     showSearch?: boolean;
     searchPlaceholder?: string;
     /** Optional CTA button rendered below the links */
@@ -184,7 +186,7 @@ const {
             <ul class="mb-4 space-y-2">
               {leftSidebar.links.map((link) => (
                 <li>
-                  <a href={link.href} class={`text-sm ${leftSidebar.textColor || 'text-gray-900'} hover:opacity-75 transition-opacity`}>
+                  <a href={link.href} class={`text-sm ${leftSidebar.linkColor || leftSidebar.textColor || 'text-gray-900'} hover:opacity-75 transition-opacity`}>
                     {link.label}
                   </a>
                 </li>

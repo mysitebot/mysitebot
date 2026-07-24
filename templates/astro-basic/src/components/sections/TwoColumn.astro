@@ -1,4 +1,7 @@
 ---
+import { resolvePath } from '../../utils/paths';
+import Button from '../ui/Button.astro';
+
 /**
  * TwoColumn Component - A two-column layout with independent left and right content areas.
  * Use this for side-by-side comparisons, dual messaging, or balanced layouts.
@@ -16,11 +19,13 @@ interface Props {
   leftImage?: { src: string; alt: string; };
   /** Left column navigation links */
   leftLinks?: Array<{ label: string; href: string; }>;
+  /** Optional CTA button rendered directly below the left column paragraphs */
+  leftAction?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
   /** Left column content sections (e.g., forms, cards with structured items) */
   leftContent?: Array<{
     title?: string;
     description?: string;
-    items?: Array<{ title: string; description?: string }>;
+    items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>;
     form?: { fields: Array<{ label?: string; type: 'email' | 'text' | 'textarea'; placeholder: string }>, buttonLabel: string, buttonColor?: string };
     action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
   }>;
@@ -32,15 +37,19 @@ interface Props {
   rightImage?: { src: string; alt: string; };
   /** Right column images for gallery grid */
   rightImages?: Array<{ src: string; alt: string; }>;
+  /** Optional CTA button rendered directly below the right column paragraphs */
+  rightAction?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
   /** Right column content sections (e.g., cards with structured items) */
   rightContent?: Array<{
     title?: string;
     description?: string;
-    items?: Array<{ title: string; description?: string }>;
+    items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>;
     action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
   }>;
   /** Background color for the outer section (Tailwind class) */
   backgroundColor?: string;
+  /** Background image URL for the whole section — spans both columns with a subtle overlay; columns default to transparent so the image shows through */
+  backgroundImage?: string;
   /** Background color for the left column (Tailwind class); overrides backgroundColor for that column */
   leftBackgroundColor?: string;
   /** Background color for the right column (Tailwind class); overrides backgroundColor for that column */
@@ -68,13 +77,16 @@ const {
   leftParagraphs = [],
   leftImage,
   leftLinks = [],
+  leftAction,
   leftContent = [],
   rightHeading,
   rightParagraphs = [],
   rightImage,
   rightImages = [],
+  rightAction,
   rightContent = [],
   backgroundColor = 'bg-gray-100',
+  backgroundImage,
   leftBackgroundColor,
   rightBackgroundColor,
   leftBackgroundImage,
@@ -86,156 +98,198 @@ const {
   spacing = 'normal',
 } = Astro.props;
 
-const paddingClass = spacing === 'compact' ? 'py-8 px-4' : 'py-16 px-4';
-const leftBg = leftBackgroundColor || backgroundColor;
-const rightBg = rightBackgroundColor || backgroundColor;
+const paddingClass = spacing === 'compact' ? 'py-10 px-6' : 'py-20 px-6 md:px-12';
+const baseBg = backgroundImage ? 'bg-transparent' : backgroundColor;
+const leftBg = leftBackgroundColor || baseBg;
+const rightBg = rightBackgroundColor || baseBg;
 const leftText = leftTextColor || textColor;
 const rightText = rightTextColor || textColor;
+
+// Shared field styling so form inputs match the library's UI components.
+const fieldClass = 'block w-full rounded-xl border border-gray-200 bg-white p-3 text-gray-900 shadow-sm transition-colors placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 focus:outline-none';
 ---
 
-<section id={id} class="w-full">
+<section
+  id={id}
+  class={`w-full ${backgroundImage ? 'bg-cover bg-center relative' : ''}`}
+  style={backgroundImage ? { backgroundImage: `url(${resolvePath(backgroundImage)})` } : {}}
+>
+  {backgroundImage && <div class="absolute inset-0 bg-black bg-opacity-40 pointer-events-none"></div>}
   {logo && (
     <div class="flex justify-center py-8">
       <img
-        src={logo.src}
+        src={resolvePath(logo.src)}
         alt={logo.alt || 'Logo'}
-        class={`${logo.size || 'h-16'}`}
+        decoding="async"
+        class={`w-auto ${logo.size || 'h-16'}`}
       />
     </div>
   )}
-  <div class="grid grid-cols-1 md:grid-cols-2">
+  <div class={`grid grid-cols-1 md:grid-cols-2 ${backgroundImage ? 'relative z-10' : ''}`}>
     {/* Left Column */}
     <div
       class={`flex flex-col justify-center ${leftBg} ${paddingClass} bg-cover bg-center`}
-      style={leftBackgroundImage ? { backgroundImage: `url(${leftBackgroundImage})` } : {}}
+      style={leftBackgroundImage ? { backgroundImage: `url(${resolvePath(leftBackgroundImage)})` } : {}}
     >
-      {leftImage && (
-        <img src={leftImage.src} alt={leftImage.alt} class="w-full h-auto mb-6 rounded" />
-      )}
-      {leftHeading && (
-        <h2 class={`text-2xl font-bold mb-4 ${leftText}`}>{leftHeading}</h2>
-      )}
-      {leftLinks.length > 0 && (
-        <nav class="mb-6">
-          <ul class="space-y-2">
-            {leftLinks.map((link) => (
-              <li key={link.href}>
-                <a href={link.href} class={`${leftLinkColor || 'text-blue-500'} hover:opacity-80`}>{link.label}</a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
-      {leftParagraphs.map((para) => (
-        <p class={`text-lg leading-relaxed mb-4 ${leftText}`}>{para}</p>
-      ))}
-        {leftContent.map((section, idx) => (
-          <div key={idx} class="bg-white rounded shadow p-4 mb-6">
+      <div class="w-full max-w-xl mx-auto">
+        {leftImage && (
+          <img src={resolvePath(leftImage.src)} alt={leftImage.alt} loading="lazy" decoding="async" class="w-full h-auto mb-6 rounded-2xl" />
+        )}
+        {leftHeading && (
+          <h2 class={`text-3xl font-bold tracking-tight mb-4 ${leftText}`}>{leftHeading}</h2>
+        )}
+        {leftLinks.length > 0 && (
+          <nav class="mb-6" aria-label="Section links">
+            <ul role="list" class="space-y-2">
+              {leftLinks.map((link) => (
+                <li>
+                  <a href={resolvePath(link.href)} class={`inline-block rounded font-medium ${leftLinkColor || 'text-indigo-600'} hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50`}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+        {leftParagraphs.map((para) => (
+          <p class={`text-lg leading-relaxed mb-4 ${leftText}`}>{para}</p>
+        ))}
+        {leftAction && (
+          <div class="mt-2 mb-6">
+            {/* Button resolves the base path itself. */}
+            <Button href={leftAction.href} variant={leftAction.variant || 'primary'}>
+              {leftAction.label}
+            </Button>
+          </div>
+        )}
+        {leftContent.map((section) => (
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
             {section.title && (
-              <h3 class={`text-xl font-bold mb-4 ${leftText}`}>{section.title}</h3>
+              <h3 class="text-xl font-bold text-gray-900 mb-4">{section.title}</h3>
             )}
             {section.description && (
-              <p class={`text-base leading-relaxed mb-4 ${leftText}`}>{section.description}</p>
+              <p class="text-base leading-relaxed text-gray-600 mb-4">{section.description}</p>
             )}
             {section.form && (
-              <form class="space-y-3">
-                {section.form.fields.map((field, fieldIdx) => (
-                  <div key={fieldIdx}>
-                    {field.label && <label class={`block text-sm font-medium mb-1 ${leftText}`}>{field.label}</label>}
-                    <input
-                      type={field.type}
-                      placeholder={field.placeholder}
-                      class="w-full p-2 border rounded"
-                    />
+              <form class="space-y-4">
+                {section.form.fields.map((field) => (
+                  <div>
+                    {field.label && <label class="block text-sm font-medium text-gray-700 mb-1.5">{field.label}</label>}
+                    {field.type === 'textarea' ? (
+                      <textarea
+                        rows={4}
+                        placeholder={field.placeholder}
+                        aria-label={field.label || field.placeholder}
+                        class={fieldClass}
+                      ></textarea>
+                    ) : (
+                      <input
+                        type={field.type}
+                        placeholder={field.placeholder}
+                        aria-label={field.label || field.placeholder}
+                        class={fieldClass}
+                      />
+                    )}
                   </div>
                 ))}
                 <button
                   type="submit"
-                  class={`w-full p-2 ${section.form.buttonColor || 'bg-red-500'} text-white rounded`}
+                  class={`w-full rounded-xl px-6 py-3 font-bold text-white transition-opacity ${section.form.buttonColor || 'bg-indigo-600'} hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50`}
                 >
                   {section.form.buttonLabel}
                 </button>
               </form>
             )}
             {section.items && section.items.length > 0 && (
-              <div class="space-y-3">
-                {section.items.map((item, itemIdx) => (
-                  <div key={itemIdx}>
-                    {item.title && <h4 class={`font-bold ${leftText}`}>{item.title}</h4>}
-                    {item.description && <p class={`text-sm text-gray-600`}>{item.description}</p>}
-                  </div>
+              <ul role="list" class="space-y-3">
+                {section.items.map((item) => (
+                  <li class={item.image ? 'flex items-start gap-4' : ''}>
+                    {item.image && (
+                      <img src={resolvePath(item.image.src)} alt={item.image.alt} loading="lazy" decoding="async" class="w-10 h-10 flex-shrink-0 rounded object-cover" />
+                    )}
+                    <div>
+                      {item.title && <h4 class="font-bold text-gray-900">{item.title}</h4>}
+                      {item.description && <p class="text-sm text-gray-600">{item.description}</p>}
+                    </div>
+                  </li>
                 ))}
-              </div>
+              </ul>
             )}
             {section.action && (
-              <a
-                href={section.action.href}
-                class={`inline-block py-2 px-4 rounded font-bold text-white ${
-                  section.action.variant === 'secondary' ? 'bg-gray-500' :
-                  section.action.variant === 'success' ? 'bg-green-500' :
-                  'bg-yellow-500'
-                } hover:opacity-80`}
-              >
-                {section.action.label}
-              </a>
+              <div class="mt-5">
+                {/* Button resolves the base path itself. */}
+                <Button href={section.action.href} variant={section.action.variant || 'primary'}>
+                  {section.action.label}
+                </Button>
+              </div>
             )}
           </div>
         ))}
       </div>
+    </div>
 
     {/* Right Column */}
     <div
       class={`flex flex-col justify-center ${rightBg} ${paddingClass} bg-cover bg-center`}
-      style={rightBackgroundImage ? { backgroundImage: `url(${rightBackgroundImage})` } : {}}
+      style={rightBackgroundImage ? { backgroundImage: `url(${resolvePath(rightBackgroundImage)})` } : {}}
     >
-      {rightImage && (
-        <img src={rightImage.src} alt={rightImage.alt} class="w-full h-auto mb-6 rounded" />
-      )}
-      {rightHeading && (
-        <h2 class={`text-2xl font-bold mb-4 ${rightText}`}>{rightHeading}</h2>
-      )}
-      {rightParagraphs.map((para) => (
-        <p class={`text-lg leading-relaxed mb-4 ${rightText}`}>{para}</p>
-      ))}
-      {rightImages.length > 0 && (
-        <div class="grid grid-cols-2 gap-4 mb-6">
-          {rightImages.map((img) => (
-            <img key={img.src} src={img.src} alt={img.alt} class="w-full h-auto rounded" />
-          ))}
-        </div>
-      )}
-      {rightContent.map((section, idx) => (
-        <div key={idx} class="bg-white rounded shadow p-4 mb-6">
-          {section.title && (
-            <h3 class={`text-xl font-bold mb-4 ${rightText}`}>{section.title}</h3>
-          )}
-          {section.description && (
-            <p class={`text-base leading-relaxed mb-4 ${rightText}`}>{section.description}</p>
-          )}
-          {section.items && section.items.length > 0 && (
-            <div class="space-y-4">
-              {section.items.map((item, itemIdx) => (
-                <div key={itemIdx} class="mb-4">
-                  {item.title && <h4 class={`text-lg font-bold ${rightText}`}>{item.title}</h4>}
-                  {item.description && <p class={`text-sm text-gray-700`}>{item.description}</p>}
-                </div>
-              ))}
-            </div>
-          )}
-          {section.action && (
-            <a
-              href={section.action.href}
-              class={`inline-block py-2 px-4 rounded font-bold text-white ${
-                section.action.variant === 'secondary' ? 'bg-gray-500' :
-                section.action.variant === 'success' ? 'bg-green-500' :
-                'bg-yellow-500'
-              } hover:opacity-80`}
-            >
-              {section.action.label}
-            </a>
-          )}
-        </div>
-      ))}
+      <div class="w-full max-w-xl mx-auto">
+        {rightImage && (
+          <img src={resolvePath(rightImage.src)} alt={rightImage.alt} loading="lazy" decoding="async" class="w-full h-auto mb-6 rounded-2xl" />
+        )}
+        {rightHeading && (
+          <h2 class={`text-3xl font-bold tracking-tight mb-4 ${rightText}`}>{rightHeading}</h2>
+        )}
+        {rightParagraphs.map((para) => (
+          <p class={`text-lg leading-relaxed mb-4 ${rightText}`}>{para}</p>
+        ))}
+        {rightImages.length > 0 && (
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            {rightImages.map((img) => (
+              <img src={resolvePath(img.src)} alt={img.alt} loading="lazy" decoding="async" class="w-full h-auto rounded-2xl" />
+            ))}
+          </div>
+        )}
+        {rightAction && (
+          <div class="mt-2 mb-6">
+            {/* Button resolves the base path itself. */}
+            <Button href={rightAction.href} variant={rightAction.variant || 'primary'}>
+              {rightAction.label}
+            </Button>
+          </div>
+        )}
+        {rightContent.map((section) => (
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+            {section.title && (
+              <h3 class="text-xl font-bold text-gray-900 mb-4">{section.title}</h3>
+            )}
+            {section.description && (
+              <p class="text-base leading-relaxed text-gray-600 mb-4">{section.description}</p>
+            )}
+            {section.items && section.items.length > 0 && (
+              <ul role="list" class="space-y-4">
+                {section.items.map((item) => (
+                  <li class={item.image ? 'flex items-start gap-4' : ''}>
+                    {item.image && (
+                      <img src={resolvePath(item.image.src)} alt={item.image.alt} loading="lazy" decoding="async" class="w-10 h-10 flex-shrink-0 rounded object-cover" />
+                    )}
+                    <div>
+                      {item.title && <h4 class="text-lg font-bold text-gray-900">{item.title}</h4>}
+                      {item.description && <p class="text-sm text-gray-600">{item.description}</p>}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {section.action && (
+              <div class="mt-5">
+                {/* Button resolves the base path itself. */}
+                <Button href={section.action.href} variant={section.action.variant || 'primary'}>
+                  {section.action.label}
+                </Button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 </section>

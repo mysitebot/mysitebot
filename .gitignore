@@ -9,3 +9,8 @@ dist/
 .env
 .env.*
 uv.lock
+
+# WebSight reproductions are disposable training artifacts, never product.
+# The mapper writes them here and archives them out again; content/pages/ is
+# seeded verbatim into every customer site, so it ships index.mdx only.
+templates/astro-basic/content/pages/repro-*.mdx

@@ -2,6 +2,8 @@
 /**
  * Table Component - Displays structured tabular data with optional search and filtering.
  * Ideal for food menus, product catalogs, pricing tables, or any structured dataset.
+ * Columns can be individually aligned (e.g. right-aligned prices) and the header
+ * can stick to the top of the viewport while scrolling long tables.
  */
 interface Props {
   /** Optional ID for anchor linking */
@@ -10,14 +12,16 @@ interface Props {
   heading?: string;
   /** Section subheading */
   subheading?: string;
-  /** Column headers */
-  columns: Array<{ label: string; key: string; }>;
+  /** Column headers. Set `align` to right-align numeric data such as prices ('left' by default). */
+  columns: Array<{ label: string; key: string; align?: 'left' | 'center' | 'right'; }>;
   /** Table rows */
   rows: Array<Record<string, string>>;
   /** Whether to show a search bar above the table */
   showSearch?: boolean;
   /** Placeholder text for the search bar */
   searchPlaceholder?: string;
+  /** Keep the header row pinned to the top of the viewport while scrolling long tables (default: false) */
+  stickyHeader?: boolean;
   /** Background color for the outer section (Tailwind class, e.g., 'bg-white') */
   backgroundColor?: string;
   /** Background image URL for the outer section */
@@ -46,6 +50,7 @@ const {
   rows = [],
   showSearch = false,
   searchPlaceholder = 'Search...',
+  stickyHeader = false,
   backgroundColor = 'bg-white',
   backgroundImage,
   textColor = 'text-gray-900',
@@ -58,6 +63,19 @@ const {
 } = Astro.props;
 
 const alignClass = align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right';
+
+// Per-column text alignment — right-aligned columns keep prices and figures
+// visually anchored so they scan cleanly down the column.
+const cellAlignClass = (colAlign?: 'left' | 'center' | 'right') =>
+  colAlign === 'right' ? 'text-right' : colAlign === 'center' ? 'text-center' : 'text-left';
+
+const headerCellClass = (colAlign?: 'left' | 'center' | 'right') =>
+  `px-6 py-4 text-sm font-semibold uppercase tracking-wide ${textColor} ${cellAlignClass(colAlign)}` +
+  (stickyHeader ? ` sticky top-0 z-10 ${headerBackgroundColor}` : '');
+
+// Precompute a lowercased search index per row so client-side filtering never
+// has to walk the DOM cells on every keystroke.
+const searchIndex = rows.map(row => columns.map(col => row[col.key] ?? '').join(' ').toLowerCase());
 ---
 
 <section id={id} class={`py-24 px-6 overflow-hidden ${backgroundColor}`} style={backgroundImage ? `background-image: url('${backgroundImage}'); background-size: cover; background-position: center;` : undefined}>
@@ -65,45 +83,116 @@ const alignClass = align === 'left' ? 'text-left' : align === 'center' ? 'text-c
     {(heading || subheading) && (
       <div class={`${alignClass} mb-12`}>
         {heading && <h2 class={`text-4xl font-bold mb-4 ${textColor}`}>{heading}</h2>}
-        {subheading && <p class={`text-lg ${textColor} opacity-70`}>{subheading}</p>}
+        {subheading && <p class={`text-lg ${textColor} opacity-70 ${align === 'center' ? 'max-w-2xl mx-auto' : ''}`}>{subheading}</p>}
       </div>
     )}
 
-    {showSearch && (
-      <div class="mb-8">
-        <input
-          type="text"
-          placeholder={searchPlaceholder}
-          class={`w-full px-4 py-3 border border-gray-300 rounded-lg ${textColor} bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500`}
-        />
-      </div>
-    )}
+    <div data-table-root>
+      {showSearch && (
+        <div class="mb-8">
+          <label class="relative block">
+            <span class="sr-only">{searchPlaceholder}</span>
+            <svg aria-hidden="true" class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+            </svg>
+            <input
+              type="search"
+              placeholder={searchPlaceholder}
+              autocomplete="off"
+              aria-controls={id ? `${id}-table` : undefined}
+              data-table-search
+              class={`w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl ${textColor} bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition`}
+            />
+          </label>
+          <p class="mt-2 text-sm text-gray-500" aria-live="polite" data-table-status></p>
+        </div>
+      )}
 
-    <div class={card ? `${cardBackgroundColor} rounded-lg shadow-lg overflow-hidden` : 'overflow-hidden rounded-lg border border-gray-200'}>
-      <div class="overflow-x-auto">
-        <table class="w-full">
-          <thead>
-            <tr class={`${headerBackgroundColor} border-b border-gray-200`}>
-              {columns.map(col => (
-                <th class={`px-6 py-4 text-left text-sm font-semibold ${textColor} uppercase tracking-wide`}>
-                  {col.label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody class={textColor}>
-            {rows.map(row => (
-              <tr class={`border-b border-gray-200 ${rowHoverColor} transition-colors`}>
+      <div class={card ? `${cardBackgroundColor} rounded-2xl shadow-lg overflow-hidden` : 'overflow-hidden rounded-2xl border border-gray-200'}>
+        <div class="overflow-x-auto">
+          <table id={id ? `${id}-table` : undefined} class="w-full border-collapse">
+            {heading && <caption class="sr-only">{heading}</caption>}
+            <thead>
+              <tr class={`${headerBackgroundColor} border-b border-gray-200`}>
                 {columns.map(col => (
-                  <td class="px-6 py-4 text-sm">
-                    {row[col.key]}
-                  </td>
+                  <th scope="col" class={headerCellClass(col.align)}>
+                    {col.label}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody class={textColor} data-table-body>
+              {rows.map((row, i) => (
+                <tr data-table-row data-search={searchIndex[i]} class={`border-b border-gray-200 last:border-0 ${rowHoverColor} transition-colors`}>
+                  {columns.map(col => (
+                    <td class={`px-6 py-4 text-sm ${cellAlignClass(col.align)}`}>
+                      {row[col.key]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+              <tr data-table-empty hidden>
+                <td colspan={columns.length} class="px-6 py-10 text-center text-sm text-gray-500">
+                  No matching results.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  /* Zebra striping is applied to *visible* rows in JS so the pattern stays
+     consistent while filtering. :where() keeps this at zero specificity so the
+     Tailwind hover:bg-* utility always wins on the hovered row. */
+  :where([data-table-row].is-striped) {
+    background-color: rgba(0, 0, 0, 0.025);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-table-root]').forEach(root => {
+    const rows = Array.from(root.querySelectorAll<HTMLTableRowElement>('[data-table-row]'));
+    const empty = root.querySelector<HTMLTableRowElement>('[data-table-empty]');
+    const status = root.querySelector<HTMLElement>('[data-table-status]');
+    const search = root.querySelector<HTMLInputElement>('[data-table-search]');
+
+    // Re-stripe only the rows currently visible so the alternating pattern never
+    // breaks when a search hides arbitrary rows in the middle of the table.
+    const restripe = () => {
+      let visibleIndex = 0;
+      rows.forEach(row => {
+        if (row.hidden) {
+          row.classList.remove('is-striped');
+          return;
+        }
+        row.classList.toggle('is-striped', visibleIndex % 2 === 1);
+        visibleIndex++;
+      });
+    };
+
+    const apply = () => {
+      const query = search?.value.trim().toLowerCase() ?? '';
+      let visible = 0;
+      rows.forEach(row => {
+        const match = !query || (row.dataset.search ?? '').includes(query);
+        row.hidden = !match;
+        if (match) visible++;
+      });
+      if (empty) empty.hidden = visible !== 0;
+      if (status) {
+        status.textContent = query
+          ? `${visible} of ${rows.length} result${rows.length === 1 ? '' : 's'}`
+          : '';
+      }
+      restripe();
+    };
+
+    if (search) search.addEventListener('input', apply);
+    // Stripe on load even when the table has no search box.
+    apply();
+  });
+</script>

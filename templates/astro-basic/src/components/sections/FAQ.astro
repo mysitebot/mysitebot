@@ -1,0 +1,105 @@
+---
+/**
+ * FAQ Component - An accessible, JavaScript-free accordion for frequently asked
+ * questions. Built on native <details>/<summary> elements so it is keyboard
+ * operable and screen-reader friendly out of the box. Ideal for support,
+ * pricing, or onboarding pages.
+ */
+interface Props {
+  /** Optional anchor id for in-page links (e.g. href="#faq") */
+  id?: string;
+  /** Section heading (e.g. "Frequently asked questions") */
+  heading?: string;
+  /** Supporting description shown below the heading */
+  subheading?: string;
+  /** Background color for the outer section (Tailwind class, e.g. 'bg-gray-50') */
+  backgroundColor?: string;
+  /** Base text color applied to heading and body text (Tailwind class, e.g. 'text-white'). Use when backgroundColor is dark. */
+  textColor?: string;
+  /** Text alignment for the section header: 'center' (default), 'left', or 'right' */
+  align?: 'left' | 'center' | 'right';
+  /** Number of columns for the question list (1 default, or 2 for long lists) */
+  columns?: 1 | 2;
+  /** Array of question/answer pairs */
+  items: Array<{
+    /** The question shown in the clickable summary */
+    question: string;
+    /** The answer revealed when the item is expanded */
+    answer: string;
+    /** If true, this item starts expanded */
+    open?: boolean;
+  }>;
+}
+
+const {
+  id,
+  heading = 'Frequently asked questions',
+  subheading,
+  backgroundColor = 'bg-white',
+  textColor,
+  align = 'center',
+  columns = 1,
+  items = [],
+} = Astro.props;
+
+const alignClass = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+}[align];
+
+const containerWidth = columns === 2 ? 'max-w-6xl' : 'max-w-3xl';
+const listCols = columns === 2 ? 'md:grid-cols-2' : 'grid-cols-1';
+---
+
+<section id={id} class={`py-24 px-6 ${backgroundColor} ${textColor ?? ''}`}>
+  <div class={`${containerWidth} mx-auto`}>
+    {(heading || subheading) && (
+      <div class={`${alignClass} mb-14`}>
+        {heading && <h2 class={`text-4xl font-bold mb-4 ${textColor ?? 'text-gray-900'}`}>{heading}</h2>}
+        {subheading && (
+          <p class={`text-lg ${textColor ?? 'text-gray-500'} ${align === 'center' ? 'max-w-2xl mx-auto' : ''}`}>
+            {subheading}
+          </p>
+        )}
+      </div>
+    )}
+
+    <div class={`grid ${listCols} gap-4 items-start`}>
+      {items.map(item => (
+        <details
+          open={item.open}
+          class="faq-item group rounded-2xl border border-gray-200 bg-white/70 shadow-sm transition-colors duration-300 open:border-indigo-300 open:shadow-md focus-within:ring-2 focus-within:ring-indigo-500/40"
+        >
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-left text-lg font-semibold text-gray-900 focus:outline-none">
+            <span>{item.question}</span>
+            <svg
+              class="faq-chevron h-5 w-5 flex-shrink-0 text-indigo-600 transition-transform duration-300"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </summary>
+          <div class="px-6 pb-6 pt-0 text-base leading-relaxed text-gray-600">
+            {item.answer}
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Remove the default disclosure triangle across browsers. */
+  .faq-item > summary::-webkit-details-marker {
+    display: none;
+  }
+  /* Rotate the chevron when the item is expanded — no JavaScript required. */
+  .faq-item[open] > summary .faq-chevron {
+    transform: rotate(180deg);
+  }
+</style>

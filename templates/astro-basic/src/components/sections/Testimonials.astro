@@ -2,7 +2,12 @@
 import { resolvePath } from '../../utils/paths';
 
 /**
- * Testimonials Component - Property-Driven Architecture
+ * Testimonials Component - Social proof from customers, rendered as an
+ * accessible card grid (default) or an alternating text/image split layout.
+ * Each quote is marked up as a <figure>/<blockquote> with its author in the
+ * <figcaption>, and avatars fall back to a lettered monogram when no image is
+ * supplied. Set `showRating` to display a star rating per testimonial; each
+ * item's `rating` (1–5, default 5) drives how many stars are filled.
  */
 interface Props {
   /** Optional anchor id for in-page links (e.g. href="#testimonials") */
@@ -24,18 +29,26 @@ interface Props {
   maxWidth?: string;
   /** Text alignment for heading and subheading: 'center' (default), 'left', or 'right' */
   align?: 'left' | 'center' | 'right';
+  /** Show a 5-star rating per testimonial (default: true). Set false to hide stars entirely. */
+  showRating?: boolean;
   testimonials: Array<{
     quote: string;
     author: string;
     role?: string;
     avatar?: string;
+    /** Star rating from 1 to 5 (default 5). Only shown when showRating is true. */
+    rating?: number;
     image?: { src: string; alt: string; };
   }>;
 }
 
-const { id, heading = "Trusted by businesses worldwide", subheading, backgroundColor = "bg-gray-50", textColor, headingColor, layout = 'grid', columns = 3, maxWidth = 'max-w-7xl', align = 'center', testimonials = [] } = Astro.props;
+const { id, heading = "Trusted by businesses worldwide", subheading, backgroundColor = "bg-gray-50", textColor, headingColor, layout = 'grid', columns = 3, maxWidth = 'max-w-7xl', align = 'center', showRating = true, testimonials = [] } = Astro.props;
 const textAlignClass = align === 'left' ? 'text-left' : align === 'right' ? 'text-right' : 'text-center';
 const gridCols = columns === 2 ? 'lg:grid-cols-2' : columns === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3';
+const initial = (name: string) => (name?.trim()?.[0] ?? '').toUpperCase();
+// Clamp any supplied rating to a whole number of stars in the 1–5 range,
+// defaulting to a full 5 when the field is omitted.
+const starCount = (rating?: number) => Math.max(1, Math.min(5, Math.round(rating ?? 5)));
 ---
 
 <section id={id} class={`py-24 px-6 ${backgroundColor} ${textColor ?? ''}`}>
@@ -46,59 +59,70 @@ const gridCols = columns === 2 ? 'lg:grid-cols-2' : columns === 4 ? 'lg:grid-col
     {layout === 'split' ? (
       <div class="space-y-16">
         {testimonials.map((item, idx) => (
-          <div class={`flex flex-col md:flex-row gap-8 items-center ${idx % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
+          <figure class={`flex flex-col md:flex-row gap-8 items-center ${idx % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
             <div class="w-full md:w-1/2">
-              <p class="text-gray-600 italic mb-6 text-lg leading-relaxed">"{item.quote}"</p>
-              <div class="flex items-center">
+              {showRating && (
+                <div class="flex mb-4" role="img" aria-label={`Rated ${starCount(item.rating)} out of 5`}>
+                  {[...Array(5)].map((_, i) => (
+                    <svg class={`h-5 w-5 fill-current ${i < starCount(item.rating) ? 'text-indigo-400' : 'text-gray-200'}`} viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  ))}
+                </div>
+              )}
+              <blockquote class="text-gray-600 italic mb-6 text-lg leading-relaxed before:content-['“'] after:content-['”']">{item.quote}</blockquote>
+              <figcaption class="flex items-center">
                 {item.avatar ? (
-                  <img src={resolvePath(item.avatar)} alt={item.author} class="w-12 h-12 rounded-full mr-4 object-cover" />
+                  <img src={resolvePath(item.avatar)} alt={`Portrait of ${item.author}`} loading="lazy" decoding="async" class="w-12 h-12 rounded-full mr-4 object-cover" />
                 ) : (
-                  <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold mr-4">
-                    {item.author[0]}
+                  <div aria-hidden="true" class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold mr-4">
+                    {initial(item.author)}
                   </div>
                 )}
                 <div>
-                  <p class="font-bold text-gray-900">{item.author}</p>
+                  <p class="font-bold text-gray-900 not-italic">{item.author}</p>
                   {item.role && <p class="text-xs text-gray-500 uppercase tracking-wider">{item.role}</p>}
                 </div>
-              </div>
+              </figcaption>
             </div>
             {item.image && (
               <div class="w-full md:w-1/2">
-                <img src={item.image.src} alt={item.image.alt} class="w-full h-64 object-cover rounded" />
+                <img src={resolvePath(item.image.src)} alt={item.image.alt} loading="lazy" decoding="async" class="w-full h-64 object-cover rounded-2xl" />
               </div>
             )}
-          </div>
+          </figure>
         ))}
       </div>
     ) : (
-      <div class={`grid grid-cols-1 md:grid-cols-2 ${gridCols} gap-8`}>
+      <ul role="list" class={`grid grid-cols-1 md:grid-cols-2 ${gridCols} gap-8`}>
         {testimonials.map(item => (
-          <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col">
-            <div class="flex-grow">
-              <div class="flex text-indigo-400 mb-4">
-                {[...Array(5)].map(() => (
-                  <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                ))}
+          <li>
+            <figure class="h-full bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col transition-shadow duration-300 hover:shadow-lg">
+              <div class="flex-grow">
+                {showRating && (
+                  <div class="flex mb-4" role="img" aria-label={`Rated ${starCount(item.rating)} out of 5`}>
+                    {[...Array(5)].map((_, i) => (
+                      <svg class={`h-5 w-5 fill-current ${i < starCount(item.rating) ? 'text-indigo-400' : 'text-gray-200'}`} viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    ))}
+                  </div>
+                )}
+                <blockquote class="text-gray-600 italic mb-8 leading-relaxed before:content-['“'] after:content-['”']">{item.quote}</blockquote>
               </div>
-              <p class="text-gray-600 italic mb-8 leading-relaxed">"{item.quote}"</p>
-            </div>
-            <div class="flex items-center mt-6">
-              {item.avatar ? (
-                <img src={resolvePath(item.avatar)} alt={item.author} class="w-12 h-12 rounded-full mr-4 object-cover" />
-              ) : (
-                <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold mr-4">
-                  {item.author[0]}
+              <figcaption class="flex items-center mt-6">
+                {item.avatar ? (
+                  <img src={resolvePath(item.avatar)} alt={`Portrait of ${item.author}`} loading="lazy" decoding="async" class="w-12 h-12 rounded-full mr-4 object-cover" />
+                ) : (
+                  <div aria-hidden="true" class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold mr-4">
+                    {initial(item.author)}
+                  </div>
+                )}
+                <div>
+                  <p class="font-bold text-gray-900 not-italic">{item.author}</p>
+                  {item.role && <p class="text-xs text-gray-500 uppercase tracking-wider">{item.role}</p>}
                 </div>
-              )}
-              <div>
-                <p class="font-bold text-gray-900">{item.author}</p>
-                {item.role && <p class="text-xs text-gray-500 uppercase tracking-wider">{item.role}</p>}
-              </div>
-            </div>
-          </div>
+              </figcaption>
+            </figure>
+          </li>
         ))}
-      </div>
+      </ul>
     )}
   </div>
 </section>

@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 
@@ -28,18 +29,23 @@ def test_missing_templates_tree_raises_loudly(monkeypatch, tmp_path):
 
 def test_allowed_sections_fall_back_to_schema_file(monkeypatch, tmp_path):
     """With the component directory missing but sections-schema.json present
-    (a slim install), the whitelist comes from the committed schema — all 21
-    section names, not a stale hand-maintained list."""
+    (a slim install), the whitelist comes from the committed schema — exactly
+    the sections it lists, not a stale hand-maintained list. Assert against the
+    schema itself rather than a literal count: the WebSight training loop grows
+    the library, and a hard-coded number would just be the stale list again."""
     from agent.content_validator import get_allowed_sections
+
+    schema_src = template_path("sections-schema.json")
+    with open(schema_src) as f:
+        expected = set(json.load(f)["sections"])
 
     slim_root = tmp_path / "templates"
     slim_root.mkdir()
-    shutil.copyfile(template_path("sections-schema.json"),
-                    slim_root / "sections-schema.json")
+    shutil.copyfile(schema_src, slim_root / "sections-schema.json")
 
     monkeypatch.setattr(templates_mod, "_TEMPLATES_ROOT", None)
     monkeypatch.setattr(templates_mod, "_candidate_roots", lambda: [slim_root])
 
     names = get_allowed_sections()
-    assert len(names) == 21
+    assert set(names) == expected
     assert "Hero" in names and "ContactForm" in names and "TwoColumn" in names

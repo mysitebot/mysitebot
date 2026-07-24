@@ -35,19 +35,19 @@ interface Props {
   actions?: Array<{
     label: string;
     href: string;
-    variant?: 'primary' | 'secondary' | 'success';
+    variant?: 'primary' | 'secondary' | 'success' | 'danger';
   }>;
   /** Optional single CTA button (alternative to actions) */
   cta?: {
     label: string;
     href: string;
-    variant?: 'primary' | 'secondary' | 'success';
+    variant?: 'primary' | 'secondary' | 'success' | 'danger';
   };
   /** Optional CTA button rendered below the text (alternative to cta) */
   action?: {
     label: string;
     href: string;
-    variant?: 'primary' | 'secondary' | 'success';
+    variant?: 'primary' | 'secondary' | 'success' | 'danger';
   };
   /** Text alignment: 'center' (default), 'left' or 'right' */
   align?: 'center' | 'left' | 'right';
@@ -131,6 +131,8 @@ interface Props {
   links?: Array<{ label: string; href: string }>;
   /** Brand/site name shown on the left side of the overlay nav bar (used alongside links) */
   siteName?: string;
+  /** Optional logo image shown on the left side of the overlay nav bar (alternative to siteName) */
+  navLogo?: { src: string; alt?: string; size?: string };
   /** Text color for navigation links in the overlay nav bar (Tailwind class, e.g., 'text-pink-300') */
   linkColor?: string;
   /** If true, header is fixed to the top of the viewport */
@@ -203,6 +205,7 @@ const {
   cardBackgroundColor = 'bg-white bg-opacity-75',
   links,
   siteName,
+  navLogo,
   linkColor,
   newsletter,
   loginForm,
@@ -239,9 +242,13 @@ const stackedAlignment = {
       )}
     </div>
   )}
-  {(links && links.length > 0 || siteName || showHamburger) && (
+  {(links && links.length > 0 || siteName || navLogo || showHamburger) && (
     <nav class="absolute top-0 left-0 w-full z-20 flex items-center justify-between px-6 py-4">
-      {siteName && (
+      {navLogo ? (
+        <a href="#" class="hover:no-underline">
+          <img src={resolvePath(navLogo.src)} alt={navLogo.alt || 'Logo'} class={navLogo.size || 'h-12'} />
+        </a>
+      ) : siteName && (
         <a href="#" class={`text-2xl font-semibold ${textColor || 'text-white'} hover:no-underline`}>{siteName}</a>
       )}
       {links && links.length > 0 && (

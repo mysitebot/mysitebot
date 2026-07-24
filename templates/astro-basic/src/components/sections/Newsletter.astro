@@ -52,35 +52,43 @@ const {
 } = Astro.props;
 
 const { default: slot } = Astro.slots;
+
+// Unique id so each instance's <label> associates with its own input, even
+// when several Newsletter sections appear on the same page.
+const emailInputId = `newsletter-email-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
 {layout === 'split' && image ? (
-  <section id={id} role="region" aria-label="Newsletter" class={`py-16 px-6 ${backgroundColor} my-16 max-w-6xl mx-auto overflow-hidden`}>
+  <section id={id} role="region" aria-label="Newsletter" class={`py-16 px-6 ${backgroundColor} my-16 max-w-6xl mx-auto overflow-hidden rounded-3xl shadow-sm`}>
     <div class="flex flex-col md:flex-row gap-0">
-      <div class="w-full md:w-1/2 overflow-hidden">
-        <img src={resolvePath(image.src)} alt={image.alt} class="w-full h-full object-cover" />
+      <div class="w-full md:w-1/2 overflow-hidden min-h-[220px] md:min-h-0">
+        <img src={resolvePath(image.src)} alt={image.alt} loading="lazy" class="w-full h-full object-cover" />
       </div>
       <div class="w-full md:w-1/2 flex flex-col justify-center px-6 py-8 md:px-12 md:py-16 bg-gray-50">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
           {heading}
         </h2>
         {subheading && (
-          <p class="text-gray-600 text-lg mb-8">
+          <p class="text-gray-600 text-lg mb-8 leading-relaxed">
             {subheading}
           </p>
         )}
         <form class="flex flex-col gap-4" data-newsletter-form>
+          <label for={emailInputId} class="sr-only">Email address</label>
           <Input
+            id={emailInputId}
             type="email"
+            name="email"
+            autocomplete="email"
             placeholder={placeholder}
             required
             class="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-indigo-500"
           />
-          <Button type="submit" variant="unstyled" class={`${buttonColor ?? 'bg-blue-500'} text-white hover:opacity-90 border-none px-6 py-3 whitespace-nowrap`}>
+          <Button type="submit" variant="unstyled" class={`${buttonColor ?? 'bg-blue-500'} text-white hover:opacity-90 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-current border-none px-6 py-3 whitespace-nowrap`}>
             {buttonLabel}
           </Button>
         </form>
-        <div class="hidden mt-4 p-3 rounded-xl bg-green-100 text-green-800 text-center text-sm font-medium" data-success-msg>
+        <div class="hidden mt-4 p-3 rounded-xl bg-green-100 text-green-800 text-center text-sm font-medium" data-success-msg role="status" aria-live="polite" tabindex="-1">
           Thanks! You've been subscribed.
         </div>
         {slot && (
@@ -93,16 +101,17 @@ const { default: slot } = Astro.slots;
   </section>
 ) : (
   <section id={id} role="region" aria-label="Newsletter" class={`py-16 px-6 ${backgroundColor} rounded-3xl my-16 max-w-6xl mx-auto overflow-hidden relative`}>
-    <!-- Decorative background circle -->
-    <div class="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500 rounded-full opacity-50 blur-3xl"></div>
+    <!-- Decorative background circles -->
+    <div aria-hidden="true" class="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500 rounded-full opacity-50 blur-3xl"></div>
+    <div aria-hidden="true" class="absolute -bottom-32 -left-20 w-72 h-72 bg-white rounded-full opacity-10 blur-3xl"></div>
 
     <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
       <div class="flex-1 text-center md:text-left">
-        <h2 class={`text-3xl md:text-4xl font-bold mb-4 ${textColor ?? 'text-white'}`}>
+        <h2 class={`text-3xl md:text-4xl font-bold mb-4 tracking-tight ${textColor ?? 'text-white'}`}>
           {heading}
         </h2>
         {subheading && (
-          <p class={`text-lg max-w-xl ${textColor ?? 'text-indigo-100'}`}>
+          <p class={`text-lg max-w-xl leading-relaxed ${textColor ?? 'text-indigo-100'}`}>
             {subheading}
           </p>
         )}
@@ -111,24 +120,28 @@ const { default: slot } = Astro.slots;
       <div class="flex-1 w-full max-w-md">
         <form class="flex flex-col sm:flex-row gap-4" data-newsletter-form>
           <div class="flex-1">
+            <label for={emailInputId} class="sr-only">Email address</label>
             <Input
+              id={emailInputId}
               type="email"
+              name="email"
+              autocomplete="email"
               placeholder={placeholder}
               required
               class="bg-white/10 border-white/20 text-white placeholder:text-indigo-200 focus:bg-white/20"
             />
           </div>
-          <Button type="submit" variant="unstyled" class={`${buttonColor ? `${buttonColor} text-white` : 'bg-white text-indigo-600'} hover:opacity-90 border-none px-8 whitespace-nowrap`}>
+          <Button type="submit" variant="unstyled" class={`${buttonColor ? `${buttonColor} text-white` : 'bg-white text-indigo-600'} hover:opacity-90 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-white/70 border-none px-8 whitespace-nowrap`}>
             {buttonLabel}
           </Button>
         </form>
-        <div class="hidden mt-4 p-3 rounded-xl bg-indigo-500/30 text-white text-center text-sm font-medium" data-success-msg>
+        <div class={`hidden mt-4 p-3 rounded-xl bg-white/20 text-center text-sm font-medium ${textColor ?? 'text-white'}`} data-success-msg role="status" aria-live="polite" tabindex="-1">
           Thanks! You've been subscribed.
         </div>
       </div>
     </div>
     {slot && (
-      <div class="mt-6">
+      <div class="relative z-10 mt-6">
         <slot />
       </div>
     )}
@@ -142,7 +155,10 @@ const { default: slot } = Astro.slots;
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       (form as HTMLFormElement).reset();
-      if (successMsg) successMsg.classList.remove('hidden');
+      if (successMsg) {
+        successMsg.classList.remove('hidden');
+        (successMsg as HTMLElement).focus();
+      }
     });
   });
 </script>

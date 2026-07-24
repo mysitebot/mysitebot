@@ -1,6 +1,13 @@
 ---
+import { resolvePath } from '../../utils/paths';
+
 /**
- * Calendar Component - Displays a grid of events or a schedule.
+ * Calendar Component - A responsive grid of upcoming events, sessions, or
+ * schedule entries. Each event is rendered as a card with an accent rail and
+ * an icon-led meta row (date, optional time and location). When an event
+ * provides an `href`, the whole card becomes an accessible link via a
+ * stretched overlay, with external URLs opening safely in a new tab. Ideal for
+ * conference agendas, class schedules, webinars, or community calendars.
  */
 interface Props {
   /** Optional anchor id for in-page links (e.g. href="#events") */
@@ -15,22 +22,48 @@ interface Props {
   subheading?: string;
   /** Text alignment for heading and subheading: 'center' (default), 'left', or 'right' */
   align?: 'left' | 'center' | 'right';
+  /** Number of columns on large screens (2 or 3; default: 3). Fewer columns are used on smaller screens automatically. */
+  columns?: 2 | 3;
   /** Array of events */
   events: Array<{
+    /** Display date for the event (e.g. 'Mar 14', 'March 14, 2026') */
     date: string;
+    /** Event title shown as the card heading */
     title: string;
+    /** Optional one- or two-line summary of the event */
     description?: string;
+    /** Optional time or time range (e.g. '10:00 AM', '2–4 PM EST') */
     time?: string;
+    /** Optional venue or location label (e.g. 'Main Hall', 'Online') */
+    location?: string;
+    /** Optional link to an event detail or registration page. External URLs open in a new tab. */
+    href?: string;
   }>;
 }
 
-const { id, backgroundColor = 'bg-white', textColor = '', heading, subheading, align = 'center', events = [] } = Astro.props;
+const {
+  id,
+  backgroundColor = 'bg-white',
+  textColor = '',
+  heading,
+  subheading,
+  align = 'center',
+  columns = 3,
+  events = [],
+} = Astro.props;
 
 const alignClass = {
   left: 'text-left',
   center: 'text-center',
   right: 'text-right',
 }[align];
+
+const gridColsClass = {
+  2: 'md:grid-cols-2',
+  3: 'md:grid-cols-2 lg:grid-cols-3',
+}[columns] ?? 'md:grid-cols-2 lg:grid-cols-3';
+
+const isExternal = (href: string) => /^(https?:|\/\/)/i.test(href);
 ---
 
 <section id={id} class={`py-24 px-6 ${backgroundColor} ${textColor}`}>
@@ -38,18 +71,59 @@ const alignClass = {
     {(heading || subheading) && (
       <div class={`${alignClass} mb-16`}>
         {heading && <h2 class={`text-4xl font-bold mb-4 ${textColor || 'text-gray-900'}`}>{heading}</h2>}
-        {subheading && <p class={`text-lg max-w-2xl mx-auto ${textColor || 'text-gray-500'}`}>{subheading}</p>}
+        {subheading && (
+          <p class={`text-lg ${textColor || 'text-gray-500'} ${align === 'center' ? 'max-w-2xl mx-auto' : ''}`}>
+            {subheading}
+          </p>
+        )}
       </div>
     )}
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <ul role="list" class={`grid grid-cols-1 ${gridColsClass} gap-8`}>
       {events.map(event => (
-        <div class="border border-gray-100 rounded-3xl p-8 hover:shadow-lg transition-all">
-          <div class="text-indigo-600 font-bold mb-2 uppercase tracking-widest text-sm">{event.date} {event.time && `· ${event.time}`}</div>
-          <h3 class={`text-xl font-bold mb-4 ${textColor || 'text-gray-900'}`}>{event.title}</h3>
+        <li class="group relative flex flex-col overflow-hidden rounded-3xl border border-gray-100 bg-white/60 p-8 pl-9 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus-within:ring-2 focus-within:ring-indigo-500/40">
+          <span aria-hidden="true" class="absolute inset-y-0 left-0 w-1.5 bg-indigo-600 transition-all duration-300 group-hover:w-2"></span>
+          <div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-bold uppercase tracking-widest text-indigo-600">
+            <span class="inline-flex items-center gap-1.5">
+              <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <time>{event.date}</time>
+            </span>
+            {event.time && (
+              <span class="inline-flex items-center gap-1.5 text-gray-400">
+                <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {event.time}
+              </span>
+            )}
+          </div>
+          <h3 class={`text-xl font-bold mb-3 ${textColor || 'text-gray-900'}`}>
+            {event.href ? (
+              <a
+                href={resolvePath(event.href)}
+                class="after:absolute after:inset-0 focus-visible:outline-none"
+                {...(isExternal(event.href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
+                {event.title}
+              </a>
+            ) : (
+              event.title
+            )}
+          </h3>
           {event.description && <p class={`text-sm leading-relaxed ${textColor || 'text-gray-500'}`}>{event.description}</p>}
-        </div>
+          {event.location && (
+            <p class={`mt-4 inline-flex items-center gap-1.5 text-sm font-medium ${textColor || 'text-gray-600'}`}>
+              <svg aria-hidden="true" class="h-4 w-4 flex-shrink-0 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {event.location}
+            </p>
+          )}
+        </li>
       ))}
-    </div>
+    </ul>
   </div>
 </section>

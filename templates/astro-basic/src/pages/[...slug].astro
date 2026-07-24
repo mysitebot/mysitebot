@@ -22,6 +22,9 @@ import TwoColumn from '../components/sections/TwoColumn.astro';
 import NewsGrid from '../components/sections/NewsGrid.astro';
 import Parallax from '../components/sections/Parallax.astro';
 import Table from '../components/sections/Table.astro';
+import FAQ from '../components/sections/FAQ.astro';
+import Stats from '../components/sections/Stats.astro';
+import LogoCloud from '../components/sections/LogoCloud.astro';
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages');
@@ -57,6 +60,9 @@ const components = {
   NewsGrid,
   Parallax,
   Table,
+  FAQ,
+  Stats,
+  LogoCloud,
 };
 ---
 

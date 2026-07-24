@@ -71,16 +71,33 @@ const actionVariantClass =
   action?.variant === 'secondary' ? 'bg-gray-200 text-gray-900 hover:bg-gray-300' :
   action?.variant === 'success'   ? 'bg-green-600 text-white hover:bg-green-700' :
                                     'bg-blue-600 text-white hover:bg-blue-700';
+
+const alignClass = align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : '';
+// Center/right alignment should also pull the newsletter form inline with the text.
+const formAlignClass = align === 'center' ? 'items-center' : align === 'right' ? 'items-end' : 'items-stretch';
+// A provided linkColor becomes the resting color and dims on hover; the default
+// fades muted links up to full white. Both keep an accessible focus ring.
+const linkClass = `inline-flex rounded-sm transition-colors ${linkColor ? `${linkColor} hover:opacity-80` : 'hover:text-white'} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent`;
+
+// External links open in a new tab with safe rel attributes; internal links stay
+// in-tab and are resolved against the site base path.
+const isExternal = (href: string) => /^(https?:|\/\/|mailto:|tel:)/i.test(href);
+
+// Unique id so the newsletter <label> associates with its own input even when
+// several footers share a page.
+const newsletterInputId = `footer-newsletter-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
 <footer id={id} class={`${backgroundColor} ${textColor} py-16 px-6 ${fixedPosition ? 'fixed bottom-0 left-0 right-0 z-50' : ''}`}>
   <div class="max-w-7xl mx-auto">
-    <div class={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 ${align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : ''}`}>
+    <div class={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 mb-12 ${alignClass}`}>
       <div class="lg:col-span-1">
-        {logo && <img src={logo.src} alt={logo.alt || 'Logo'} class="w-10 h-10 mb-4" />}
-        {siteName && <h2 class="text-2xl font-bold text-white mb-6">{siteName}</h2>}
+        <div class={`flex items-center gap-3 mb-6 ${align === 'center' ? 'justify-center' : align === 'right' ? 'justify-end' : ''}`}>
+          {logo && <img src={resolvePath(logo.src)} alt={logo.alt || 'Logo'} loading="lazy" decoding="async" class="w-10 h-10 object-contain" />}
+          {siteName && <span class="text-2xl font-bold text-white tracking-tight">{siteName}</span>}
+        </div>
         {description && (
-          <p class="text-sm leading-relaxed max-w-xs">
+          <p class={`text-sm leading-relaxed max-w-xs ${align === 'center' ? 'mx-auto' : align === 'right' ? 'ml-auto' : ''}`}>
             {description}
           </p>
         )}
@@ -94,10 +111,14 @@ const actionVariantClass =
             </div>
           )}
           {column.links && column.links.length > 0 && (
-            <ul class="space-y-4">
+            <ul class={`space-y-4 text-sm ${column.text && column.text.length > 0 ? 'mt-4' : ''}`}>
               {column.links.map(link => (
                 <li>
-                  <a href={resolvePath(link.href)} class={`${linkColor || 'hover:text-white'} transition-colors`}>{link.label}</a>
+                  <a
+                    href={resolvePath(link.href)}
+                    class={linkClass}
+                    {...(isExternal(link.href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  >{link.label}</a>
                 </li>
               ))}
             </ul>
@@ -107,9 +128,21 @@ const actionVariantClass =
       {newsletter && (
         <div>
           <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-6">{newsletter.heading || 'Newsletter'}</h3>
-          <form class="flex flex-col gap-2">
-            <input type="email" placeholder={newsletter.placeholder || 'Enter your email'} class="p-2 rounded text-gray-900 w-full" />
-            <button type="submit" class="bg-white text-gray-900 font-semibold p-2 rounded w-full hover:bg-gray-100 transition-colors">{newsletter.buttonLabel || 'Subscribe'}</button>
+          <form class={`flex flex-col gap-3 ${formAlignClass}`}>
+            <label for={newsletterInputId} class="sr-only">Email address</label>
+            <input
+              id={newsletterInputId}
+              type="email"
+              name="email"
+              autocomplete="email"
+              required
+              placeholder={newsletter.placeholder || 'Enter your email'}
+              class="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white/60 focus:border-transparent"
+            />
+            <button
+              type="submit"
+              class="w-full rounded-lg bg-white px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            >{newsletter.buttonLabel || 'Subscribe'}</button>
           </form>
         </div>
       )}
@@ -117,7 +150,11 @@ const actionVariantClass =
     <div class="pt-8 border-t border-gray-800 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
       <p>{copyright}</p>
       {action && (
-        <a href={resolvePath(action.href)} class={`font-bold py-2 px-4 rounded transition-colors ${actionVariantClass}`}>
+        <a
+          href={resolvePath(action.href)}
+          class={`font-bold py-2 px-4 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:ring-white/60 ${actionVariantClass}`}
+          {...(isExternal(action.href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        >
           {action.label}
         </a>
       )}

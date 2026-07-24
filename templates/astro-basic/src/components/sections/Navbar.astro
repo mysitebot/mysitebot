@@ -51,6 +51,14 @@ interface Props {
   backgroundImage?: string;
   /** If true, shows a hamburger menu button on the right side */
   showHamburger?: boolean;
+  /** Optional social/icon links rendered as small images on the right side */
+  socialLinks?: Array<{
+    href: string;
+    /** Image URL for the icon */
+    icon: string;
+    /** Accessible label / alt text (e.g. "Facebook") */
+    label?: string;
+  }>;
 }
 
 const {
@@ -69,7 +77,8 @@ const {
   searchPlaceholder = 'Search...',
   searchButtonLabel = 'Search',
   backgroundImage,
-  showHamburger = false
+  showHamburger = false,
+  socialLinks = []
 } = Astro.props;
 
 const alignmentClasses = {
@@ -146,6 +155,17 @@ const hasLeftBrand = !!(siteName || logo);
         <a href={resolvePath(cta.href)} class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 rounded hover:bg-gray-200 font-medium transition-colors">
           {cta.label}
         </a>
+      )}
+      {socialLinks.length > 0 && (
+        <ul class="flex items-center gap-4">
+          {socialLinks.map(social => (
+            <li>
+              <a href={resolvePath(social.href)} aria-label={social.label ?? ''} class="inline-flex hover:opacity-80 transition-opacity">
+                <img src={social.icon} alt={social.label ?? ''} class="h-6 w-6 object-contain" />
+              </a>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   </div>
