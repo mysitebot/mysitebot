@@ -61,6 +61,21 @@ Banner Component - A slim horizontal bar for announcements, promotions, or a sec
 
 ---
 
+## `<BlogList />`
+BlogList Component - Shows the most recent blog posts as cards. Reads the site's posts automatically, newest first — it takes no post data. Use it on the homepage or any page that should surface recent articles.
+
+| Property | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | no | `string` | Optional anchor id for in-page links (e.g. href="#news") |
+| `heading` | no | `string` | Section heading shown above the cards |
+| `subheading` | no | `string` | Supporting text below the heading |
+| `limit` | no | `number` | How many posts to show (default 3) |
+| `columns` | no | `2 \| 3` | Number of columns in the card grid |
+| `backgroundColor` | no | `string` | Background color (Tailwind class, e.g. 'bg-gray-50') |
+| `textColor` | no | `string` | Text color for heading and subheading (Tailwind class, e.g. 'text-white') |
+
+---
+
 ## `<Calendar />`
 Calendar Component - A responsive grid of upcoming events, sessions, or schedule entries. Each event is rendered as a card with an accent rail and an icon-led meta row (date, optional time and location). When an event provides an `href`, the whole card becomes an accessible link via a stretched overlay, with external URLs opening safely in a new tab. Ideal for conference agendas, class schedules, webinars, or community calendars.
 

@@ -1,0 +1,58 @@
+---
+import PostCard from '../ui/PostCard.astro';
+import { resolvePath } from '../../utils/paths';
+import { getPublishedPosts } from '../../utils/posts';
+/**
+ * BlogList Component - Shows the most recent blog posts as cards.
+ * Reads the site's posts automatically, newest first — it takes no post data.
+ * Use it on the homepage or any page that should surface recent articles.
+ */
+interface Props {
+  /** Optional anchor id for in-page links (e.g. href="#news") */
+  id?: string;
+  /** Section heading shown above the cards */
+  heading?: string;
+  /** Supporting text below the heading */
+  subheading?: string;
+  /** How many posts to show (default 3) */
+  limit?: number;
+  /** Number of columns in the card grid */
+  columns?: 2 | 3;
+  /** Background color (Tailwind class, e.g. 'bg-gray-50') */
+  backgroundColor?: string;
+  /** Text color for heading and subheading (Tailwind class, e.g. 'text-white') */
+  textColor?: string;
+}
+
+const {
+  id,
+  heading = "From the blog",
+  subheading,
+  limit = 3,
+  columns = 3,
+  backgroundColor = 'bg-gray-50',
+  textColor = 'text-gray-900',
+} = Astro.props;
+
+const posts = (await getPublishedPosts()).slice(0, limit);
+const gridCols = columns === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3';
+---
+
+{posts.length > 0 && (
+  <section id={id} role="region" aria-label="Blog posts" class={`py-16 px-6 ${backgroundColor}`}>
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class={`text-3xl md:text-4xl font-bold ${textColor}`}>{heading}</h2>
+        {subheading && <p class={`mt-4 text-lg ${textColor} opacity-80`}>{subheading}</p>}
+      </div>
+      <div class={`grid grid-cols-1 ${gridCols} gap-8`}>
+        {posts.map((post) => <PostCard post={post} />)}
+      </div>
+      <div class="text-center mt-12">
+        <a href={resolvePath('/blog')} class="text-indigo-600 font-medium hover:underline">
+          View all posts &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+)}

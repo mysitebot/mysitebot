@@ -45,3 +45,23 @@ def test_existing_pages_still_render_sections(tmp_path):
     })
     assert result.returncode == 0, result.stderr
     assert "Welcome aboard" in (site / "dist" / "index.html").read_text()
+
+
+@pytest.mark.slow
+def test_bloglist_section_renders_cards_on_a_page(tmp_path):
+    site = tmp_path / "site"
+    result = build_site(site, pages={
+        "index.mdx": '---\ntitle: "Home"\npageLayout: "full"\n---\n'
+                     '<BlogList heading="Latest news" limit={2} />\n',
+    }, posts={
+        "one.mdx": post_file("First Post", "2026-07-01", excerpt="About the first"),
+        "two.mdx": post_file("Second Post", "2026-07-02"),
+        "three.mdx": post_file("Third Post", "2026-07-03"),
+    })
+    assert result.returncode == 0, result.stderr
+    html = (site / "dist" / "index.html").read_text()
+    assert "Latest news" in html
+    # limit=2, newest first
+    assert "Third Post" in html and "Second Post" in html
+    assert "First Post" not in html
+    assert '/blog/three' in html
