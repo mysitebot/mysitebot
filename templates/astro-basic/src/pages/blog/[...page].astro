@@ -1,0 +1,26 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PostCard from '../../components/ui/PostCard.astro';
+import Pagination from '../../components/ui/Pagination.astro';
+import { getPublishedPosts, POSTS_PER_PAGE } from '../../utils/posts';
+
+export async function getStaticPaths({ paginate }) {
+  const posts = await getPublishedPosts();
+  // Explicit: paginate([]) would still emit one empty /blog page, and a site
+  // with no blog must build byte-identically to one without this route.
+  if (posts.length === 0) return [];
+  return paginate(posts, { pageSize: POSTS_PER_PAGE });
+}
+
+const { page } = Astro.props;
+---
+
+<Layout title="Blog" description="Latest posts and updates.">
+  <div class="max-w-6xl mx-auto px-6 py-16">
+    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-12">Blog</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {page.data.map((post) => <PostCard post={post} />)}
+    </div>
+    <Pagination page={page} />
+  </div>
+</Layout>

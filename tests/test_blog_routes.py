@@ -65,3 +65,39 @@ def test_bloglist_section_renders_cards_on_a_page(tmp_path):
     assert "Third Post" in html and "Second Post" in html
     assert "First Post" not in html
     assert '/blog/three' in html
+
+
+def _numbered_posts(count: int) -> dict[str, str]:
+    return {
+        f"post-{i:02d}.mdx": post_file(f"Post {i:02d}", f"2026-07-{i:02d}")
+        for i in range(1, count + 1)
+    }
+
+
+@pytest.mark.slow
+def test_no_blog_route_when_there_are_no_posts(tmp_path):
+    site = tmp_path / "site"
+    result = build_site(site)
+    assert result.returncode == 0, result.stderr
+    assert not (site / "dist" / "blog").exists()
+
+
+@pytest.mark.slow
+def test_nine_posts_fit_on_one_page(tmp_path):
+    site = tmp_path / "site"
+    build_site(site, posts=_numbered_posts(9))
+    assert (site / "dist" / "blog" / "index.html").exists()
+    assert not (site / "dist" / "blog" / "2").exists()
+
+
+@pytest.mark.slow
+def test_tenth_post_creates_a_second_page(tmp_path):
+    site = tmp_path / "site"
+    build_site(site, posts=_numbered_posts(10))
+    first = (site / "dist" / "blog" / "index.html").read_text()
+    second = (site / "dist" / "blog" / "2" / "index.html").read_text()
+    # Newest first: Post 10 leads page 1, the oldest falls to page 2.
+    assert "Post 10" in first
+    assert "Post 01" in second and "Post 01" not in first
+    # Proves the extracted Pagination component rendered end-to-end.
+    assert "Newer posts" in second
