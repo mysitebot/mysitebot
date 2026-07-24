@@ -1,5 +1,6 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
+import { resolvePath } from '../utils/paths';
 
 /**
  * The feed is deliberately built from the collection directly rather than from
@@ -19,7 +20,7 @@ export async function GET(context) {
       title: post.data.title,
       pubDate: post.data.date,
       description: post.data.excerpt ?? post.data.description ?? '',
-      link: `/blog/${post.slug}/`,
+      link: resolvePath(`/blog/${post.slug}/`),
     })),
   });
 }

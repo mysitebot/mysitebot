@@ -8,6 +8,7 @@ const base = process.env.ASTRO_BASE || '/';
 
 export default defineConfig({
   base,
+  site: process.env.PUBLIC_SITE_URL || undefined,
   integrations: [tailwind(), mdx()],
   vite: {
     // On Cloud Run node_modules is a symlink into the read-only image; keep the

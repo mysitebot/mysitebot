@@ -153,8 +153,20 @@ def test_rss_lists_published_posts(tmp_path):
 @pytest.mark.slow
 def test_rss_excludes_drafts_even_in_draft_builds(tmp_path):
     site = tmp_path / "site"
-    build_site(site, posts={
+    result = build_site(site, posts={
         "hidden.mdx": post_file("Hidden Post", "2026-07-01", draft=True),
     }, env=DRAFT_ENV)
+    assert result.returncode == 0, result.stderr
     feed = (site / "dist" / "rss.xml").read_text()
     assert "Hidden Post" not in feed
+
+
+@pytest.mark.slow
+def test_rss_uses_configured_site_url(tmp_path):
+    site = tmp_path / "site"
+    build_site(site, posts={
+        "hello.mdx": post_file("Hello Post", "2026-07-01"),
+    }, env={"PUBLIC_SITE_URL": "https://example.com"})
+    feed = (site / "dist" / "rss.xml").read_text()
+    assert "https://example.com/blog/hello/" in feed
+    assert "localhost" not in feed
