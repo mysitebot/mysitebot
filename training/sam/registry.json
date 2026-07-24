@@ -3882,5 +3882,16 @@
     "fixes": [],
     "flaky": false,
     "needs_human": false
+  },
+  "blog_external_link_001": {
+    "runs": [
+      {
+        "run": "2026-07-25T08-07-20",
+        "result": "pass"
+      }
+    ],
+    "fixes": [],
+    "flaky": false,
+    "needs_human": false
   }
 }
