@@ -1,30 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import Hero from '../components/sections/Hero.astro';
-import ContactForm from '../components/sections/ContactForm.astro';
-import Pricing from '../components/sections/Pricing.astro';
-import Gallery from '../components/sections/Gallery.astro';
-import Testimonials from '../components/sections/Testimonials.astro';
-import Features from '../components/sections/Features.astro';
-import Newsletter from '../components/sections/Newsletter.astro';
-import Team from '../components/sections/Team.astro';
-import ListingGrid from '../components/sections/ListingGrid.astro';
-import Banner from '../components/sections/Banner.astro';
-import Calendar from '../components/sections/Calendar.astro';
-import Navbar from '../components/sections/Navbar.astro';
-import HeroCarousel from '../components/sections/HeroCarousel.astro';
-import Footer from '../components/sections/Footer.astro';
-import Article from '../components/sections/Article.astro';
-import Header from '../components/sections/Header.astro';
-import Sidebar from '../components/sections/Sidebar.astro';
-import TwoColumn from '../components/sections/TwoColumn.astro';
-import NewsGrid from '../components/sections/NewsGrid.astro';
-import Parallax from '../components/sections/Parallax.astro';
-import Table from '../components/sections/Table.astro';
-import FAQ from '../components/sections/FAQ.astro';
-import Stats from '../components/sections/Stats.astro';
-import LogoCloud from '../components/sections/LogoCloud.astro';
+import { sectionComponents as components } from '../components/sections';
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages');
@@ -36,34 +13,6 @@ export async function getStaticPaths() {
 
 const { page } = Astro.props;
 const { Content } = await page.render();
-
-// Map components for MDX
-const components = {
-  Hero,
-  ContactForm,
-  Pricing,
-  Gallery,
-  Testimonials,
-  Features,
-  Newsletter,
-  Team,
-  ListingGrid,
-  Banner,
-  Calendar,
-  Navbar,
-  HeroCarousel,
-  Footer,
-  Article,
-  Header,
-  Sidebar,
-  TwoColumn,
-  NewsGrid,
-  Parallax,
-  Table,
-  FAQ,
-  Stats,
-  LogoCloud,
-};
 ---
 
 <Layout 

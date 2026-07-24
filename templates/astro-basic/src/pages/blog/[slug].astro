@@ -1,0 +1,47 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { sectionComponents as components } from '../../components/sections';
+import { getPublishedPosts, formatDate, tagSlug } from '../../utils/posts';
+import { resolvePath } from '../../utils/paths';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const { title, date, description, excerpt, image, tags } = post.data;
+---
+
+<Layout title={title} description={description ?? excerpt} image={image?.src}>
+  <article class="max-w-3xl mx-auto px-6 py-16">
+    <p class="text-sm text-gray-500 mb-3">
+      <time datetime={date.toISOString()}>{formatDate(date)}</time>
+    </p>
+    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-8">{title}</h1>
+    {image && (
+      <img
+        src={resolvePath(image.src)}
+        alt={image.alt}
+        class="w-full rounded-2xl mb-10 object-cover"
+      />
+    )}
+    <div class="prose prose-indigo max-w-none">
+      <Content components={components} />
+    </div>
+    {tags.length > 0 && (
+      <div class="mt-12 flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <a
+            href={resolvePath(`/blog/tag/${tagSlug(tag)}`)}
+            class="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-sm hover:bg-gray-200"
+          >{tag}</a>
+        ))}
+      </div>
+    )}
+    <p class="mt-12">
+      <a href={resolvePath('/blog')} class="text-indigo-600 hover:underline">&larr; All posts</a>
+    </p>
+  </article>
+</Layout>
