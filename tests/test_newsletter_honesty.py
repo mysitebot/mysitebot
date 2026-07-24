@@ -12,6 +12,9 @@ def test_component_source_makes_no_subscription_claim():
     source = SOURCE.read_text()
     assert "subscribed" not in source.lower()
     assert "data-success-msg" not in source
+    # The "unavailable" notice appears in response to the user's submit
+    # action, so it must be announced to screen readers immediately.
+    assert 'role="alert"' in source
 
 
 @pytest.mark.slow

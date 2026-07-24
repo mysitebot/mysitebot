@@ -89,7 +89,7 @@ const emailInputId = `newsletter-email-${Math.random().toString(36).slice(2, 8)}
             {buttonLabel}
           </Button>
         </form>
-        <div class="hidden mt-4 p-3 rounded-xl bg-amber-100 text-amber-900 text-center text-sm font-medium" data-unavailable-msg>
+        <div class="hidden mt-4 p-3 rounded-xl bg-amber-100 text-amber-900 text-center text-sm font-medium" role="alert" data-unavailable-msg>
           Newsletter signup isn't available on this site yet.
         </div>
         {slot && (
@@ -136,7 +136,7 @@ const emailInputId = `newsletter-email-${Math.random().toString(36).slice(2, 8)}
             {buttonLabel}
           </Button>
         </form>
-        <div class="hidden mt-4 p-3 rounded-xl bg-amber-100 text-amber-900 text-center text-sm font-medium" data-unavailable-msg>
+        <div class="hidden mt-4 p-3 rounded-xl bg-amber-100 text-amber-900 text-center text-sm font-medium" role="alert" data-unavailable-msg>
           Newsletter signup isn't available on this site yet.
         </div>
       </div>
