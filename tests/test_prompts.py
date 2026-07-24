@@ -232,8 +232,11 @@ def test_system_prompt_documents_blog_posts():
     assert "date:" in text
 
 
-def test_system_prompt_refuses_to_plant_the_newsletter():
+def test_system_prompt_documents_working_newsletter():
     text = base_system_instruction()
     lowered = text.lower()
     assert "newsletter" in lowered
-    assert "not available" in lowered or "isn't available" in lowered
+    # The newsletter is functional again (emails the owner) — Sam should add it,
+    # not decline, so the old "not available yet" refusal must be gone.
+    assert "subscribe" in lowered
+    assert "not available yet" not in lowered

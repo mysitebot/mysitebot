@@ -401,7 +401,7 @@ NewsGrid Component - Displays multiple columns of news or content articles. Each
 ---
 
 ## `<Newsletter />`
-Newsletter Component - A mailing-list signup form. NOT YET FUNCTIONAL: it has no backend and tells visitors that signup is unavailable. Do not add it to a site; if a user asks for a newsletter, tell them it is not available yet. NOTE: this component collects an email address ONLY. If the request asks for any additional named field (e.g. first name, last name, phone), use the ContactForm component with a `fields` array instead — Newsletter cannot render extra fields.
+Newsletter Component - A mailing-list signup form. On submit it emails the site owner that someone wants to subscribe (same backend as the contact form, so no separate setup is needed). Add it whenever a user wants a newsletter or email signup. NOTE: this component collects an email address ONLY. If the request asks for any additional named field (e.g. first name, last name, phone), use the ContactForm component with a `fields` array instead — Newsletter cannot render extra fields.
 
 | Property | Required | Type | Description |
 | :--- | :--- | :--- | :--- |

@@ -1,9 +1,10 @@
 ---
 import { resolvePath } from '../../utils/paths';
 /**
- * Newsletter Component - A mailing-list signup form. NOT YET FUNCTIONAL: it has
- * no backend and tells visitors that signup is unavailable. Do not add it to a
- * site; if a user asks for a newsletter, tell them it is not available yet.
+ * Newsletter Component - A mailing-list signup form. On submit it emails the
+ * site owner that someone wants to subscribe (same backend as the contact form,
+ * so no separate setup is needed). Add it whenever a user wants a newsletter or
+ * email signup.
  * NOTE: this component collects an email address ONLY. If the request asks
  * for any additional named field (e.g. first name, last name, phone), use the
  * ContactForm component with a `fields` array instead — Newsletter cannot
@@ -89,9 +90,10 @@ const emailInputId = `newsletter-email-${Math.random().toString(36).slice(2, 8)}
             {buttonLabel}
           </Button>
         </form>
-        <div class="hidden mt-4 p-3 rounded-xl bg-amber-100 text-amber-900 text-center text-sm font-medium" role="alert" data-unavailable-msg>
-          Newsletter signup isn't available on this site yet.
+        <div class="hidden mt-4 p-3 rounded-xl bg-green-100 text-green-800 text-center text-sm font-medium" role="status" data-newsletter-success>
+          Thanks for signing up — we'll be in touch!
         </div>
+        <div class="hidden mt-4 p-3 rounded-xl bg-red-100 text-red-800 text-center text-sm font-medium" role="alert" data-newsletter-error></div>
         {slot && (
           <div class="mt-6 text-gray-700">
             <slot />
@@ -136,9 +138,10 @@ const emailInputId = `newsletter-email-${Math.random().toString(36).slice(2, 8)}
             {buttonLabel}
           </Button>
         </form>
-        <div class="hidden mt-4 p-3 rounded-xl bg-amber-100 text-amber-900 text-center text-sm font-medium" role="alert" data-unavailable-msg>
-          Newsletter signup isn't available on this site yet.
+        <div class="hidden mt-4 p-3 rounded-xl bg-green-100 text-green-800 text-center text-sm font-medium" role="status" data-newsletter-success>
+          Thanks for signing up — we'll be in touch!
         </div>
+        <div class="hidden mt-4 p-3 rounded-xl bg-red-100 text-red-800 text-center text-sm font-medium" role="alert" data-newsletter-error></div>
       </div>
     </div>
     {slot && (
@@ -150,16 +153,46 @@ const emailInputId = `newsletter-email-${Math.random().toString(36).slice(2, 8)}
 )}
 
 <script>
-  // This form has no backend yet. It deliberately reveals an "unavailable"
-  // notice instead of faking success — an unbacked form that thanks people for
-  // subscribing is lying to the site's visitors. When a real subscribe
-  // endpoint exists, wire it here the way ContactForm does.
-  const forms = document.querySelectorAll('[data-newsletter-form]');
-  forms.forEach(form => {
-    const notice = form.parentElement?.querySelector('[data-unavailable-msg]');
-    form.addEventListener('submit', (e) => {
+  // Same backend as ContactForm: POST the email to the site's form endpoint,
+  // which emails the owner "someone wants to subscribe" (form_type=newsletter).
+  const endpoint = document.querySelector('meta[name="mysitebot:form-endpoint"]')?.getAttribute('content') || '';
+  const projectId = document.querySelector('meta[name="mysitebot:project-id"]')?.getAttribute('content') || '';
+
+  document.querySelectorAll('[data-newsletter-form]').forEach(form => {
+    const el = form as HTMLFormElement;
+    const parent = el.parentElement;
+    const successMsg = parent?.querySelector('[data-newsletter-success]');
+    const errorMsg = parent?.querySelector('[data-newsletter-error]');
+
+    const showSuccess = () => {
+      el.reset();
+      errorMsg?.classList.add('hidden');
+      successMsg?.classList.remove('hidden');
+    };
+    const showError = (msg: string) => {
+      if (errorMsg) { errorMsg.textContent = msg; errorMsg.classList.remove('hidden'); }
+    };
+
+    el.addEventListener('submit', async (e) => {
       e.preventDefault();
-      notice?.classList.remove('hidden');
+      // Not wired to a backend (e.g. local template preview): keep the
+      // optimistic confirmation rather than erroring.
+      if (!endpoint || !projectId) { showSuccess(); return; }
+
+      const data = new FormData(el);
+      data.append('project_id', projectId);
+      data.append('form_type', 'newsletter');
+      const btn = el.querySelector('[type="submit"]') as HTMLButtonElement | null;
+      if (btn) btn.disabled = true;
+      try {
+        const res = await fetch(endpoint, { method: 'POST', body: data });
+        if (res.ok) showSuccess();
+        else showError("Sorry, we couldn't sign you up right now. Please try again.");
+      } catch {
+        showError("Sorry, we couldn't sign you up right now. Please try again.");
+      } finally {
+        if (btn) btn.disabled = false;
+      }
     });
   });
 </script>

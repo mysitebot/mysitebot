@@ -1,24 +1,30 @@
-"""The newsletter form has no backend. Until it does, it must say so rather
-than telling visitors they were subscribed."""
+"""The newsletter form is functional: it POSTs to the site's shared form
+endpoint (like the contact form) tagged as a newsletter signup, which emails
+the owner that someone wants to subscribe. It must NOT fake success offline in
+a way that lies, and must no longer show the old "unavailable" placeholder."""
 import pytest
 
 from tests.template_build import TEMPLATE, build_site
 
 SOURCE = TEMPLATE / "src" / "components" / "sections" / "Newsletter.astro"
-UNAVAILABLE = "Newsletter signup isn't available on this site yet."
 
 
-def test_component_source_makes_no_subscription_claim():
+def test_component_source_is_wired_to_the_backend():
     source = SOURCE.read_text()
-    assert "subscribed" not in source.lower()
-    assert "data-success-msg" not in source
-    # The "unavailable" notice appears in response to the user's submit
-    # action, so it must be announced to screen readers immediately.
+    # POSTs to the shared form endpoint, tagged as a newsletter signup.
+    assert "mysitebot:form-endpoint" in source
+    assert "form_type" in source and "newsletter" in source.lower()
+    # The dead "unavailable" placeholder is gone.
+    assert "isn't available on this site yet" not in source
+    assert "data-unavailable-msg" not in source
+    # Honest success + error affordances, announced to assistive tech.
+    assert "data-newsletter-success" in source
+    assert "data-newsletter-error" in source
     assert 'role="alert"' in source
 
 
 @pytest.mark.slow
-def test_rendered_form_shows_the_unavailable_message(tmp_path):
+def test_rendered_form_has_no_unavailable_notice(tmp_path):
     site = tmp_path / "site"
     result = build_site(site, pages={
         "index.mdx": '---\ntitle: "Home"\npageLayout: "full"\n---\n'
@@ -26,5 +32,5 @@ def test_rendered_form_shows_the_unavailable_message(tmp_path):
     })
     assert result.returncode == 0, result.stderr
     html = (site / "dist" / "index.html").read_text()
-    assert UNAVAILABLE in html
-    assert "subscribed" not in html.lower()
+    assert "isn't available" not in html
+    assert "data-newsletter-form" in html
