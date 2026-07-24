@@ -134,3 +134,27 @@ def test_no_tag_routes_without_tags(tmp_path):
     site = tmp_path / "site"
     build_site(site, posts={"a.mdx": post_file("Untagged", "2026-07-01")})
     assert not (site / "dist" / "blog" / "tag").exists()
+
+
+@pytest.mark.slow
+def test_rss_lists_published_posts(tmp_path):
+    site = tmp_path / "site"
+    result = build_site(site, posts={
+        "live.mdx": post_file("Live Post", "2026-07-02"),
+        "hidden.mdx": post_file("Hidden Post", "2026-07-01", draft=True),
+    })
+    assert result.returncode == 0, result.stderr
+    feed = (site / "dist" / "rss.xml").read_text()
+    assert "<rss" in feed and "</rss>" in feed
+    assert "Live Post" in feed
+    assert "Hidden Post" not in feed
+
+
+@pytest.mark.slow
+def test_rss_excludes_drafts_even_in_draft_builds(tmp_path):
+    site = tmp_path / "site"
+    build_site(site, posts={
+        "hidden.mdx": post_file("Hidden Post", "2026-07-01", draft=True),
+    }, env=DRAFT_ENV)
+    feed = (site / "dist" / "rss.xml").read_text()
+    assert "Hidden Post" not in feed
