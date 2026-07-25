@@ -14,3 +14,11 @@ uv.lock
 # The mapper writes them here and archives them out again; content/pages/ is
 # seeded verbatim into every customer site, so it ships index.mdx only.
 templates/astro-basic/content/pages/repro-*.mdx
+
+# The mapper verifies a reproduction through the Playwright MCP, which drops
+# screenshots and page dumps in whatever directory it was driven from -- this
+# repo root. Disposable exhaust, swept by run_batch.sh; ignored here so that a
+# `git add -A` in a mapping session can never ship them either.
+/.playwright-mcp/
+/repro-*.png
+/verify-*.png
