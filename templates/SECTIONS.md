@@ -549,14 +549,14 @@ TwoColumn Component - A two-column layout with independent left and right conten
 | `leftParagraphs` | no | `string[]` | Left column paragraphs |
 | `leftImage` | no | `{ src: string; alt: string; }` | Left column image |
 | `leftLinks` | no | `Array<{ label: string; href: string; }>` | Left column navigation links |
-| `leftAction` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }` | Optional CTA button rendered directly below the left column paragraphs |
+| `leftAction` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success' \| 'danger'; }` | Optional CTA button rendered directly below the left column paragraphs |
 | `leftContent` | no | `Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; form?: { fields: Array<{ label?: string; type: 'email' \| 'text' \| 'textarea...` | Left column content sections (e.g., forms, cards with structured items) |
 | `rightHeading` | no | `string` | Right column heading |
 | `rightParagraphs` | no | `string[]` | Right column paragraphs |
 | `rightImage` | no | `{ src: string; alt: string; }` | Right column image |
 | `rightImages` | no | `Array<{ src: string; alt: string; }>` | Right column images for gallery grid |
 | `rightAction` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }` | Optional CTA button rendered directly below the right column paragraphs |
-| `rightContent` | no | `Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; action?: { label: string; href: string; variant?: 'primary' \| 'secondary' \|...` | Right column content sections (e.g., cards with structured items) |
+| `rightContent` | no | `Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; form?: { fields: Array<{ label?: string; type: 'email' \| 'text' \| 'textarea...` | Right column content sections (e.g., forms, cards with structured items) |
 | `backgroundColor` | no | `string` | Background color for the outer section (Tailwind class) |
 | `backgroundImage` | no | `string` | Background image URL for the whole section — spans both columns with a subtle overlay; columns default to transparent so the image shows through |
 | `leftBackgroundColor` | no | `string` | Background color for the left column (Tailwind class); overrides backgroundColor for that column |
