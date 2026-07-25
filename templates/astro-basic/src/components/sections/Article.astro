@@ -65,6 +65,8 @@ interface Props {
   videoEmbed?: string;
   /** Optional bulleted list of items rendered after paragraphs */
   bulletPoints?: string[];
+  /** Optional list of labeled sub-sections rendered as a bold title + paragraph pairs below the paragraphs (e.g. "Project Team", "Location", "Services Provided"), separated by a top divider */
+  sections?: Array<{ title: string; content: string; }>;
   /** Text alignment: 'left' (default), 'center', or 'right' — mirrors Hero.align */
   align?: 'left' | 'center' | 'right';
   /** Alignment for the heading only: 'left', 'center', or 'right'. Overrides the section align for the heading element — use for a centered title above left-aligned body prose. */
@@ -101,6 +103,7 @@ const {
   map,
   videoEmbed,
   bulletPoints,
+  sections,
   fontFamily = 'sans',
   align,
   headingAlign,
@@ -279,6 +282,18 @@ const paragraphGridCols = columns
             )}
             {image && imagePosition !== 'top' && (
               <img src={resolvePath(image.src)} alt={image.alt} class="w-full h-64 object-cover mt-6 rounded" />
+            )}
+            {sections && (
+              <div class="mt-6 pt-6 border-t border-gray-300">
+                <ul class="space-y-4">
+                  {sections.map((section) => (
+                    <li>
+                      <h4 class={`text-sm font-semibold ${headingColor || textColor || 'text-gray-800'}`}>{section.title}</h4>
+                      <p class={`mt-1 text-sm leading-relaxed ${textColor || 'text-gray-600'}`}>{section.content}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
             {videoEmbed && (
               <div class="relative w-full mt-6" style="padding-bottom: 56.25%;">

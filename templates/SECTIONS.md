@@ -39,6 +39,7 @@ Article Component - A content card with a heading and one or more body paragraph
 | `map` | no | `{ src: string; width?: string; height?: string; heading?: string; }` | Optional embedded iframe (e.g., Google Maps embed or YouTube video); rendered below paragraphs, or in the right column when layout='split' |
 | `videoEmbed` | no | `string` | YouTube or other iframe embed URL; rendered as a responsive 16:9 iframe below the paragraphs |
 | `bulletPoints` | no | `string[]` | Optional bulleted list of items rendered after paragraphs |
+| `sections` | no | `Array<{ title: string; content: string; }>` | Optional list of labeled sub-sections rendered as a bold title + paragraph pairs below the paragraphs (e.g. "Project Team", "Location", "Services Provided"), separated by a top divider |
 | `align` | no | `'left' \| 'center' \| 'right'` | Text alignment: 'left' (default), 'center', or 'right' — mirrors Hero.align |
 | `headingAlign` | no | `'left' \| 'center' \| 'right'` | Alignment for the heading only: 'left', 'center', or 'right'. Overrides the section align for the heading element — use for a centered title above left-aligned body prose. |
 

@@ -324,6 +324,25 @@
           "kind": "string_list"
         },
         {
+          "name": "sections",
+          "required": false,
+          "type": "Array<{ title: string; content: string; }>",
+          "description": "Optional list of labeled sub-sections rendered as a bold title + paragraph pairs below the paragraphs (e.g. \"Project Team\", \"Location\", \"Services Provided\"), separated by a top divider",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "title",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "content",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
           "name": "align",
           "required": false,
           "type": "'left' | 'center' | 'right'",
