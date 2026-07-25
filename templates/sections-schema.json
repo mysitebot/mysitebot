@@ -40,6 +40,13 @@
           "kind": "string_list"
         },
         {
+          "name": "columns",
+          "required": false,
+          "type": "2 | 3 | 4",
+          "description": "Render paragraphs side-by-side in a multi-column grid (2, 3, or 4 columns) instead of stacked; ideal for equal columns of prose",
+          "kind": "unknown"
+        },
+        {
           "name": "fontFamily",
           "required": false,
           "type": "'sans' | 'serif' | 'mono'",

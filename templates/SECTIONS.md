@@ -14,6 +14,7 @@ Article Component - A content card with a heading and one or more body paragraph
 | `heading` | no | `string` | Section heading |
 | `subheading` | no | `string` | Optional subtitle displayed directly below the heading |
 | `paragraphs` | yes | `string[]` | One or more paragraphs of body text |
+| `columns` | no | `2 \| 3 \| 4` | Render paragraphs side-by-side in a multi-column grid (2, 3, or 4 columns) instead of stacked; ideal for equal columns of prose |
 | `fontFamily` | no | `'sans' \| 'serif' \| 'mono'` | Primary font family for paragraphs: 'sans' (default), 'serif', or 'mono' |
 | `image` | no | `{ src: string; alt: string; }` | Optional full-width image |
 | `images` | no | `Array<{ src: string; alt: string; }>` | Optional array of images for split layout (alternative to single image) |
