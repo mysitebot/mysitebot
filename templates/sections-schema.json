@@ -324,6 +324,25 @@
           "kind": "string_list"
         },
         {
+          "name": "links",
+          "required": false,
+          "type": "Array<{ label: string; href: string; }>",
+          "description": "Optional horizontal row of navigation links rendered below the heading (e.g. a menu card); styled as plain text links, not buttons",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
           "name": "sections",
           "required": false,
           "type": "Array<{ title: string; content: string; }>",
