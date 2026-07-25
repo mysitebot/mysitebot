@@ -31,6 +31,8 @@ interface Props {
   }>;
   /** Right column heading */
   rightHeading?: string;
+  /** Right column navigation links */
+  rightLinks?: Array<{ label: string; href: string; }>;
   /** Right column paragraphs */
   rightParagraphs?: string[];
   /** Right column image */
@@ -67,6 +69,8 @@ interface Props {
   textColor?: string;
   /** Link color for left column navigation (Tailwind class) */
   leftLinkColor?: string;
+  /** Link color for right column navigation (Tailwind class) */
+  rightLinkColor?: string;
   /** Padding and spacing preset: 'normal' (default) or 'compact' */
   spacing?: 'normal' | 'compact';
 }
@@ -81,6 +85,7 @@ const {
   leftAction,
   leftContent = [],
   rightHeading,
+  rightLinks = [],
   rightParagraphs = [],
   rightImage,
   rightImages = [],
@@ -96,6 +101,7 @@ const {
   rightTextColor,
   textColor = 'text-gray-800',
   leftLinkColor,
+  rightLinkColor,
   spacing = 'normal',
 } = Astro.props;
 
@@ -238,6 +244,17 @@ const fieldClass = 'block w-full rounded-xl border border-gray-200 bg-white p-3 
         )}
         {rightHeading && (
           <h2 class={`text-3xl font-bold tracking-tight mb-4 ${rightText}`}>{rightHeading}</h2>
+        )}
+        {rightLinks.length > 0 && (
+          <nav class="mb-6" aria-label="Section links">
+            <ul role="list" class="space-y-2">
+              {rightLinks.map((link) => (
+                <li>
+                  <a href={resolvePath(link.href)} class={`inline-block rounded font-medium ${rightLinkColor || 'text-indigo-600'} hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50`}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
         )}
         {rightParagraphs.map((para) => (
           <p class={`text-lg leading-relaxed mb-4 ${rightText}`}>{para}</p>
