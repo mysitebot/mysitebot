@@ -3616,7 +3616,7 @@
         {
           "name": "leftAction",
           "required": false,
-          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }",
+          "type": "{ label: string; href: string; variant?: 'primary' | 'secondary' | 'success' | 'danger'; }",
           "description": "Optional CTA button rendered directly below the left column paragraphs",
           "kind": "object",
           "fields": [
@@ -3637,7 +3637,8 @@
               "values": [
                 "primary",
                 "secondary",
-                "success"
+                "success",
+                "danger"
               ]
             }
           ]
@@ -3721,8 +3722,8 @@
         {
           "name": "rightContent",
           "required": false,
-          "type": "Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
-          "description": "Right column content sections (e.g., cards with structured items)",
+          "type": "Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; form?: { fields: Array<{ label?: string; type: 'email' | 'text' | 'textarea'; placeholder: string }>, buttonLabel: string, buttonColor?: string }; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
+          "description": "Right column content sections (e.g., forms, cards with structured items)",
           "kind": "unknown"
         },
         {
