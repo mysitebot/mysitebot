@@ -3658,6 +3658,25 @@
           "kind": "string"
         },
         {
+          "name": "rightLinks",
+          "required": false,
+          "type": "Array<{ label: string; href: string; }>",
+          "description": "Right column navigation links",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "label",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "href",
+              "required": true,
+              "kind": "string"
+            }
+          ]
+        },
+        {
           "name": "rightParagraphs",
           "required": false,
           "type": "string[]",
@@ -3794,6 +3813,13 @@
           "required": false,
           "type": "string",
           "description": "Link color for left column navigation (Tailwind class)",
+          "kind": "string"
+        },
+        {
+          "name": "rightLinkColor",
+          "required": false,
+          "type": "string",
+          "description": "Link color for right column navigation (Tailwind class)",
           "kind": "string"
         },
         {

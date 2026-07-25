@@ -552,6 +552,7 @@ TwoColumn Component - A two-column layout with independent left and right conten
 | `leftAction` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success' \| 'danger'; }` | Optional CTA button rendered directly below the left column paragraphs |
 | `leftContent` | no | `Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; form?: { fields: Array<{ label?: string; type: 'email' \| 'text' \| 'textarea...` | Left column content sections (e.g., forms, cards with structured items) |
 | `rightHeading` | no | `string` | Right column heading |
+| `rightLinks` | no | `Array<{ label: string; href: string; }>` | Right column navigation links |
 | `rightParagraphs` | no | `string[]` | Right column paragraphs |
 | `rightImage` | no | `{ src: string; alt: string; }` | Right column image |
 | `rightImages` | no | `Array<{ src: string; alt: string; }>` | Right column images for gallery grid |
@@ -567,4 +568,5 @@ TwoColumn Component - A two-column layout with independent left and right conten
 | `rightTextColor` | no | `string` | Text color for right column (Tailwind class) |
 | `textColor` | no | `string` | Text color for content (Tailwind class) |
 | `leftLinkColor` | no | `string` | Link color for left column navigation (Tailwind class) |
+| `rightLinkColor` | no | `string` | Link color for right column navigation (Tailwind class) |
 | `spacing` | no | `'normal' \| 'compact'` | Padding and spacing preset: 'normal' (default) or 'compact' |
