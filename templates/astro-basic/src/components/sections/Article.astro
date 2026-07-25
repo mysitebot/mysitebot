@@ -65,6 +65,8 @@ interface Props {
   videoEmbed?: string;
   /** Optional bulleted list of items rendered after paragraphs */
   bulletPoints?: string[];
+  /** Optional horizontal row of navigation links rendered below the heading (e.g. a menu card); styled as plain text links, not buttons */
+  links?: Array<{ label: string; href: string; }>;
   /** Optional list of labeled sub-sections rendered as a bold title + paragraph pairs below the paragraphs (e.g. "Project Team", "Location", "Services Provided"), separated by a top divider */
   sections?: Array<{ title: string; content: string; }>;
   /** Text alignment: 'left' (default), 'center', or 'right' — mirrors Hero.align */
@@ -103,6 +105,7 @@ const {
   map,
   videoEmbed,
   bulletPoints,
+  links,
   sections,
   fontFamily = 'sans',
   align,
@@ -261,6 +264,13 @@ const paragraphGridCols = columns
             )}
             {subheading && (
               <p class={`text-lg font-medium mt-1 mb-4 ${textColor || 'text-gray-500'}`}>{subheading}</p>
+            )}
+            {links && links.length > 0 && (
+              <div class={`flex flex-wrap gap-4 mt-2 ${align === 'center' ? 'justify-center' : align === 'right' ? 'justify-end' : ''}`}>
+                {links.map((link) => (
+                  <a href={resolvePath(link.href)} class={`${textColor || 'text-gray-500 hover:text-gray-900'}`}>{link.label}</a>
+                ))}
+              </div>
             )}
             {columns ? (
               <div class={`grid grid-cols-1 ${paragraphGridCols} gap-8 mt-4`}>
