@@ -18,6 +18,11 @@ interface Props {
     src: string;
     alt?: string;
   };
+  /** Optional row of images shown on the right side (e.g. language flags, badges) */
+  images?: Array<{
+    src: string;
+    alt?: string;
+  }>;
   /** Body paragraphs displayed below the heading */
   paragraphs?: string[];
   /** Contact information displayed on the right side */
@@ -96,6 +101,7 @@ const {
   heading,
   subheading,
   image,
+  images = [],
   paragraphs = [],
   contactInfo = [],
   cta,
@@ -161,6 +167,13 @@ const justifyClass = align === 'center' ? 'justify-center' : align === 'right' ?
     )}
     {logoAlign !== 'right' && (
       <div class={`flex items-center gap-4 ${imageFullWidth ? 'mx-auto' : 'ml-auto'}`}>
+      {images && images.length > 0 && (
+        <div class="flex items-center gap-2">
+          {images.map(img => (
+            <img src={img.src} alt={img.alt ?? ''} class="h-6 w-auto object-contain" />
+          ))}
+        </div>
+      )}
       {links && links.length > 0 && (
         <nav>
           <ul class="flex gap-6">

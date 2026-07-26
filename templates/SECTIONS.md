@@ -195,6 +195,7 @@ Header Component - A horizontal header with logo on the left and contact info on
 | `siteName` | no | `string` | Brand name rendered as bold text on the left when no logo is provided |
 | `heading` | no | `string` | Main heading text displayed prominently (e.g., "Welcome to Tech Startup") |
 | `image` | no | `{ src: string; alt?: string; }` | Optional image displayed alongside the site name (e.g. school emblem, badge) |
+| `images` | no | `Array<{ src: string; alt?: string; }>` | Optional row of images shown on the right side (e.g. language flags, badges) |
 | `paragraphs` | no | `string[]` | Body paragraphs displayed below the heading |
 | `contactInfo` | no | `Array<{ label: string; value: string; }>` | Contact information displayed on the right side |
 | `cta` | no | `{ label: string; href: string; }` | Optional call-to-action button shown on the right side |
