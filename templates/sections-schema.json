@@ -1260,6 +1260,25 @@
           "kind": "image"
         },
         {
+          "name": "images",
+          "required": false,
+          "type": "Array<{ src: string; alt?: string; }>",
+          "description": "Optional row of images shown on the right side (e.g. language flags, badges)",
+          "kind": "object_list",
+          "fields": [
+            {
+              "name": "src",
+              "required": true,
+              "kind": "string"
+            },
+            {
+              "name": "alt",
+              "required": false,
+              "kind": "string"
+            }
+          ]
+        },
+        {
           "name": "paragraphs",
           "required": false,
           "type": "string[]",
