@@ -15,6 +15,8 @@ interface Props {
   leftHeading?: string;
   /** Left column paragraphs */
   leftParagraphs?: string[];
+  /** Left column bulleted list of items rendered below the paragraphs */
+  leftBulletPoints?: string[];
   /** Left column image */
   leftImage?: { src: string; alt: string; };
   /** Left column navigation links */
@@ -36,6 +38,8 @@ interface Props {
   rightLinks?: Array<{ label: string; href: string; }>;
   /** Right column paragraphs */
   rightParagraphs?: string[];
+  /** Right column bulleted list of items rendered below the paragraphs */
+  rightBulletPoints?: string[];
   /** Right column image */
   rightImage?: { src: string; alt: string; };
   /** Right column images for gallery grid */
@@ -82,6 +86,7 @@ const {
   logo,
   leftHeading,
   leftParagraphs = [],
+  leftBulletPoints = [],
   leftImage,
   leftLinks = [],
   leftAction,
@@ -89,6 +94,7 @@ const {
   rightHeading,
   rightLinks = [],
   rightParagraphs = [],
+  rightBulletPoints = [],
   rightImage,
   rightImages = [],
   rightAction,
@@ -161,6 +167,13 @@ const fieldClass = 'block w-full rounded-xl border border-gray-200 bg-white p-3 
         {leftParagraphs.map((para) => (
           <p class={`text-lg leading-relaxed mb-4 ${leftText}`}>{para}</p>
         ))}
+        {leftBulletPoints.length > 0 && (
+          <ul role="list" class={`list-disc pl-5 space-y-2 mb-4 ${leftText}`}>
+            {leftBulletPoints.map((point) => (
+              <li class="text-lg leading-relaxed">{point}</li>
+            ))}
+          </ul>
+        )}
         {leftAction && (
           <div class="mt-2 mb-6">
             {/* Button resolves the base path itself. */}
@@ -270,6 +283,13 @@ const fieldClass = 'block w-full rounded-xl border border-gray-200 bg-white p-3 
         {rightParagraphs.map((para) => (
           <p class={`text-lg leading-relaxed mb-4 ${rightText}`}>{para}</p>
         ))}
+        {rightBulletPoints.length > 0 && (
+          <ul role="list" class={`list-disc pl-5 space-y-2 mb-4 ${rightText}`}>
+            {rightBulletPoints.map((point) => (
+              <li class="text-lg leading-relaxed">{point}</li>
+            ))}
+          </ul>
+        )}
         {rightImages.length > 0 && (
           <div class="grid grid-cols-2 gap-4 mb-6">
             {rightImages.map((img) => (

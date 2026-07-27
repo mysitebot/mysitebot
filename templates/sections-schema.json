@@ -3645,6 +3645,13 @@
           "kind": "string_list"
         },
         {
+          "name": "leftBulletPoints",
+          "required": false,
+          "type": "string[]",
+          "description": "Left column bulleted list of items rendered below the paragraphs",
+          "kind": "string_list"
+        },
+        {
           "name": "leftImage",
           "required": false,
           "type": "{ src: string; alt: string; }",
@@ -3738,6 +3745,13 @@
           "required": false,
           "type": "string[]",
           "description": "Right column paragraphs",
+          "kind": "string_list"
+        },
+        {
+          "name": "rightBulletPoints",
+          "required": false,
+          "type": "string[]",
+          "description": "Right column bulleted list of items rendered below the paragraphs",
           "kind": "string_list"
         },
         {
