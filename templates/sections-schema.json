@@ -3703,7 +3703,7 @@
         {
           "name": "leftContent",
           "required": false,
-          "type": "Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; form?: { fields: Array<{ label?: string; type: 'email' | 'text' | 'textarea'; placeholder: string }>, buttonLabel: string, buttonColor?: string }; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
+          "type": "Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; links?: Array<{ label: string; href: string; }>; form?: { fields: Array<{ label?: string; type: 'email' | 'text' | 'textarea'; placeholder: string }>, buttonLabel: string, buttonColor?: string }; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
           "description": "Left column content sections (e.g., forms, cards with structured items)",
           "kind": "unknown"
         },
@@ -3798,7 +3798,7 @@
         {
           "name": "rightContent",
           "required": false,
-          "type": "Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; form?: { fields: Array<{ label?: string; type: 'email' | 'text' | 'textarea'; placeholder: string }>, buttonLabel: string, buttonColor?: string }; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
+          "type": "Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; links?: Array<{ label: string; href: string; }>; form?: { fields: Array<{ label?: string; type: 'email' | 'text' | 'textarea'; placeholder: string }>, buttonLabel: string, buttonColor?: string }; action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; }; }>",
           "description": "Right column content sections (e.g., forms, cards with structured items)",
           "kind": "unknown"
         },
