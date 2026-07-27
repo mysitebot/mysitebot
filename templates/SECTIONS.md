@@ -550,6 +550,7 @@ TwoColumn Component - A two-column layout with independent left and right conten
 | `logo` | no | `{ src: string; alt?: string; size?: string; }` | Optional logo image displayed centered above the two-column layout |
 | `leftHeading` | no | `string` | Left column heading |
 | `leftParagraphs` | no | `string[]` | Left column paragraphs |
+| `leftBulletPoints` | no | `string[]` | Left column bulleted list of items rendered below the paragraphs |
 | `leftImage` | no | `{ src: string; alt: string; }` | Left column image |
 | `leftLinks` | no | `Array<{ label: string; href: string; }>` | Left column navigation links |
 | `leftAction` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success' \| 'danger'; }` | Optional CTA button rendered directly below the left column paragraphs |
@@ -557,6 +558,7 @@ TwoColumn Component - A two-column layout with independent left and right conten
 | `rightHeading` | no | `string` | Right column heading |
 | `rightLinks` | no | `Array<{ label: string; href: string; }>` | Right column navigation links |
 | `rightParagraphs` | no | `string[]` | Right column paragraphs |
+| `rightBulletPoints` | no | `string[]` | Right column bulleted list of items rendered below the paragraphs |
 | `rightImage` | no | `{ src: string; alt: string; }` | Right column image |
 | `rightImages` | no | `Array<{ src: string; alt: string; }>` | Right column images for gallery grid |
 | `rightAction` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }` | Optional CTA button rendered directly below the right column paragraphs |
