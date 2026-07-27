@@ -26,6 +26,7 @@ interface Props {
     title?: string;
     description?: string;
     items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>;
+    links?: Array<{ label: string; href: string; }>;
     form?: { fields: Array<{ label?: string; type: 'email' | 'text' | 'textarea'; placeholder: string }>, buttonLabel: string, buttonColor?: string };
     action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
   }>;
@@ -46,6 +47,7 @@ interface Props {
     title?: string;
     description?: string;
     items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>;
+    links?: Array<{ label: string; href: string; }>;
     form?: { fields: Array<{ label?: string; type: 'email' | 'text' | 'textarea'; placeholder: string }>, buttonLabel: string, buttonColor?: string };
     action?: { label: string; href: string; variant?: 'primary' | 'secondary' | 'success'; };
   }>;
@@ -220,6 +222,15 @@ const fieldClass = 'block w-full rounded-xl border border-gray-200 bg-white p-3 
                 ))}
               </ul>
             )}
+            {section.links && section.links.length > 0 && (
+              <ul role="list" class="space-y-2">
+                {section.links.map((link) => (
+                  <li>
+                    <a href={resolvePath(link.href)} class={`inline-block rounded font-medium ${leftLinkColor || 'text-indigo-600'} hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50`}>{link.label}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
             {section.action && (
               <div class="mt-5">
                 {/* Button resolves the base path itself. */}
@@ -323,6 +334,15 @@ const fieldClass = 'block w-full rounded-xl border border-gray-200 bg-white p-3 
                       {item.title && <h4 class="text-lg font-bold text-gray-900">{item.title}</h4>}
                       {item.description && <p class="text-sm text-gray-600">{item.description}</p>}
                     </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {section.links && section.links.length > 0 && (
+              <ul role="list" class="space-y-2">
+                {section.links.map((link) => (
+                  <li>
+                    <a href={resolvePath(link.href)} class={`inline-block rounded font-medium ${rightLinkColor || 'text-indigo-600'} hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50`}>{link.label}</a>
                   </li>
                 ))}
               </ul>
