@@ -554,7 +554,7 @@ TwoColumn Component - A two-column layout with independent left and right conten
 | `leftImage` | no | `{ src: string; alt: string; }` | Left column image |
 | `leftLinks` | no | `Array<{ label: string; href: string; }>` | Left column navigation links |
 | `leftAction` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success' \| 'danger'; }` | Optional CTA button rendered directly below the left column paragraphs |
-| `leftContent` | no | `Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; links?: Array<{ label: string; href: string; }>; form?: { fields: Array<{ l...` | Left column content sections (e.g., forms, cards with structured items) |
+| `leftContent` | no | `Array<{ title?: string; description?: string; bulletPoints?: string[]; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; links?: Array<{ label: string; href: string; }>; f...` | Left column content sections (e.g., forms, cards with structured items) |
 | `rightHeading` | no | `string` | Right column heading |
 | `rightLinks` | no | `Array<{ label: string; href: string; }>` | Right column navigation links |
 | `rightParagraphs` | no | `string[]` | Right column paragraphs |
@@ -562,7 +562,7 @@ TwoColumn Component - A two-column layout with independent left and right conten
 | `rightImage` | no | `{ src: string; alt: string; }` | Right column image |
 | `rightImages` | no | `Array<{ src: string; alt: string; }>` | Right column images for gallery grid |
 | `rightAction` | no | `{ label: string; href: string; variant?: 'primary' \| 'secondary' \| 'success'; }` | Optional CTA button rendered directly below the right column paragraphs |
-| `rightContent` | no | `Array<{ title?: string; description?: string; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; links?: Array<{ label: string; href: string; }>; form?: { fields: Array<{ l...` | Right column content sections (e.g., forms, cards with structured items) |
+| `rightContent` | no | `Array<{ title?: string; description?: string; bulletPoints?: string[]; items?: Array<{ title?: string; description?: string; image?: { src: string; alt: string; } }>; links?: Array<{ label: string; href: string; }>; f...` | Right column content sections (e.g., forms, cards with structured items) |
 | `backgroundColor` | no | `string` | Background color for the outer section (Tailwind class) |
 | `backgroundImage` | no | `string` | Background image URL for the whole section — spans both columns with a subtle overlay; columns default to transparent so the image shows through |
 | `leftBackgroundColor` | no | `string` | Background color for the left column (Tailwind class); overrides backgroundColor for that column |
